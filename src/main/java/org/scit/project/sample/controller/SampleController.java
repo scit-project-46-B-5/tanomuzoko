@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class SampleController {
     
 
-    @GetMapping({"/",""})
-    public String index() {
+    // @GetMapping({"/",""})
+    // public String index() {
         
-        return new String("index");
-    }
+    //     return new String("index");
+    // }
 
     
 }
