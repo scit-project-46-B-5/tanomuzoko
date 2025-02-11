@@ -100,7 +100,8 @@ create table recipe_input_keyword
 (
 	recipe_seq bigint auto_increment,
 	keyword varchar(100) not null,
-	constraint recipe_input_keyword_pk primary key (recipe_seq)    
+	constraint recipe_input_keyword_pk primary key (recipe_seq),
+    constraint recipe_input_keyword_fk foreign key(recipe_seq) references recipe(recipe_seq)     
 );
 
 
