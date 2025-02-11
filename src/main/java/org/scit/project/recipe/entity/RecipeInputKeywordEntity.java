@@ -1,6 +1,7 @@
 package org.scit.project.recipe.entity;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -8,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,15 +26,12 @@ import lombok.Setter;
 @Table(name = "recipe_input_keyword")
 public class RecipeInputKeywordEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "recipe_seq")
-    private Long recipeSeq;
+    @EmbeddedId
+    private RecipeComplicatedPK recipeComplicatedPK;
 
+    @MapsId("recipeSeq")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipe_seq", referencedColumnName = "recipe_seq")
     private RecipeEntity recipeEntity;
 
-    @Column(name = "keyword")
-    private String keyword;
 }
