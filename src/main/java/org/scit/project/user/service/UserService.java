@@ -11,5 +11,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class UserService {
 
-	private final UserRepository userRepository; 
+	private final UserRepository userRepository;
+
+	public boolean existId(String userId) {
+		boolean result = userRepository.existsByUserId(userId);
+		log.info("중복값: {}",result);
+		return !result;
+	} 
 }

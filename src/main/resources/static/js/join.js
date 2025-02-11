@@ -1,3 +1,4 @@
+let idCheck = false;
 $(function () {
     $('#userId').on('blur', confirmId);
     $('#check_all').on('change', toggleAllCheckboxes);
@@ -28,5 +29,22 @@ function confirmId() {
         $('#confirmId').html("아이디는 3~12자리 사이로 입력");
         return;
     }
+    // 아이디 중복체크 
+    $.ajax({
+        url: '/user/idCheck'
+        , method: 'POST'
+        , data: { "userId": userId }
+        , success: function (resp) {
+            if (resp) {
+                $('#confirmId').css('color', 'blue');
+                $('#confirmId').html("사용가능한 아이디");
+                idCheck = true;
+            } else {
+                $('#confirmId').css('color', 'red');
+                $('#confirmId').html("사용 불가능한 아이디");
+                idCheck = false;
+            }
+        }
+    });
 
 }
