@@ -1,14 +1,12 @@
 let idCheck = false;
-let pwdCheck = false;
 $(function () {
     $('#userId').on('blur', confirmId);
     $('#check_all').on('change', toggleAllCheckboxes);
     $('.check-item').on('change', handleCheckItemChange);
     $('#userPwd').on('focus', clearPwdCheck);
     $('#joinBtn').on('click', join);
-    $('#email').on('blur', validateEmail);
-
 });
+
 // "전체 동의" 체크 시 모든 체크박스 선택/해제
 function toggleAllCheckboxes() {
     $(".check-item").prop("checked", $(this).prop("checked"));
@@ -19,6 +17,7 @@ function handleCheckItemChange() {
     let checked = $('.check-item:checked').length;
     $('#check_all').prop('checked', total === checked);
 }
+// 아이디 중복체크
 function confirmId() {
     //  아이디 길이체크, 아이디를 적지않았을경우 메세지가 안보이게 설정
     let userId = $('#userId').val();
@@ -30,7 +29,7 @@ function confirmId() {
     }
     if (userId.trim().length < 3 || userId.trim().length > 12) {
         $('#confirmId').css('color', 'red');
-        $('#confirmId').html("아이디는 3~12자리 사이로 입력");
+        $('#confirmId').html("아이디는 3~12자리 사이로 입력해주세요.");
         return;
     }
     // 아이디 중복체크 
@@ -79,26 +78,7 @@ function join() {
         alert('필수 항목에 동의해야 가입이 가능합니다.');
         return false;
     }
-    // 중복확인을 위한 ajax 요청
-    $.ajax({
-        url: '/user/join'
-        , method: 'POST'
-        , data: { "userId": userId, "userPwd": userPwd }
-        , success: function (resp) {
-            if (resp) {
-                $('#confirmId').css('color', 'blue');
-                $('#confirmId').html("사용가능한 아이디");
-                idCheck = true;
-            } else {
-                $('#confirmId').css('color', 'red');
-                $('#confirmId').html("사용 불가능한 아이디");
-                idCheck = false;
-            }
-        }
-    });
-}
-// 이메일 유효성 검사
-function validateEmail() {
+    // 이메일 유효성 검사
     let email = $("#email").val().trim();
     let emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
