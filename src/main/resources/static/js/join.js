@@ -5,7 +5,7 @@ $(function () {
     $('#check_all').on('change', toggleAllCheckboxes);
     $('.check-item').on('change', handleCheckItemChange);
     $('#userPwd').on('focus', clearPwdCheck);
-    $('joinBtn').on('click', join);
+    $('#joinBtn').on('click', join);
     $('#email').on('blur', validateEmail);
 
 });
@@ -28,7 +28,6 @@ function confirmId() {
         idCheck = false;
         return;
     }
-
     if (userId.trim().length < 3 || userId.trim().length > 12) {
         $('#confirmId').css('color', 'red');
         $('#confirmId').html("아이디는 3~12자리 사이로 입력");
@@ -75,6 +74,12 @@ function join() {
         alert('비밀번호가 일치하지 않습니다.');
         return false;
     }
+    // 필수 체크박스 검사
+    if (!$('#terms').prop('checked') || !$('#privacy').prop('checked') || !$('#age').prop('checked')) {
+        alert('필수 항목에 동의해야 가입이 가능합니다.');
+        return false;
+    }
+    // 중복확인을 위한 ajax 요청
     $.ajax({
         url: '/user/join'
         , method: 'POST'
@@ -106,7 +111,3 @@ function validateEmail() {
         return false;
     }
 }
-
-
-
-

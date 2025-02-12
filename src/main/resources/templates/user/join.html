@@ -117,7 +117,7 @@
 
         </div>
         <span>닉네임 입력</span>
-        <input type="text" id="nickName" class="input-field" placeholder="닉네임">
+        <input type="text" id="userName" class="input-field" placeholder="닉네임">
         <div id="confirmName" style="font-size: 0.8em;"></div>
         <span>아이디 확인</span>
         <input type="text" id="userId" name="userId" class="input-field" placeholder="아이디">
@@ -134,10 +134,10 @@
         <button class="verify-button">인증하기</button>
         <div class="checkbox-container">
             <label><input type="checkbox" id="check_all"> 전체 동의</label>
-            <label><input type="checkbox" class="check-item" value="terms"> 서비스 이용약관 동의 (필수)</label>
-            <label><input type="checkbox" class="check-item" value="privacy"> 개인정보 처리방침 (필수)</label>
-            <label><input type="checkbox" class="check-item" value="age"> 만 14세 이상입니다 (필수)</label>
-            <label><input type="checkbox" class="check-item" value="ads"> 광고성 정보 수신 동의 (선택)</label>
+            <label><input type="checkbox" class="check-item" id="terms" value="terms"> 서비스 이용약관 동의 (필수)</label>
+            <label><input type="checkbox" class="check-item" id="privacy" value="privacy"> 개인정보 처리방침 (필수)</label>
+            <label><input type="checkbox" class="check-item" id="age" value="age"> 만 14세 이상입니다 (필수)</label>
+            <label><input type="checkbox" class="check-item" id="ads" value="ads"> 광고성 정보 수신 동의 (선택)</label>
         </div>
         <button class="signup-button" id="joinBtn">가입하기</button>
     </div>
