@@ -1,12 +1,44 @@
 let idCheck = false;
+let userNameCheck = false;
 $(function () {
     $('#userId').on('blur', confirmId);
     $('#check_all').on('change', toggleAllCheckboxes);
     $('.check-item').on('change', handleCheckItemChange);
     $('#userPwd').on('focus', clearPwdCheck);
     $('#joinBtn').on('click', join);
+    $('#userName').on('blur', nickNameCheck);
 });
 
+// 닉네임 중복체크
+function nickNameCheck() {
+    let userName = $('#userName').val();
+    if (userName === "") {
+        $('#confirmName').html("");
+        userNameCheck = false;
+        return;
+    }
+    if (userName.trim().length < 2 || userName.trim().length > 11) {
+        $('#confirmName').css('color', 'red');
+        $('#confirmName').html("닉네임은 2~11자리 사이로 입력");
+        return;
+    }
+    $.ajax({
+        url: '/user/nameCheck'
+        , method: 'POST'
+        , data: { "userName": userName }
+        , success: function (resp) {
+            if (resp) {
+                $('#confirmName').css('color', 'blue');
+                $('#confirmName').html("사용가능한 닉네임");
+                userNameCheck = true;
+            } else {
+                $('#confirmName').css('color', 'red');
+                $('#confirmName').html("사용 불가능한 닉네임");
+                userNameCheck = false;
+            }
+        }
+    });
+}
 // "전체 동의" 체크 시 모든 체크박스 선택/해제
 function toggleAllCheckboxes() {
     $(".check-item").prop("checked", $(this).prop("checked"));
@@ -88,6 +120,11 @@ function join() {
     }
     if (!emailPattern.test(email)) {
         alert("올바른 이메일 형식을 입력해주세요.");
+        return false;
+    }
+    let userName = $('#userName').val();
+    if (userName.trim().length < 2 || userName.trim().length > 11) {
+        alert('닉네임은 2~11자 사이로 입력해 주세요.')
         return false;
     }
 }

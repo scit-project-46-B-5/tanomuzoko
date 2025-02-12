@@ -7,8 +7,10 @@ public interface UserRepository extends JpaRepository<UserEntity, Long>{
 
 
 
-
+//	아이디 중복확인
 	boolean existsByUserId(String userId);
+//	닉네임 중복확인
+	boolean existsByUserName(String userName);
 
 	
 

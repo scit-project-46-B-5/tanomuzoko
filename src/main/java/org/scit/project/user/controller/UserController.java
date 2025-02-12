@@ -24,15 +24,23 @@ public class UserController {
 		
 		return "user/join";
 	}
+//	로그인 화면 출력
 	@GetMapping("/login")
 	public String login() {
 		
 		return "user/login";
 	}
+//	아이디 중복체크
 	@PostMapping("/idCheck")
 	@ResponseBody
 	public boolean idCheck (@RequestParam(name="userId")String userId) {
 		boolean result =userService.existId(userId);
+		return result;
+	}
+	@PostMapping("/nameCheck")
+	@ResponseBody
+	public boolean nameCheck(@RequestParam(name="userName")String userName) {
+		boolean result =userService.existName(userName);
 		return result;
 	}
 }

@@ -15,7 +15,11 @@ public class UserService {
 
 	public boolean existId(String userId) {
 		boolean result = userRepository.existsByUserId(userId);
-		log.info("중복값: {}",result);
+		return !result;
+	}
+
+	public boolean existName(String userName) {
+		boolean result = userRepository.existsByUserName(userName);
 		return !result;
 	} 
 }
