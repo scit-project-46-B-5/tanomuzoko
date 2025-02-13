@@ -34,7 +34,7 @@ public class BoardEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "board_seq")
-    private long boardSeq;
+    private Long boardSeq;
 
     @Column(name = "board_writer", nullable = false, length = 50)
     private String boardWriter;
@@ -67,7 +67,7 @@ public class BoardEntity {
 
     public static BoardEntity toEntity(BoardDTO boardDTO) {
         return BoardEntity.builder()
-                .boardSeq(boardDTO.getBoardSeq())
+                .boardSeq(boardDTO.getBoardSeq() != null ? boardDTO.getBoardSeq() : null)
                 .boardWriter(boardDTO.getBoardWriter())
                 .boardTitle(boardDTO.getBoardTitle())
                 .boardContent(boardDTO.getBoardContent())
