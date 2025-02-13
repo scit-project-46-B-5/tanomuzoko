@@ -92,7 +92,7 @@ CREATE TABLE reply
 CREATE TABLE recipe
 (
     recipe_seq BIGINT AUTO_INCREMENT,
-    user_seq BIGINT NOT NULL, 
+    user_seq BIGINT, 
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT recipe_PK PRIMARY KEY (recipe_seq),    
     CONSTRAINT recipe_user_FK FOREIGN KEY (user_seq) REFERENCES user(user_seq) ON DELETE set null 
