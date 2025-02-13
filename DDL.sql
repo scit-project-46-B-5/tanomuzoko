@@ -19,8 +19,8 @@ CREATE TABLE user
     user_name VARCHAR(50) NOT NULL, 
     user_password VARCHAR(60),
     user_email VARCHAR(254), 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,  # java의 localDateTime은 timezone이 없으므로 timestamp보다는 DATETIME으로
+    updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP,
     roles VARCHAR(20) DEFAULT 'ROLE_USER',
     is_deleted BOOLEAN DEFAULT FALSE,
     CONSTRAINT user_PK PRIMARY KEY (user_seq),
@@ -39,7 +39,7 @@ CREATE TABLE board
     board_content VARCHAR(4000),
     hit_count INT DEFAULT 0,
     create_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    update_date DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    update_date DATETIME ON UPDATE CURRENT_TIMESTAMP,
     is_deleted BOOLEAN DEFAULT FALSE,
     CONSTRAINT board_PK PRIMARY KEY (board_seq),
     CONSTRAINT board_user_FK FOREIGN KEY (user_seq) REFERENCES user(user_seq) ON DELETE SET null #user가 없어져도 board는 남겨야한다. 대신 user는 null로 들어가게 됨.
@@ -53,7 +53,7 @@ CREATE TABLE board_image
     original_file_name VARCHAR(255),
     saved_file_name VARCHAR(255),
     create_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    update_date DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    update_date DATETIME ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT board_image_PK PRIMARY KEY (image_seq),
     CONSTRAINT board_image_board_FK FOREIGN KEY (board_seq) REFERENCES board(board_seq) ON DELETE CASCADE
 );
@@ -65,6 +65,8 @@ CREATE TABLE board_heart
     user_seq BIGINT NOT NULL,
     board_seq BIGINT NOT NULL,
     is_hearted BOOLEAN DEFAULT FALSE,
+    create_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    update_date DATETIME ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT board_heart_PK PRIMARY KEY (board_heart_seq),
     CONSTRAINT board_heart_board_FK FOREIGN KEY (board_seq) REFERENCES board(board_seq) ON DELETE CASCADE,
     CONSTRAINT board_heart_user_FK FOREIGN KEY (user_seq) REFERENCES user(user_seq) ON DELETE CASCADE, # 한 게시물에 복수 개의 공감. user 지워진다고 모두 null로 바꾸면 (1, null) 등의 row가 여러개  생겨 unique key 조건 위반이됨.
@@ -80,6 +82,7 @@ CREATE TABLE reply
     reply_content VARCHAR(300) NOT NULL,
     is_deleted BOOLEAN DEFAULT FALSE,
     create_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    update_date DATETIME ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT reply_PK PRIMARY KEY (reply_seq),
     CONSTRAINT reply_board_FK FOREIGN KEY (board_seq) REFERENCES board(board_seq) ON DELETE CASCADE,
     CONSTRAINT reply_user_FK FOREIGN KEY (user_seq) REFERENCES user(user_seq)ON DELETE SET null #user가 없어져도 reply는 남겨야한다. 대신 user는 null로 들어가게 됨.
@@ -92,7 +95,7 @@ CREATE TABLE recipe
     user_seq BIGINT NOT NULL, 
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT recipe_PK PRIMARY KEY (recipe_seq),    
-    CONSTRAINT recipe_user_FK FOREIGN KEY (user_seq) REFERENCES user(user_seq) ON DELETE CASCADE
+    CONSTRAINT recipe_user_FK FOREIGN KEY (user_seq) REFERENCES user(user_seq) ON DELETE set null 
 );
 
 -- Recipe Input Keywords Table
