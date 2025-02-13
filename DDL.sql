@@ -1,110 +1,115 @@
-create database project;
-use project;
+CREATE DATABASE project;
+USE project;
 
-drop table user;
-drop table board;
-drop table board_heart;
-drop table reply;
-drop table favorite_board_item;
-drop table reply;
-drop table recipe;
-drop table recipe_input_keyword;
+-- Drop tables in correct order to avoid FK constraint issues
+DROP TABLE IF EXISTS recipe_output_content;
+DROP TABLE IF EXISTS recipe_input_keyword;
+DROP TABLE IF EXISTS recipe;
+DROP TABLE IF EXISTS reply;
+DROP TABLE IF EXISTS board_heart;
+DROP TABLE IF EXISTS board_image;
+DROP TABLE IF EXISTS board;
+DROP TABLE IF EXISTS user;
 
-create table user 
+-- User Table
+CREATE TABLE user 
 ( 
-   	user_seq bigint auto_increment, 
-	user_id varchar(255), 
-	user_name VARCHAR(255), 
-	user_email VARCHAR(255) unique, 
-	created_at TIMESTAMP default CURRENT_TIMESTAMP, 
-	updated_at TIMESTAMP, 
-	is_deleted BOOLEAN default false,
-	constraint user_PK primary key (user_seq),
-	unique key(user_id)
- );
-
-
-create table board
-(
-    board_seq bigint auto_increment,
-    board_writer varchar(50) not null,
-    board_title varchar(200) default "Untitled",
-    board_content varchar(4000),
-    hit_count int default 0, -- 조회수
-    create_date datetime default current_timestamp,
-    update_date datetime default current_timestamp,
-    original_file_name varchar(2000),
-    saved_file_name varchar(2000),
-    is_deleted BOOLEAN DEFAULT false,
-    constraint board_PK primary key (board_seq)
+    user_seq BIGINT AUTO_INCREMENT, 
+    user_id VARCHAR(30) NOT NULL, 
+    user_name VARCHAR(50) NOT NULL, 
+    user_password VARCHAR(60),
+    user_email VARCHAR(254), 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    roles VARCHAR(20) DEFAULT 'ROLE_USER',
+    is_deleted BOOLEAN DEFAULT FALSE,
+    CONSTRAINT user_PK PRIMARY KEY (user_seq),
+    CONSTRAINT user_roles_CHK CHECK (roles IN ('ROLE_USER', 'ROLE_ADMIN')),
+    CONSTRAINT user_id_UK UNIQUE (user_id),
+    CONSTRAINT user_email_UK UNIQUE (user_email),
+    CONSTRAINT user_name_UK UNIQUE (user_name)
 );
 
-CREATE table board_heart
+-- Board Table
+CREATE TABLE board
 (
-    user_seq bigint not null,
-    board_seq bigint not null,
-    board_heart_seq bigint,
-    is_hearted boolean default true,
-	constraint board_heart_PK primary key (board_heart_seq),
-    foreign key(board_seq) references board(board_seq),
-    foreign key(user_seq) references user(user_seq) on delete cascade,
-    unique key(board_seq, user_seq)
+    board_seq BIGINT AUTO_INCREMENT,
+    user_seq BIGINT, 
+    board_title VARCHAR(100) DEFAULT "Untitled",
+    board_content VARCHAR(4000),
+    hit_count INT DEFAULT 0,
+    create_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    update_date DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    is_deleted BOOLEAN DEFAULT FALSE,
+    CONSTRAINT board_PK PRIMARY KEY (board_seq),
+    CONSTRAINT board_user_FK FOREIGN KEY (user_seq) REFERENCES user(user_seq) ON DELETE SET null #user가 없어져도 board는 남겨야한다. 대신 user는 null로 들어가게 됨.
 );
 
-
-
-CREATE table favorite_board_item 
-(
-    user_seq bigint not null,
-    board_seq bigint not null,
-    favorite_seq bigint,
-    is_favorited boolean default true,
-    constraint favorite_board_item_PK primary key (favorite_seq),
-    foreign key(board_seq) references board(board_seq),
-    foreign key(user_seq) references user(user_seq) on delete cascade,
-    unique key(board_seq, user_seq)
+-- Board Image Table
+CREATE TABLE board_image
+(	
+    image_seq BIGINT AUTO_INCREMENT,
+    board_seq BIGINT NOT NULL,
+    original_file_name VARCHAR(255),
+    saved_file_name VARCHAR(255),
+    create_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    update_date DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT board_image_PK PRIMARY KEY (image_seq),
+    CONSTRAINT board_image_board_FK FOREIGN KEY (board_seq) REFERENCES board(board_seq) ON DELETE CASCADE
 );
 
-
-
-
-create table reply
+-- Board Heart (Likes) Table
+CREATE TABLE board_heart
 (
-    reply_seq bigint auto_increment,
-    board_seq bigint,
-    user_seq bigint not null,
-    reply_content varchar(1000) not null,
-    is_deleted BOOLEAN default FALSE,
-    create_date datetime default current_timestamp,
-    constraint reply_pk primary key (reply_seq),
-    constraint reply_board_fk foreign key (board_seq) references board(board_seq) on Delete cascade,
-	constraint reply_user_fk foreign key (user_seq) references user(user_seq)
+    board_heart_seq BIGINT AUTO_INCREMENT,
+    user_seq BIGINT NOT NULL,
+    board_seq BIGINT NOT NULL,
+    is_hearted BOOLEAN DEFAULT FALSE,
+    CONSTRAINT board_heart_PK PRIMARY KEY (board_heart_seq),
+    CONSTRAINT board_heart_board_FK FOREIGN KEY (board_seq) REFERENCES board(board_seq) ON DELETE CASCADE,
+    CONSTRAINT board_heart_user_FK FOREIGN KEY (user_seq) REFERENCES user(user_seq) ON DELETE CASCADE, # 한 게시물에 복수 개의 공감. user 지워진다고 모두 null로 바꾸면 (1, null) 등의 row가 여러개  생겨 unique key 조건 위반이됨.
+    UNIQUE KEY (board_seq, user_seq)
 );
 
-
-
-Create table recipe
+-- Reply Table
+CREATE TABLE reply
 (
-	recipe_seq bigint auto_increment,
-	user_seq bigint not null, 
-	recipe_output_content varchar(5000) not null,
-	created_at datetime default current_timestamp,
-	constraint recipe_PK primary key (recipe_seq),    
-	constraint recipe_user_fk foreign key (user_seq) references user(user_seq) 
+    reply_seq BIGINT AUTO_INCREMENT,
+    board_seq BIGINT NOT NULL,
+    user_seq BIGINT,
+    reply_content VARCHAR(300) NOT NULL,
+    is_deleted BOOLEAN DEFAULT FALSE,
+    create_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT reply_PK PRIMARY KEY (reply_seq),
+    CONSTRAINT reply_board_FK FOREIGN KEY (board_seq) REFERENCES board(board_seq) ON DELETE CASCADE,
+    CONSTRAINT reply_user_FK FOREIGN KEY (user_seq) REFERENCES user(user_seq)ON DELETE SET null #user가 없어져도 reply는 남겨야한다. 대신 user는 null로 들어가게 됨.
 );
 
-
-drop table recipe_input_keyword;
-
-create table recipe_input_keyword
+-- Recipe Table
+CREATE TABLE recipe
 (
-	recipe_seq bigint auto_increment,
-	keyword varchar(100) not null,
-	constraint recipe_input_keyword_pk primary key (recipe_seq)    
+    recipe_seq BIGINT AUTO_INCREMENT,
+    user_seq BIGINT NOT NULL, 
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT recipe_PK PRIMARY KEY (recipe_seq),    
+    CONSTRAINT recipe_user_FK FOREIGN KEY (user_seq) REFERENCES user(user_seq) ON DELETE CASCADE
 );
 
+-- Recipe Input Keywords Table
+CREATE TABLE recipe_input_keyword
+(
+    recipe_seq BIGINT NOT NULL,
+    keyword VARCHAR(30) NOT NULL,
+    CONSTRAINT recipe_input_keyword_PK PRIMARY KEY (recipe_seq, keyword),
+    CONSTRAINT recipe_input_keyword_FK FOREIGN KEY (recipe_seq) REFERENCES recipe(recipe_seq) ON DELETE CASCADE
+);
 
-
-
-
-
+-- Recipe Output Content Table (Fixed PK Name)
+CREATE TABLE recipe_output_content
+(
+    recipe_output_content_seq BIGINT AUTO_INCREMENT,
+    recipe_seq BIGINT NOT NULL,
+    output_content VARCHAR(300) NOT NULL,
+    CONSTRAINT recipe_output_content_PK PRIMARY KEY (recipe_output_content_seq),
+    CONSTRAINT recipe_output_content_recipe_FK FOREIGN KEY (recipe_seq) REFERENCES recipe(recipe_seq) ON DELETE CASCADE
+);
