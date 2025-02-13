@@ -17,7 +17,7 @@ public class SecurityConfig {
 		http
 				.authorizeHttpRequests((auth) -> auth
 						.requestMatchers(
-								"/"
+								"/recipe/**"
 								,"/user/idCheck"
 								,"/user/join"
 								,"/user/joinProc"

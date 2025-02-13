@@ -3,6 +3,8 @@ package org.scit.project.recipe.dto;
 import java.io.Serializable;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,8 +24,16 @@ public class RecipeChatGPTRequestDTO implements Serializable {
     private String model;
     private List<MessageChatGPTDTO> messages;
     private float temperature;
-    
 
+    public static RecipeChatGPTRequestDTO TODTO(String model, List<MessageChatGPTDTO> messages, float temperature) {
+      return RecipeChatGPTRequestDTO.builder()
+                                      .model(model)
+                                      .messages(messages)
+                                      .temperature(0.7f)
+                                      .build();
+
+    }
+    
 }
 /*
  * {
