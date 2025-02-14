@@ -22,7 +22,7 @@ public class SecurityConfig {
 								,"/user/join"
 								,"/user/joinProc"
 								,"/user/login"
-								, "/images/**"
+								, "/image/**"
 								, "/css/**"
 								, "/js/**")
 						.permitAll()
