@@ -31,7 +31,7 @@ public class LoginUserDetails implements UserDetails {
 	private static final long serialVersionUID = 1L;
 	private Long userSeq;
 	private String userId;
-	private String userPwd;
+	private String userPassword;
 	private String userName;
 	private String userEmail;
 	private LocalDateTime createdAt;
@@ -49,7 +49,7 @@ public class LoginUserDetails implements UserDetails {
     public LoginUserDetails(UserEntity entity) {
         this.userSeq = entity.getUserSeq();
         this.userId = entity.getUserId();
-        this.userPwd = entity.getUserPwd();
+        this.userPassword = entity.getUserPassword();
         this.userName = entity.getUserName();
         this.userEmail = entity.getUserEmail();
         this.createdAt = entity.getCreatedAt();
@@ -60,7 +60,7 @@ public class LoginUserDetails implements UserDetails {
 
 	@Override
 	public String getPassword() {
-		return this.userPwd;
+		return this.userPassword;
 	}
 
 	@Override

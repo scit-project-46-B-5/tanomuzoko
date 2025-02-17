@@ -1,5 +1,6 @@
 package org.scit.project.user.controller;
 
+import org.scit.project.user.dto.UserDTO;
 import org.scit.project.user.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -52,7 +53,7 @@ public class UserController {
 	}
 //	회원가입 처리
 	@PostMapping("/joinProc")
-	public String joinProc(@ModelAttribute org.scit.project.user.dto.UserDTO dto) {
+	public String joinProc(@ModelAttribute UserDTO dto) {
 		boolean result = userService.joinProc(dto);
 		return "redirect:/";
 	}
