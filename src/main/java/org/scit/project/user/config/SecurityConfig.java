@@ -17,6 +17,7 @@ public class SecurityConfig {
 				.authorizeHttpRequests((auth) -> auth
 						.requestMatchers(
 								"/",
+								"/recipe/**",
 								"/api/v1/email/**",		
 								"/posts",
 								"/board/**",
