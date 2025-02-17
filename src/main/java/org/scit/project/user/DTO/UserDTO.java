@@ -41,6 +41,7 @@ public class UserDTO {
 				.createdAt(entity.getCreatedAt()!= null ? entity.getCreatedAt() : LocalDateTime.now())
 				.updatedAt(entity.getUpdatedAt()!= null ? entity.getCreatedAt() : LocalDateTime.now())
 				.isDeleted(entity.isDeleted())
+				.roles(entity.getRoles())
 				.build();
 				
 	}

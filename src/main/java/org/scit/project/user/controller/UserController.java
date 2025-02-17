@@ -3,6 +3,7 @@ package org.scit.project.user.controller;
 import org.scit.project.user.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,6 +44,12 @@ public class UserController {
 	public boolean nameCheck(@RequestParam(name="userName")String userName) {
 		boolean result =userService.existName(userName);
 		return result;
+	}
+//	회원가입 처리
+	@PostMapping("/joinProc")
+	public String joinProc(@ModelAttribute org.scit.project.user.dto.UserDTO dto) {
+		boolean result = userService.joinProc(dto);
+		return "redirect:/";
 	}
 
 }

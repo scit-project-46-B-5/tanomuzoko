@@ -7,47 +7,49 @@ $(function () {
     $('#userPwd').on('focus', clearPwdCheck);
     $('#joinBtn').on('click', join);
     $('#userName').on('blur', nickNameCheck);
-    $('#requestButton').on('click', mailAuthentication);
+    // 주석부분은 이메일 인증이 완료되면 다시 push 할 예정정
+    // $('#requestButton').on('click', mailAuthentication);
 });
-// email인증 , 버튼뒤집기기
-function mailAuthentication() {
+// // email인증 , 버튼뒤집기기
+// function mailAuthentication() {
+//     alert('asdasdasd');
 
-    // 이메일 유효성 검사
-    let email = $("#email").val().trim();
-    let emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+//     // 이메일 유효성 검사
+//     let email = $("#email").val().trim();
+//     let emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-    if (email === "") {
-        alert("이메일을 입력해주세요.");
-        return;
-    }
-    if (!emailPattern.test(email)) {
-        alert("올바른 이메일 형식을 입력해주세요.");
-        return;
-    }
-    // 버튼 중복클릭 방지
-    $('#requestButton').prop("disabled", true);
-    // 버튼 뒤집기
-    $('#verificationBox').css('display', 'block');
-    $('#emailAuthentication').css('display', 'none');
+//     if (email === "") {
+//         alert("이메일을 입력해주세요.");
+//         return;
+//     }
+//     if (!emailPattern.test(email)) {
+//         alert("올바른 이메일 형식을 입력해주세요.");
+//         return;
+//     }
+//     // 버튼 중복클릭 방지
+//     $('#requestButton').prop("disabled", true);
+//     // 버튼 뒤집기
+//     $('#verificationBox').css('display', 'block');
+//     // $('#emailAuthentication').css('display', 'none');
 
-    $.ajax({
-        url: "/api/v1/email/send", // 서버에서 제공한 URL 사용
-        type: "post",
-        dataType: "json",
-        data: { "email": email },
-        success: function (data) {
-            alert("인증번호가 이메일로 발송되었습니다.");
-            // 발송된 인증번호 자동 등록
-            $("#Confirm").attr("value", data);
-        },
-        error: function (xhr, status, error) {
-            alert("이메일 전송 실패: " + xhr.responseText);
+//     $.ajax({
+//         url: "/api/v1/email/send", // 서버에서 제공한 URL 사용
+//         type: "post",
+//         dataType: "json",
+//         data: { "email": email },
+//         success: function (data) {
+//             alert("인증번호가 이메일로 발송되었습니다.");
+//             // 발송된 인증번호 자동 등록
+//             $("#Confirm").attr("value", data);
+//         },
+//         error: function (xhr, status, error) {
+//             alert("이메일 전송 실패: " + xhr.responseText);
 
-            // 🚨 실패 시 버튼 다시 활성화
-            $('#requestButton').prop("disabled", false);
-        }
-    });
-}
+//             // 🚨 실패 시 버튼 다시 활성화
+//             $('#requestButton').prop("disabled", false);
+//         }
+//     });
+// }
 
 // 닉네임 중복체크
 function nickNameCheck() {
@@ -166,5 +168,22 @@ function join() {
     if (userName.trim().length < 2 || userName.trim().length > 11) {
         alert('닉네임은 2~11자 사이로 입력해 주세요.')
         return false;
+    }
+    // 회원가입 요청부분
+    if (idCheck || pwdCheck || userName) {
+
+        // 회원가입을 위한 처리요청
+        $.ajax({
+            url: '/user/joinProc'
+            , method: 'POST'
+            , data: { "userId": userId, "userPwd": userPwd, "userName": userName }
+            , success: function (resp) {
+                if (resp) {
+                    alert('회원가입 완료')
+                } else {
+                    alert('회원가입 실패')
+                }
+            }
+        });
     }
 }

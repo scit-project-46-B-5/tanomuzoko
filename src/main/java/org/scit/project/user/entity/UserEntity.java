@@ -54,7 +54,8 @@ public class UserEntity {
 	private boolean isDeleted;
 	
 	@Column(name="roles")
-	private String roles;
+	@Builder.Default
+	private String roles = "ROLE_USER";
 	
 	public static UserEntity toEntity(UserDTO dto) {
 		
