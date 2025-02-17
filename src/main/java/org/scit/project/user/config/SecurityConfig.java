@@ -36,7 +36,7 @@ public class SecurityConfig {
 		http
 				.formLogin((auth) -> auth
 						.loginPage("/user/login")
-						.loginProcessingUrl("/user/loginProc")
+						.loginProcessingUrl("/user/login")
 						.usernameParameter("userId")
 						.passwordParameter("userPwd")
 						.failureUrl("/user/login?error=true") // loginFailureHandler 가 있으면 이 코드는 없어야한다.

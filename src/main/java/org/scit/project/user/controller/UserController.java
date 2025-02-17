@@ -2,6 +2,7 @@ package org.scit.project.user.controller;
 
 import org.scit.project.user.service.UserService;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,10 +28,14 @@ public class UserController {
 	}
 //	로그인 화면 출력
 	@GetMapping("/login")
-	public String login() {
+	public String login(@RequestParam(name="error", required = false)String error,
+						@RequestParam(name="errMessage", required = false)String errMessage, Model model) {
 		
+		model.addAttribute("error", error);
+		model.addAttribute("errMessage", errMessage);
 		return "user/login";
 	}
+	
 //	아이디 중복체크
 	@PostMapping("/idCheck")
 	@ResponseBody
