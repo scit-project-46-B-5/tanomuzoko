@@ -137,13 +137,13 @@ function join() {
         return false;
     }
     // 비밀번호 체크
-    let userPwd = $('#userPwd').val();
-    if (userPwd.trim().length < 8 || userPwd.trim().length > 20) {
+    let userPassword = $('#userPassword').val();
+    if (userPassword.trim().length < 8 || userPassword.trim().length > 20) {
         alert('비밀번호는 8~20자 사이로 입력해주세요.');
         return false;
     }
     let userPwdCheck = $('#userPwdCheck').val();
-    if (userPwd !== userPwdCheck) {
+    if (userPassword !== userPwdCheck) {
         alert('비밀번호가 일치하지 않습니다.');
         return false;
     }
@@ -176,7 +176,7 @@ function join() {
         $.ajax({
             url: '/user/joinProc'
             , method: 'POST'
-            , data: { "userId": userId, "userPwd": userPwd, "userName": userName }
+            , data: { "userId": userId, "userPassword": userPassword, "userName": userName }
             , success: function (resp) {
                 if (resp) {
                     alert('회원가입 완료')

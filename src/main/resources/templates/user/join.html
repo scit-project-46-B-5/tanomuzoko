@@ -5,111 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회원가입 페이지</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 90vh;
-            background-color: #f7f7f7;
-            font-family: Arial, sans-serif;
-        }
-
-        .signup-container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            width: 400px;
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #ff7f50;
-        }
-
-        .logo img {
-            width: 250px;
-            height: 150px;
-            margin-right: 10px;
-        }
-
-        .verify-button {
-            background: none;
-            border: 1px solid #ff7f50;
-            color: #ff7f50;
-            padding: 5px;
-            width: 100%;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-bottom: 10px;
-        }
-
-        .verify-button:hover {
-            background: #ff7f50;
-            color: white;
-        }
-
-        .input-field {
-            width: 95%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-
-        .signup-button {
-            background: #ff7f50;
-            color: white;
-            border: none;
-            padding: 10px;
-            width: 100%;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 15px;
-        }
-
-        .signup-button:hover {
-            background: #e56b42;
-        }
-
-        .checkbox-container {
-            text-align: left;
-            font-size: 14px;
-            margin-top: 10px;
-        }
-
-        .checkbox-container label {
-            display: block;
-            margin: 5px 0;
-        }
-
-        .signup-container span {
-            text-align: left;
-            font-size: 1em;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            display: block;
-            text-align: left;
-            padding: 5px;
-        }
-
-        #verificationBox {
-            display: none;
-        }
-
-        #emailAuthentication {
-            display: block;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/join.css}">
     <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
     <script defer th:src="@{/js/join.js}"></script>
 </head>
@@ -131,7 +27,7 @@
         <input type="text" id="userId" name="userId" class="input-field" placeholder="아이디">
         <div id="confirmId" style="font-size: 0.8em;"></div>
         <span>비밀번호 입력</span>
-        <input type="password" id="userPwd" name="userPwd" class="input-field" placeholder="비밀번호를 입력해주세요">
+        <input type="password" id="userPassword" name="userPassword" class="input-field" placeholder="비밀번호를 입력해주세요">
         <div id="confirmPwd" style="font-size: 0.8em;"></div>
         <input type="password" id="userPwdCheck" name="userPwdCheck" class="input-field"
             placeholder="비밀번호를 한 번 더 입력해주세요">
