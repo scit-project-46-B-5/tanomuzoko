@@ -1,6 +1,7 @@
 package org.scit.project.user.service;
 
 import org.scit.project.user.dto.UserDTO;
+import org.scit.project.user.entity.UserEntity;
 import org.scit.project.user.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,10 +30,10 @@ public class UserService {
 	//	회원가입 처리
 	public boolean joinProc(UserDTO dto) {
 //		비밀번호 암호화
-	dto.setUserPwd(passwprdEncoder.encode(dto.getUserPwd()));
+	dto.setUserPassword(passwprdEncoder.encode(dto.getUserPassword()));
 		 
 		// DTO를 Entity로 변환하여 DB에 저장
-		org.scit.project.user.entity.UserEntity entity = org.scit.project.user.entity.UserEntity.toEntity(dto);
+		UserEntity entity = UserEntity.toEntity(dto);
 		userRepository.save(entity);
 
 		// 저장 후 DB에 아이디가 존재하는지 확인

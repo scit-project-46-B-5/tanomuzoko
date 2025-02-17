@@ -35,8 +35,8 @@ public class UserEntity {
 	@Column(name="user_id" ,unique = true)
 	private String userId;
 	
-	@Column(name="user_pwd")
-	private String userPwd;
+	@Column(name="user_password")
+	private String userPassword;
 	
 	@Column(name="user_name")
 	private String userName;
@@ -62,7 +62,7 @@ public class UserEntity {
 		return UserEntity.builder()
 				.userSeq(dto.getUserSeq())
 				.userId(dto.getUserId())
-				.userPwd(dto.getUserPwd())
+				.userPassword(dto.getUserPassword())
 				.userName(dto.getUserName())
 				.userEmail(dto.getUserEmail())
 				.createdAt(dto.getCreatedAt()!= null ? dto.getCreatedAt() : LocalDateTime.now())
