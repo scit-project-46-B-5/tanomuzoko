@@ -20,11 +20,16 @@ public class RecipeController {
     // return new String("index");
     // }
 
-    @GetMapping("/recipe")
+    @GetMapping("/recipe/chatGPT")
     @ResponseBody
     public String showExample(RecipeUserRequestDTO recipeUserRequestDTO) {
         return recipeService.sendRequestToChatGPT(recipeUserRequestDTO);
 
+    }
+
+    @GetMapping("/recipe/recommend")
+    public String viewRecipeRecoomend() {
+        return "recipe/recommend";
     }
 
 }
