@@ -2,6 +2,8 @@ package org.scit.project.user.entity;
 
 import java.time.LocalDateTime;
 
+import org.scit.project.user.dto.UserDTO;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,8 +32,11 @@ public class UserEntity {
 	@Column(name="user_seq")
 	private Long userSeq;
 	
-	@Column(name="user_id")
+	@Column(name="user_id" ,unique = true)
 	private String userId;
+	
+	@Column(name="user_pwd")
+	private String userPwd;
 	
 	@Column(name="user_name")
 	private String userName;
@@ -47,4 +52,25 @@ public class UserEntity {
 	
 	@Column(name="is_deleted")
 	private boolean isDeleted;
+	
+	@Column(name="roles")
+	@Builder.Default
+	private String roles = "ROLE_USER";
+	
+	public static UserEntity toEntity(UserDTO dto) {
+		
+		return UserEntity.builder()
+				.userSeq(dto.getUserSeq())
+				.userId(dto.getUserId())
+				.userPwd(dto.getUserPwd())
+				.userName(dto.getUserName())
+				.userEmail(dto.getUserEmail())
+				.createdAt(dto.getCreatedAt()!= null ? dto.getCreatedAt() : LocalDateTime.now())
+				.updatedAt(dto.getUpdatedAt()!= null ? dto.getUpdatedAt() : LocalDateTime.now())
+				.isDeleted(dto.isDeleted())
+				.build();
+				
+	}
 }
+
+
