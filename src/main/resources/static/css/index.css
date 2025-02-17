@@ -1,0 +1,216 @@
+.cards {
+    display: flex;
+    gap: 20px;
+    margin-top: 10px;
+}
+.cards a {
+    text-decoration: none;
+    color: black;
+}
+.card {
+    position: relative;
+    background: #fcf4ee;
+    padding: 20px;
+    border-radius: 10px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 200px;
+    border: 1px solid #ff7f50;
+    overflow: hidden; /* 넘치는 부분 자르기 */
+}
+.card img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+    opacity: 0.8;
+    transition: transform 0.3s ease-in-out; /* 부드러운 확대 효과 */
+}
+.card:hover img {
+    transform: scale(1.2); /* 이미지만 확대 */
+}
+.card-content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+.card-content p {
+    font-size: 14px;
+}
+.card-content h4 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.card-content button {
+    margin-top: 10px;
+    background: none;
+    border: none;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: #ff7f50;
+}
+.card-content button svg {
+    margin-left: 5px;
+}
+.footer {
+    background: white;
+    margin-top: 40px;
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #ddd;
+}
+.badge {
+    background: orange;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+.footer span {
+    flex-grow: 1;
+    text-align: left;
+    padding-left: 10px;
+}
+.footer a {
+    color: orange;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.popular-recipes {
+    margin-top: 40px;
+}
+.popular-recipes h2 {
+    font-size: 24px;
+    font-weight: bold;
+}
+.popular-recipes p {
+    font-size: 14px;
+    color: #666;
+    margin: 5px;
+}
+.popular-recipes .filters {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+.popular-recipes .filters button {
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+/* .recipe-cards {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .recipe-card {
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            width: 200px;
+            border: 1px solid #ddd;
+        }
+        .recipe-card img {
+            width: 100%;
+            height: 150px;
+            border-radius: 10px;
+        } */
+.recipe-cards {
+    padding-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between; /* 균등 정렬 */
+}
+.recipe-card {
+    flex: 1 1 240px; /* 최소 200px 유지하면서 균등 분배 */
+    width: 240px; /* 카드의 고정 너비 */
+    max-width: 240px; /* 최대 너비 제한 */
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: contain;
+    border: 1px solid #ddd;
+    overflow: hidden; /* 넘치는 부분 자르기 */
+}
+.recipe-card img {
+    width: 100%;
+    max-height: 150px;
+    height: 150px;
+    border-radius: 10px;
+    object-fit: fill; /* 이미지가 컨테이너 크기에 맞게 변형 (왜곡될 수 있음) */
+    transition: transform 0.3s ease-in-out; /* 부드러운 확대 효과 */
+}
+.recipe-card img:hover {
+    transform: scale(1.1); /* 이미지만 확대 */
+}
+.recipe-card h3 {
+    font-weight: bold;
+    margin: 10px 0;
+    white-space: nowrap; /* 한 줄로 표시 */
+    overflow: hidden;
+    text-overflow: ellipsis; /* 넘치는 텍스트 ... 처리 */
+}
+
+.recipe-card p {
+    margin: 5px 0;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+.recipe-link {
+    text-decoration: none;
+    color: black;
+}
+.show-more {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+.show-more button {
+    background: white;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 50%;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+}
+.show-more button img {
+    width: 20px;
+    height: 20px;
+}
+.expanded {
+    max-height: none !important;
+}
+@media (max-width: 768px) {
+    .cards {
+        flex-direction: column;
+    }
+    .footer {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+    .footer span {
+        text-align: left;
+        width: 100%;
+        padding-left: 0;
+    }
+}

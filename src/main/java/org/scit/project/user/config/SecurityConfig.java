@@ -16,16 +16,8 @@ public class SecurityConfig {
 		http
 				.authorizeHttpRequests((auth) -> auth
 						.requestMatchers(
-								"/",
-								"/posts",
-								"/board/**",
-								"/user/idCheck",
-								"/user/join",
-								"/user/joinProc",
-								"/user/login",
-								"/images/**",
-								"/css/**",
-								"/js/**")
+								"/", "/user/idCheck", "/user/join", "/user/joinProc", "/user/login", "/image/**",
+								"/css/**", "/js/**")
 						.permitAll()
 						.requestMatchers("/admin").hasRole("ADMIN")
 						.requestMatchers("/user/mypage/**").hasAnyRole("ADMIN", "USER")
