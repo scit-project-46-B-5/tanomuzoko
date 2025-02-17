@@ -16,14 +16,18 @@ public class SecurityConfig {
 		http
 				.authorizeHttpRequests((auth) -> auth
 						.requestMatchers(
-								"/recipe/**"
-								,"/user/idCheck"
-								,"/user/join"
-								,"/user/joinProc"
-								,"/user/login"
-								, "/image/**"
-								, "/css/**"
-								, "/js/**")
+								"/",
+								"/recipe/**",
+								"/api/v1/email/**",		
+								"/posts",
+								"/board/**",
+								"/user/idCheck",
+								"/user/join",
+								"/user/joinProc",
+								"/user/login",
+								"/image/**",
+								"/css/**",
+								"/js/**")
 						.permitAll()
 						.requestMatchers("/admin").hasRole("ADMIN")
 						.requestMatchers("/user/mypage/**").hasAnyRole("ADMIN", "USER")
@@ -33,7 +37,7 @@ public class SecurityConfig {
 		http
 				.formLogin((auth) -> auth
 						.loginPage("/user/login")
-						.loginProcessingUrl("/user/loginProc")
+						.loginProcessingUrl("/user/login")
 						.usernameParameter("userId")
 						.passwordParameter("userPwd")
 						.failureUrl("/user/login?error=true") // loginFailureHandler 가 있으면 이 코드는 없어야한다.
