@@ -1,0 +1,221 @@
+/* 🔥 전체 콘텐츠 배치 */
+.content-wrapper {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+/* 📌 레시피 상세 내용 (가장 넓게 설정) */
+.recipe-detail {
+    flex: 2; /* 👉 중앙 콘텐츠가 가장 넓게 배치 */
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.recipe-detail img {
+    width: 100%;
+    border-radius: 10px;
+}
+
+.recipe-title {
+    margin-bottom: 0px;
+}
+.recipe-detail .meta {
+    font-size: 14px;
+    color: #666;
+    margin: 10px 0;
+    text-align: right;
+    border-bottom: 2px solid #ddd; /* 👈 구분선 추가 */
+
+    /* 👈 구분선 위치 수정 */
+    margin-top: 0px;
+    padding-bottom: 10px;
+}
+
+/* 📌 사이드바 (🔥 인기 랭킹 & ✍️ 작성자의 다른 글) */
+.sidebar {
+    flex: 0.4; /* 👉 사이드바 너비 조정 */
+    min-width: 200px; /* 최소 너비 설정 */
+
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    display: flex;
+    flex-direction: column; /* 아이템을 세로 방향으로 배치 */
+    text-align: left;
+}
+
+/* ❤️ 공감(좋아요) 버튼 */
+#like-btn {
+    background: #ff7f50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+#like-btn:hover {
+    background: #e56b42;
+}
+
+/* 🔥 인기 랭킹 */
+.ranking-section {
+    flex: none; /* 높이 자동 조정 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* 넘치는 텍스트 ... 처리 */
+    max-width: 100%;
+}
+
+.ranking-section h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.ranking-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.ranking-section li {
+    margin: 5px 0;
+}
+
+.ranking-section a {
+    text-decoration: none;
+    color: #333;
+}
+
+.ranking-section a:hover {
+    color: #ff7f50;
+}
+
+/* 📢 광고 섹션 */
+.ad-section {
+    flex: 0.6;
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    display: flex;
+    flex-direction: column; /* 아이템을 세로 방향으로 배치 */
+}
+
+.ad-section h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.ad-section img {
+    width: 100%;
+    border-radius: 10px;
+}
+
+/* ✍️ 댓글 스타일 */
+.comment-section {
+    width: 100%;
+    margin: 30px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 0px;
+    padding-top: 0px;
+}
+
+.comment-wrapper {
+    width: 80%;
+    margin-left: 200px;
+}
+.comment-wrapper h2 {
+    /* border-top-width: 20px; */
+    padding-top: 20px;
+    margin-bottom: 10px;
+}
+
+.comment-box {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    width: 75%;
+}
+
+.comment-box input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.comment-box button {
+    padding: 10px 15px;
+    background: #ff7f50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.author-posts {
+    list-style: none;
+    padding-left: 0px;
+}
+.author-section h3 {
+    font-size: 1.1em;
+}
+
+.user-info {
+    margin-bottom: 5px;
+}
+
+.user-text {
+    margin-bottom: 15px;
+}
+.comment-box button:hover {
+    background: #e56b42;
+}
+/* 📌 태블릿(1024px 이하) & 모바일(768px 이하)에서 사이드바 & 광고 숨기기 */
+@media (max-width: 1024px) {
+    .content-wrapper {
+        flex-direction: column; /* 📌 태블릿에서는 세로 정렬 */
+    }
+    .recipe-detail {
+        width: 100%;
+    }
+    .sidebar,
+    .ad-section {
+        display: none; /* 📌 태블릿에서는 숨기기 */
+    }
+    .comment-wrapper {
+        width: 100%;
+        margin-left: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .content-wrapper {
+        max-width: 100%;
+        padding: 10px;
+    }
+    .recipe-detail {
+        width: 100%;
+    }
+    .sidebar,
+    .ad-section {
+        display: none; /* 📌 모바일에서는 숨기기 */
+    }
+    .comment-wrapper {
+        width: 100%;
+        margin-left: 0px;
+    }
+}

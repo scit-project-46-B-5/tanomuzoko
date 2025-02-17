@@ -7,7 +7,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -22,12 +21,12 @@ public class SecurityConfig {
 								,"/user/join"
 								,"/user/joinProc"
 								,"/user/login"
-								, "/images/**"
+								, "/image/**"
 								, "/css/**"
 								, "/js/**")
 						.permitAll()
 						.requestMatchers("/admin").hasRole("ADMIN")
-						.requestMatchers("/user/mypage/**").hasAnyRole("ADMIN", "USER")		
+						.requestMatchers("/user/mypage/**").hasAnyRole("ADMIN", "USER")
 						.anyRequest().authenticated());
 
 		// Custom Login 설정
@@ -37,14 +36,14 @@ public class SecurityConfig {
 						.loginProcessingUrl("/user/loginProc")
 						.usernameParameter("userId")
 						.passwordParameter("userPwd")
-						.failureUrl("/user/login?error=true")	//loginFailureHandler 가 있으면 이 코드는 없어야한다.
+						.failureUrl("/user/login?error=true") // loginFailureHandler 가 있으면 이 코드는 없어야한다.
 						.permitAll());
 
 		// logout 설정
 		http
 				.logout((auth) -> auth
 						.logoutUrl("/user/logout")
-						 .logoutSuccessUrl("/")
+						.logoutSuccessUrl("/")
 						.invalidateHttpSession(true)
 						.clearAuthentication(true));
 
@@ -61,4 +60,3 @@ public class SecurityConfig {
 		return new BCryptPasswordEncoder();
 	}
 }
-
