@@ -101,6 +101,14 @@
             text-align: left;
             padding: 5px;
         }
+
+        #verificationBox {
+            display: none;
+        }
+
+        #emailAuthentication {
+            display: block;
+        }
     </style>
     <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
     <script defer th:src="@{/js/join.js}"></script>
@@ -128,10 +136,14 @@
         <input type="password" id="userPwdCheck" name="userPwdCheck" class="input-field"
             placeholder="비밀번호를 한 번 더 입력해주세요">
         <span>이메일 인증</span>
-        <input type="email" id="email" name="email" class="input-field" placeholder="이메일을 입력해주세요">
-        <button class="verify-button" id="">메일 인증받기</button>
-        <input type="email" class="input-field" placeholder="인증번호">
-        <button class="verify-button">인증하기</button>
+        <div id="emailAuthentication">
+            <input type="email" id="email" name="email" class="input-field" placeholder="이메일을 입력해주세요">
+            <button class="verify-button" id="requestButton">메일 인증받기</button>
+        </div>
+        <div id="verificationBox">
+            <input type="text" class="input-field" placeholder="인증번호">
+            <button class="verify-button">인증하기</button>
+        </div>
         <div class="checkbox-container">
             <label><input type="checkbox" id="check_all"> 전체 동의</label>
             <label><input type="checkbox" class="check-item" id="terms" value="terms"> 서비스 이용약관 동의 (필수)</label>

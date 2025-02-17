@@ -2,7 +2,7 @@ package org.scit.project.user.entity;
 
 import java.time.LocalDateTime;
 
-import org.scit.project.user.DTO.UserDTO;
+import org.scit.project.user.dto.UserDTO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -52,6 +52,9 @@ public class UserEntity {
 	
 	@Column(name="is_deleted")
 	private boolean isDeleted;
+	
+	@Column(name="roles")
+	private String roles;
 	
 	public static UserEntity toEntity(UserDTO dto) {
 		

@@ -1,4 +1,4 @@
-package org.scit.project.user.DTO;
+package org.scit.project.user.dto;
 
 import java.time.LocalDateTime;
 
@@ -27,6 +27,8 @@ public class UserDTO {
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 	private boolean isDeleted;
+	@Builder.Default
+	private String roles = "ROLE_USER";	
 	
 	public static UserDTO toDTO(UserEntity entity) {
 		

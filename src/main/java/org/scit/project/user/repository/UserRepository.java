@@ -1,5 +1,7 @@
 package org.scit.project.user.repository;
 
+import java.util.Optional;
+
 import org.scit.project.user.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -11,6 +13,8 @@ public interface UserRepository extends JpaRepository<UserEntity, Long>{
 	boolean existsByUserId(String userId);
 //	닉네임 중복확인
 	boolean existsByUserName(String userName);
+	
+	Optional<UserEntity> findByUserId(String userId);
 
 	
 

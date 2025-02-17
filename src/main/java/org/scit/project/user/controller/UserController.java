@@ -37,10 +37,12 @@ public class UserController {
 		boolean result =userService.existId(userId);
 		return result;
 	}
+//	아이디 중복체크
 	@PostMapping("/nameCheck")
 	@ResponseBody
 	public boolean nameCheck(@RequestParam(name="userName")String userName) {
 		boolean result =userService.existName(userName);
 		return result;
 	}
+
 }

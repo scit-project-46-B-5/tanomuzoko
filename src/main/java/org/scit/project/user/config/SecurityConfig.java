@@ -17,13 +17,14 @@ public class SecurityConfig {
 				.authorizeHttpRequests((auth) -> auth
 						.requestMatchers(
 								"/",
+								"/api/v1/email/**",		
 								"/posts",
 								"/board/**",
 								"/user/idCheck",
 								"/user/join",
 								"/user/joinProc",
 								"/user/login",
-								"/images/**",
+								"/image/**",
 								"/css/**",
 								"/js/**")
 						.permitAll()
