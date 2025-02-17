@@ -1,0 +1,106 @@
+
+
+/* ✅ 레시피 컨테이너 */
+.recipe-container {
+    text-align: center;
+    padding-top: 80px; /* 헤더 높이 고려 */
+}
+
+/* ✅ 레시피 카드 */
+.recipe-card {
+    background: var(--content-box-bg, white);
+    padding: 30px;
+    border-radius: var(--border-radius, 12px);
+    box-shadow: var(--box-shadow, 0px 5px 15px rgba(0, 0, 0, 0.1));
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: left;
+    position: relative; /* ⭐ 즐겨찾기 버튼 위치 조정을 위한 relative 적용 */
+    transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.recipe-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--hover-box-shadow, 0px 8px 20px rgba(0, 0, 0, 0.15));
+}
+
+/* ✅ 즐겨찾기 버튼 (우측 상단) */
+.bookmark-btn {
+    border: none;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    
+    /* background: var(--primary-color, #ff7f50);
+    border: none;
+    padding: 12px 18px;
+    border-radius: var(--button-radius, 10px);
+    font-size: var(--font-size-medium, 18px);
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+    transition: all 0.3s ease-in-out; */
+}
+
+
+.bookmarked {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* ✅ 레시피 이미지 */
+.recipe-card img {
+    width: 100%;
+    border-radius: var(--border-radius, 12px);
+    margin-bottom: 20px;
+}
+
+/* ✅ 레시피 정보 */
+.recipe-info h2 {
+    color: var(--primary-color);
+    font-size: var(--font-size-large, 22px);
+    margin-bottom: 10px;
+}
+
+/* ✅ 리스트 스타일 */
+.recipe-info ul, .recipe-info ol {
+    padding-left: 20px;
+}
+
+.recipe-info ul li, .recipe-info ol li {
+    margin-bottom: 5px;
+    font-size: var(--font-size-medium, 16px);
+}
+
+/* ✅ 다시 추천받기 버튼 */
+.footer {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.footer button {
+    padding: 12px 18px;
+    background: var(--primary-color, #ff7f50);
+    color: white;
+    border: none;
+    border-radius: var(--button-radius, 5px);
+    font-size: var(--font-size-medium, 16px);
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.footer button:hover {
+    background: var(--hover-color, #e56b42);
+}
+
+/* 📌 반응형 디자인 */
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+    }
+
+    .recipe-card {
+        padding: 20px;
+    }
+
+}
