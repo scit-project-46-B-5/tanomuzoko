@@ -18,7 +18,7 @@ public class SecurityConfig {
 						.requestMatchers(
 								"/",
 								"/recipe/**",
-								"/api/v1/email/**",		
+								"/api/v1/email/**",
 								"/posts",
 								"/board/**",
 								"/user/idCheck",

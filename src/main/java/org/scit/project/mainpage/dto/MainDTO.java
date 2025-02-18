@@ -21,27 +21,14 @@ import lombok.ToString;
 public class MainDTO {
 
     private Long boardSeq;
-    private String boardWriter;
-    private Long userSeq;
     private String boardTitle;
     private String boardContent;
-    private Integer hitCount;
-    private LocalDateTime createDate;
-    private LocalDateTime updateDate;
-    private Boolean isDeleted;
 
-	private MultipartFile uploadFile;
-    
-	public static MainDTO toDTO(BoardEntity boardEntity) {
-		return MainDTO.builder()
+    public static MainDTO toDTO(BoardEntity boardEntity) {
+        return MainDTO.builder()
                 .boardSeq(boardEntity.getBoardSeq())
-                .boardWriter(boardEntity.getUserEntity().getUserName())
                 .boardTitle(boardEntity.getBoardTitle())
                 .boardContent(boardEntity.getBoardContent())
-                .hitCount(boardEntity.getHitCount())
-                .createDate(boardEntity.getCreateDate())
-                .updateDate(boardEntity.getUpdateDate())
-                .isDeleted(boardEntity.getIsDeleted())
                 .build();
-	}
+    }
 }
