@@ -36,8 +36,8 @@ public class BoardEntity {
     @Column(name = "board_seq")
     private Long boardSeq;
 
-    @Column(name = "board_writer", nullable = false, length = 50)
-    private String boardWriter;
+    @Column(name = "user_seq")
+    private Long userSeq;
 
     @Column(name = "board_title", length = 200, columnDefinition = "varchar(200) default 'Untitled'")
     private String boardTitle;
@@ -56,26 +56,18 @@ public class BoardEntity {
     @UpdateTimestamp
     private LocalDateTime updateDate;
 
-    @Column(name = "original_file_name", length = 2000)
-    private String originalFileName;
-
-    @Column(name = "saved_file_name", length = 2000)
-    private String savedFileName;
-
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
     public static BoardEntity toEntity(BoardDTO boardDTO) {
         return BoardEntity.builder()
                 .boardSeq(boardDTO.getBoardSeq() != null ? boardDTO.getBoardSeq() : null)
-                .boardWriter(boardDTO.getBoardWriter())
+                .userSeq(boardDTO.getUserSeq())
                 .boardTitle(boardDTO.getBoardTitle())
                 .boardContent(boardDTO.getBoardContent())
                 .hitCount(boardDTO.getHitCount())
                 .createDate(boardDTO.getCreateDate())
                 .updateDate(boardDTO.getUpdateDate())
-                .originalFileName(boardDTO.getOriginalFileName())
-                .savedFileName(boardDTO.getSavedFileName())
                 .isDeleted(boardDTO.getIsDeleted())
                 .build();
     }

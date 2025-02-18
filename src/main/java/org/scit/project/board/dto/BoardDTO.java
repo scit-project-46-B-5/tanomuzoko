@@ -19,15 +19,14 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class BoardDTO {
+
     private Long boardSeq;
-    private String boardWriter;
+    private Long userSeq;
     private String boardTitle;
     private String boardContent;
     private Integer hitCount;
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
-    private String originalFileName;
-    private String savedFileName;
     private Boolean isDeleted;
 
 	private MultipartFile uploadFile;
@@ -35,14 +34,12 @@ public class BoardDTO {
 	public static BoardDTO toDTO(BoardEntity boardEntity) {
 		return BoardDTO.builder()
                 .boardSeq(boardEntity.getBoardSeq())
-                .boardWriter(boardEntity.getBoardWriter())
+                .userSeq(boardEntity.getUserSeq())
                 .boardTitle(boardEntity.getBoardTitle())
                 .boardContent(boardEntity.getBoardContent())
                 .hitCount(boardEntity.getHitCount())
                 .createDate(boardEntity.getCreateDate())
                 .updateDate(boardEntity.getUpdateDate())
-                .originalFileName(boardEntity.getOriginalFileName())
-                .savedFileName(boardEntity.getSavedFileName())
                 .isDeleted(boardEntity.getIsDeleted())
                 .build();
 	}

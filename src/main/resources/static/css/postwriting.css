@@ -1,0 +1,126 @@
+/* 📌 게시글 작성 컨테이너 */
+.board-container {
+    width: 95%;
+    margin: 50px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* 📌 입력 필드 공통 스타일 */
+.form-group {
+    display: flex;
+    align-items: left;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: bold;
+    flex: 0.2;
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+/*게시글 폼 변경 예정*/
+.form-group input,
+.form-group textarea {
+    flex: 2;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+/* 📌 파일 업로드 버튼 스타일 */
+.form-group input[type='file'] {
+    padding: 5px;
+}
+
+/* 📌 게시글 등록 버튼 */
+.submit-btn {
+    width: 10%;
+    padding: 10px;
+    background: #ffcc99;
+    color: black;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.submit-btn:hover {
+    background: #ffa366;
+}
+
+/* 📌 Dropzone 영역 스타일 */
+.dropzone {
+    position: relative;
+    width: 100%;
+    /* max-width: 300px; */
+    /* height: 180px; */
+    border: 2px dashed #ff7f50;
+    background: #fff5f0;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dropzone:hover {
+    background: #ffe0d1;
+}
+
+/* 드래그할 때 효과 */
+.dropzone.dragover {
+    border-color: #ff4500;
+    background: #ffe0d1;
+}
+
+/* 카메라 아이콘 */
+.camera-icon {
+    width: 60px;
+    height: 60px;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.dropzone:hover img {
+    opacity: 1;
+}
+
+/* + 기호 */
+.dropzone .plus {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #ff7f50;
+    background: white;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 2px solid #ff7f50;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.dropzone:hover .plus {
+    background: #ff7f50;
+    color: white;
+}
+
+.dropzone.dz-clickable.dz-started .camera-icon {
+    display: none;
+}
+.dropzone.dz-clickable.dz-started {
+    display: block;
+}
