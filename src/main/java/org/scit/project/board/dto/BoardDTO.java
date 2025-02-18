@@ -21,6 +21,7 @@ import lombok.ToString;
 public class BoardDTO {
 
     private Long boardSeq;
+    private String boardWriter;
     private Long userSeq;
     private String boardTitle;
     private String boardContent;
@@ -34,7 +35,7 @@ public class BoardDTO {
 	public static BoardDTO toDTO(BoardEntity boardEntity) {
 		return BoardDTO.builder()
                 .boardSeq(boardEntity.getBoardSeq())
-                .userSeq(boardEntity.getUserSeq())
+                .boardWriter(boardEntity.getUserEntity().getUserName())
                 .boardTitle(boardEntity.getBoardTitle())
                 .boardContent(boardEntity.getBoardContent())
                 .hitCount(boardEntity.getHitCount())
