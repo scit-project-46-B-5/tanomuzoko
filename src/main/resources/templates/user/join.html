@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 페이지</title>
+    <link rel="stylesheet" th:href="@{/css/join.css}">
+    <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+    <script defer th:src="@{/js/join.js}"></script>
+</head>
+
+<body>
+    <div class="signup-container">
+        <div class="logo">
+            <!-- <a href="main.html">
+                <img src="logo.png" alt="Logo">
+            </a> -->
+            쿰척쿰척 잘먹더라<br>
+            회원가입
+
+        </div>
+        <span>닉네임 입력</span>
+        <input type="text" id="userName" class="input-field" placeholder="닉네임">
+        <div id="confirmName" style="font-size: 0.8em;"></div>
+        <span>아이디 확인</span>
+        <input type="text" id="userId" name="userId" class="input-field" placeholder="아이디">
+        <div id="confirmId" style="font-size: 0.8em;"></div>
+        <span>비밀번호 입력</span>
+        <input type="password" id="userPassword" name="userPassword" class="input-field" placeholder="비밀번호를 입력해주세요">
+        <div id="confirmPwd" style="font-size: 0.8em;"></div>
+        <input type="password" id="userPwdCheck" name="userPwdCheck" class="input-field"
+            placeholder="비밀번호를 한 번 더 입력해주세요">
+        <span>이메일 인증</span>
+        <div id="emailAuthentication">
+            <input type="email" id="email" name="email" class="input-field" placeholder="이메일을 입력해주세요">
+            <button class="verify-button" id="requestButton">메일 인증받기</button>
+        </div>
+        <div id="verificationBox">
+            <input type="text" class="input-field" placeholder="인증번호">
+            <button class="verify-button">인증하기</button>
+        </div>
+        <div class="checkbox-container">
+            <label><input type="checkbox" id="check_all"> 전체 동의</label>
+            <label><input type="checkbox" class="check-item" id="terms" value="terms"> 서비스 이용약관 동의 (필수)</label>
+            <label><input type="checkbox" class="check-item" id="privacy" value="privacy"> 개인정보 처리방침 (필수)</label>
+            <label><input type="checkbox" class="check-item" id="age" value="age"> 만 14세 이상입니다 (필수)</label>
+            <label><input type="checkbox" class="check-item" id="ads" value="ads"> 광고성 정보 수신 동의 (선택)</label>
+        </div>
+        <button class="signup-button" id="joinBtn">가입하기</button>
+    </div>
+</body>
+
+</html>
