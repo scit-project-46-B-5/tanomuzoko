@@ -21,7 +21,7 @@ public class UserDTO {
 	
 	private Long userSeq;
 	private String userId;
-	private String userPwd;
+	private String userPassword;
 	private String userName;
 	private String userEmail;
 	private LocalDateTime createdAt;
@@ -35,7 +35,7 @@ public class UserDTO {
 		return UserDTO.builder()
 				.userSeq(entity.getUserSeq())
 				.userId(entity.getUserId())
-//				.userPwd(entity.get())
+//				.userPassword(entity.get())
 				.userName(entity.getUserName())
 				.userEmail(entity.getUserEmail())
 				.createdAt(entity.getCreatedAt()!= null ? entity.getCreatedAt() : LocalDateTime.now())
