@@ -5,14 +5,11 @@ import java.util.List;
 import org.scit.project.recipe.dto.MessageChatGPTDTO;
 import org.scit.project.recipe.dto.RecipeChatGPTRequestDTO;
 import org.scit.project.recipe.dto.RecipeUserRequestDTO;
-import org.scit.project.recipe.dto.RecipeUserResponseDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.JSONPObject;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
