@@ -12,38 +12,36 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@ToString
-@NoArgsConstructor
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
-@Setter
-@Getter
+@NoArgsConstructor
+@ToString
 public class MainDTO {
+
     private Long boardSeq;
     private String boardWriter;
+    private Long userSeq;
     private String boardTitle;
     private String boardContent;
     private Integer hitCount;
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
-    private String originalFileName;
-    private String savedFileName;
     private Boolean isDeleted;
 
-    private MultipartFile uploadFile;
-
-    public static MainDTO toDTO(BoardEntity boardEntity) {
-        return MainDTO.builder()
+	private MultipartFile uploadFile;
+    
+	public static MainDTO toDTO(BoardEntity boardEntity) {
+		return MainDTO.builder()
                 .boardSeq(boardEntity.getBoardSeq())
-                .boardWriter(boardEntity.getBoardWriter())
+                .boardWriter(boardEntity.getUserEntity().getUserName())
                 .boardTitle(boardEntity.getBoardTitle())
                 .boardContent(boardEntity.getBoardContent())
                 .hitCount(boardEntity.getHitCount())
                 .createDate(boardEntity.getCreateDate())
                 .updateDate(boardEntity.getUpdateDate())
-                .originalFileName(boardEntity.getOriginalFileName())
-                .savedFileName(boardEntity.getSavedFileName())
                 .isDeleted(boardEntity.getIsDeleted())
                 .build();
-    }
+	}
 }
