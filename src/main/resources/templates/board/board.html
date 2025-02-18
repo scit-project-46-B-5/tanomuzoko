@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>갤러리형 게시판</title>
         <link rel="stylesheet" href="../../static/css/globalstyles.css" th:href="@{/css/globalstyles.css}" />
-        <link rel="stylesheet" href="../../static/css/board.css" />
+        <link rel="stylesheet" href="../../static/css/board.css" th:href="@{/css/board.css}"/>
     </head>
     <body>
         <div class="container">
@@ -30,13 +30,18 @@
             </div>
 
             <!-- 🔍 서치바 추가 -->
-            <div class="search-bar">
-                <div class="search-ai">
-                    <span>✨ AI</span>
-                </div>
-                <input type="text" placeholder="검색어를 입력하세요" />
-                <button class="search-btn">▶</button>
-            </div>
+            <div class="searchWrap">
+	            <div class="search-bar">
+	                <div class="search-ai">
+	                    <span>✨ AI</span>
+	                </div>
+	                <input type="text" placeholder="검색어를 입력하세요" />
+	                <button class="search-btn">▶</button>
+	            </div>
+            	<div>
+		        	<a th:href="@{/board/boardWrite}" class="write-btn">글쓰기</a>
+		        </div>
+			</div>
 
             <div class="gallery">
                 <div class="gallery-item">
