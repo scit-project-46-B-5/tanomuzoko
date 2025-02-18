@@ -24,11 +24,12 @@ public class MainService {
     private final MainRepository mainRepository;
 
     public List<MainDTO> getPosts(int page) {
-    	
-    	int pageSize = 10;
 
-    	Page<BoardEntity> temp = mainRepository.findAll(PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "createDate")));
-        
+        int pageSize = 10;
+
+        Page<BoardEntity> temp = mainRepository
+                .findAll(PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "createDate")));
+
         List<MainDTO> list = new ArrayList<>();
 
         temp.forEach((entity) -> list.add(MainDTO.toDTO(entity)));
