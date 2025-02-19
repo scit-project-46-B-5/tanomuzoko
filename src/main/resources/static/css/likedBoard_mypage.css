@@ -1,0 +1,70 @@
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.gallery-item {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease-in-out;
+}
+
+.gallery-item:hover {
+    transform: scale(1);
+}
+
+.gallery-img-wrapper {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    transition: transform 500ms ease-in-out;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.1);
+}
+
+.gallery-text {
+    padding: 10px 15px;
+}
+
+/* 텍스트 줄 제한 스타일 */
+.gallery-text h4 {
+    font-size: 18px;
+    margin-bottom: 5px;
+    color: #333;
+    white-space: nowrap;
+    /* 한 줄로 표시 */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* 넘치는 텍스트 ... 처리 */
+    margin-top: 5px;
+}
+
+.gallery-text p {
+    font-size: 14px;
+    color: #666;
+    overflow: hidden;
+    white-space: nowrap;
+    /* 한 줄로 표시 */
+    text-overflow: ellipsis;
+}
+
+.gallery-text span {
+    font-size: 14px;
+    color: #ff7f50;
+    font-weight: bold;
+}
