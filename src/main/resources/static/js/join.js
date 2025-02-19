@@ -1,55 +1,97 @@
 let idCheck = false;
 let userNameCheck = false;
+let emailCheck = false;
 $(function () {
     $('#userId').on('blur', confirmId);
     $('#check_all').on('change', toggleAllCheckboxes);
     $('.check-item').on('change', handleCheckItemChange);
-    $('#userPwd').on('focus', clearPwdCheck);
+    $('#userPassword').on('focus', clearPwdCheck);
+    $('#requestButton').on('click', emailDuplication);
     $('#joinBtn').on('click', join);
     $('#userName').on('blur', nickNameCheck);
-    // 주석부분은 이메일 인증이 완료되면 다시 push 할 예정정
-    // $('#requestButton').on('click', mailAuthentication);
+    $('#verifyButton').on('click', verifyCode);
 });
-// // email인증 , 버튼뒤집기기
-// function mailAuthentication() {
-//     alert('asdasdasd');
+// 입력값과 인증코드가 같은지 확인
+function verifyCode() {
+    let email = $('#userEmail').val().trim();
+    let code = $('#verificationCode').val().trim();
 
-//     // 이메일 유효성 검사
-//     let email = $("#email").val().trim();
-//     let emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (code === "") {
+        alert('인증번호를 입력해주세요.')
+        return;
+    }
+    $.ajax({
+        url: "/api/v1/email/verify",
+        type: "POST",
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify({ email: email, verifyCode: code }),
+        success: function (resp) {
+            if (resp) {
+                alert("이메일 인증 성공!");
+                emailCheck = true;  // 인증 성공 시 회원가입 가능
+                $("#verificationCode").prop("disabled", true); // 입력 칸 비활성화
+                $("#verifyButton").prop("disabled", true); // 인증 버튼 비활성화
+            } else {
+                alert("인증 실패: 인증번호가 올바르지 않습니다.");
+                emailCheck = false;
+                $('#verificationCode').val(''); // 인증 실패 시 입력 필드 초기화
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("인증 실패 응답: ", xhr.responseTexts)
+            alert("인증 실패: 인증번호가 올바르지 않습니다.");
+            emailCheck = false;  // 인증 실패 시 회원가입 불가
+            $('#verificationCode').val(''); // 인증 실패 시 입력 필드 초기화
+        }
+    });
+}
 
-//     if (email === "") {
-//         alert("이메일을 입력해주세요.");
-//         return;
-//     }
-//     if (!emailPattern.test(email)) {
-//         alert("올바른 이메일 형식을 입력해주세요.");
-//         return;
-//     }
-//     // 버튼 중복클릭 방지
-//     $('#requestButton').prop("disabled", true);
-//     // 버튼 뒤집기
-//     $('#verificationBox').css('display', 'block');
-//     // $('#emailAuthentication').css('display', 'none');
+// email인증 , 버튼뒤집기기
+function mailAuthentication() {
+    if (!emailCheck) {
+        return;
+    }
+    // 이메일 유효성 검사
+    let email = $("#userEmail").val().trim();
+    let emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-//     $.ajax({
-//         url: "/api/v1/email/send", // 서버에서 제공한 URL 사용
-//         type: "post",
-//         dataType: "json",
-//         data: { "email": email },
-//         success: function (data) {
-//             alert("인증번호가 이메일로 발송되었습니다.");
-//             // 발송된 인증번호 자동 등록
-//             $("#Confirm").attr("value", data);
-//         },
-//         error: function (xhr, status, error) {
-//             alert("이메일 전송 실패: " + xhr.responseText);
+    if (email === "") {
+        alert("이메일을 입력해주세요.");
+        return;
+    }
+    if (!emailPattern.test(email)) {
+        alert("올바른 이메일 형식을 입력해주세요.");
+        return;
+    }
+    // ✅ 버튼 비활성화 (중복 클릭 방지)
+    $('#requestButton').prop("disabled", true);
 
-//             // 🚨 실패 시 버튼 다시 활성화
-//             $('#requestButton').prop("disabled", false);
-//         }
-//     });
-// }
+    // ✅ 1초 후 버튼 다시 활성화
+    setTimeout(() => {
+        $('#requestButton').prop("disabled", false);
+    }, 2000);
+    $('#verificationBox').css('display', 'block');
+
+    $.ajax({
+        url: "/api/v1/email/send",
+        type: "POST",
+        contentType: "application/json",
+        dataType: "json",  // ✅ JSON 응답을 받을 수 있도록 설정
+        xhrFields: {
+            withCredentials: true  // ✅ 인증 정보를 포함하여 요청
+        },
+        data: JSON.stringify({ email: email }),
+        success: function (data) {
+            alert("인증번호가 이메일로 발송되었습니다.");
+            $("#Confirm").attr("value", data);
+            // alert(data.message); // ✅ JSON 응답에서 메시지 출력
+        },
+        error: function (xhr, status, error) {
+            alert("이메일 전송 실패: " + xhr.responseText + "\n상태 코드: " + xhr.status);
+        }
+    });
+}
 
 // 닉네임 중복체크
 function nickNameCheck() {
@@ -128,6 +170,35 @@ function confirmId() {
 function clearPwdCheck() {
     $('#userPwdCheck').val('');
 }
+// ✅ 이메일 중복 체크 후 진행
+function emailDuplication() {
+    let userEmail = $("#userEmail").val().trim();
+
+    if (userEmail === "") {
+        alert("이메일을 입력해주세요.");
+        return;
+    }
+
+    // 이메일 중복 체크 요청
+    $.ajax({
+        url: "/user/emailCheck", // 이메일 중복 체크를 위한 API
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ "userEmail": userEmail }),  // 이메일 데이터를 JSON 형식으로 전송
+        success: function (isDuplicate) {
+            if (isDuplicate) {
+                alert("이미 사용 중인 이메일입니다. 다른 이메일을 입력해주세요.");
+                emailCheck = false;  // 이메일이 중복된 경우
+            } else {
+                emailCheck = true;   // 이메일이 중복되지 않은 경우
+                mailAuthentication();
+            }
+        },
+        error: function (xhr) {
+            alert("이메일 중복 확인 실패: " + xhr.responseText);
+        }
+    });
+}
 // 회원가입 유효성 검사
 function join() {
     let userId = $('#userId').val();
@@ -153,14 +224,14 @@ function join() {
         return false;
     }
     // 이메일 유효성 검사
-    let email = $("#email").val().trim();
+    let userEmail = $("#userEmail").val().trim();
     let emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-    if (email === "") {
+    if (userEmail === "") {
         alert("이메일을 입력해주세요.");
         return false;
     }
-    if (!emailPattern.test(email)) {
+    if (!emailPattern.test(userEmail)) {
         alert("올바른 이메일 형식을 입력해주세요.");
         return false;
     }
@@ -171,7 +242,6 @@ function join() {
     }
     // 회원가입 요청부분
     if (idCheck || pwdCheck || userName) {
-
         // 회원가입을 위한 처리요청
         $.ajax({
             url: '/user/joinProc'

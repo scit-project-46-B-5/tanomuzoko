@@ -11,56 +11,55 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-	@Bean
-	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http
-				.authorizeHttpRequests((auth) -> auth
-						.requestMatchers(
-								"/",
-								"/recipe/**",
-								"/api/v1/email/**",
-								"/posts",
-								"/board/**",
-								"/user/idCheck",
-								"/user/join",
-								"/user/joinProc",
-								"/user/login",
-								"/image/**",
-								"/css/**",
-								"/js/**")
-						.permitAll()
-						.requestMatchers("/admin").hasRole("ADMIN")
-						.requestMatchers("/user/mypage/**").hasAnyRole("ADMIN", "USER")
-						.anyRequest().authenticated());
+    @Bean
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                // ✅ CSRF 비활성화 (개발 환경)
+                .csrf(csrf -> csrf.disable())
 
-		// Custom Login 설정
-		http
-				.formLogin((auth) -> auth
-						.loginPage("/user/login")
-						.loginProcessingUrl("/user/login")
-						.usernameParameter("userId")
-						.passwordParameter("userPwd")
-						.failureUrl("/user/login?error=true") // loginFailureHandler 가 있으면 이 코드는 없어야한다.
-						.permitAll());
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/",
+                                "/recipe/**",
+                                "/api/v1/email/**",
+                                "/posts",
+                                "/board/**",
+                                "/user/idCheck",
+                                "/user/nameCheck",
+                                "/user/emailCheck",
+                                "/user/join",
+                                "/user/joinProc",
+                                "/user/login",
+                                "/image/**",
+                                "/css/**",
+                                "/js/**"
+                        ).permitAll()
+                        .requestMatchers("/admin").hasRole("ADMIN")
+                        .requestMatchers("/user/mypage/**").hasAnyRole("ADMIN", "USER")
+                        .anyRequest().authenticated())
 
-		// logout 설정
-		http
-				.logout((auth) -> auth
-						.logoutUrl("/user/logout")
-						.logoutSuccessUrl("/")
-						.invalidateHttpSession(true)
-						.clearAuthentication(true));
+                // ✅ Custom Login 설정
+                .formLogin(auth -> auth
+                        .loginPage("/user/login")
+                        .loginProcessingUrl("/user/login")
+                        .usernameParameter("userId")
+                        .passwordParameter("userPwd")
+                        .failureUrl("/user/login?error=true")
+                        .permitAll())
 
-		// POST 요청시 CSRF 토큰을 요청하므로 (Cross-Site Request Forgery) 비활성화(개발환경)
-		http
-				.csrf((auth) -> auth.disable());
+                // ✅ Logout 설정
+                .logout(auth -> auth
+                        .logoutUrl("/user/logout")
+                        .logoutSuccessUrl("/")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true));
 
-		return http.build();
-	}
+        return http.build();
+    }
 
-	// 단방향 비밀번호 암호화
-	@Bean
-	BCryptPasswordEncoder bCryptPasswordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+    // ✅ 단방향 비밀번호 암호화
+    @Bean
+    BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }
