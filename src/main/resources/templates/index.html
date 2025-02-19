@@ -41,7 +41,7 @@
             $.each(resp, function (index, item) {
                 tag += `
                     <div class="gallery-item">
-                        <a class="gallery-link" href="#">
+                        <a class="gallery-link" href="/board/boardDetail?boardSeq=${item['boardSeq']}">
                             <img src="" alt="레시피">
                             <div class="gallery-text">
                                 <h4>${item['boardTitle']}</h4>
@@ -137,7 +137,8 @@
             </div>
             <div class="gallery">
                 <div class="gallery-item">
-                    <a class="gallery-link" href="/src/main/resources/templates/board/detail.html">
+                    <a class="gallery-link" href="/src/main/resources/templates/board/detail.html"
+                        th:href="@{/board/boardDetail/1}">
                         <img src="https://semie.cooking/image/contents/recipe/px/rh/jaowrvzg/IRD/143210130axpn.jpg"
                             alt="레시피" />
                         <div class="gallery-text">
