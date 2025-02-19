@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://thymeleaf.org">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>로그인 페이지</title>
-        <link rel="stylesheet" href="../../static/css/login.css" />
-    </head>
-    <body>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>로그인 페이지</title>
+    <link rel="stylesheet" href="../../static/css/login.css" th:href="@{/css/login.css}">
+</head>
+
+<body>
+    <form th:action="@{/user/login}" method="post">
         <div class="login-container">
             <div class="logo"></div>
             <div class="logo">
@@ -16,12 +19,14 @@
                 <br />쿰척쿰척 잘먹더라
             </div>
 
-            <input type="text" class="input-field" placeholder="아이디" />
-            <input type="password" class="input-field" placeholder="비밀번호" />
-            <button class="login-button">로그인</button>
+            <input type="text" class="input-field" id="userId" name="userId" placeholder="아이디" />
+            <input type="password" class="input-field" id="userPwd" name="userPwd" placeholder="비밀번호" />
+            <button class="login-button" id="loginBtn">로그인</button>
             <div class="links">
                 <a href="#">계정 찾기</a> | <a href="#">비밀번호 찾기</a> | <a href="#">회원가입</a>
             </div>
         </div>
-    </body>
+    </form>
+</body>
+
 </html>

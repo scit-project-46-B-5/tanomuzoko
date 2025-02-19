@@ -212,3 +212,25 @@ body {
 .search-btn:hover {
     transform: scale(1.2);
 }
+
+.searchWrap {
+	display:flex;
+	align-items: center;
+}
+
+.write-btn {
+  top: 120px;  /* 원하는 위치값으로 조정 */
+  right: 50px; /* 원하는 위치값으로 조정 */
+  background-color: #ff6347; /* 글쓰기 버튼 색상 */
+  color: #fff;              /* 글자 색상 */
+  padding: 10px 20px;       /* 여백 */
+  border-radius: 4px;       /* 모서리 둥글게 */
+  text-decoration: none;    /* 밑줄 제거 */
+  font-weight: bold;        /* 글자 두껍게 */
+  cursor: pointer;          /* 마우스 포인터 */
+  
+}
+
+.write-btn:hover {
+  background-color: #ff4500;
+}
