@@ -1,6 +1,7 @@
 let idCheck = false;
 let userNameCheck = false;
 let emailCheck = false;
+let emailCodeCheck = false;
 $(function () {
     $('#userId').on('blur', confirmId);
     $('#check_all').on('change', toggleAllCheckboxes);
@@ -29,12 +30,12 @@ function verifyCode() {
         success: function (resp) {
             if (resp) {
                 alert("이메일 인증 성공!");
-                emailCheck = true;  // 인증 성공 시 회원가입 가능
+                emailCodeCheck = true;  // 인증 성공 시 회원가입 가능
                 $("#verificationCode").prop("disabled", true); // 입력 칸 비활성화
                 $("#verifyButton").prop("disabled", true); // 인증 버튼 비활성화
             } else {
                 alert("인증 실패: 인증번호가 올바르지 않습니다.");
-                emailCheck = false;
+                emailCodeCheck = false;
                 $('#verificationCode').val(''); // 인증 실패 시 입력 필드 초기화
             }
         },
@@ -201,6 +202,11 @@ function emailDuplication() {
 }
 // 회원가입 유효성 검사
 function join() {
+    // ✅ 이메일 중복 체크가 완료되어야 회원가입을 진행
+    if (!emailCheck) {
+        alert("이메일 중복을 먼저 확인해 주세요.");
+        return false;
+    }
     let userId = $('#userId').val();
     // 아이디 체크
     if (userId.trim().length < 3 || userId.trim().length > 12) {
@@ -240,19 +246,24 @@ function join() {
         alert('닉네임은 2~11자 사이로 입력해 주세요.')
         return false;
     }
-    // 회원가입 요청부분
-    if (idCheck || pwdCheck || userName) {
-        // 회원가입을 위한 처리요청
+    // 회원가입을 위한 처리요청
+    if (idCheck && userNameCheck && emailCodeCheck) {
         $.ajax({
-            url: '/user/joinProc'
-            , method: 'POST'
-            , data: { "userId": userId, "userPassword": userPassword, "userName": userName }
-            , success: function (resp) {
-                if (resp) {
-                    alert('회원가입 완료')
-                } else {
-                    alert('회원가입 실패')
-                }
+            url: '/user/joinProc',
+            method: 'POST',
+            contentType: "application/json",
+            data: JSON.stringify({
+                "userId": userId,
+                "userPassword": userPassword,
+                "userName": userName,
+                "userEmail": userEmail
+            }),
+            success: function (resp) {
+                alert(resp); // "회원가입이 완료되었습니다." 메시지 출력
+                window.location.href = "/"; // ✅ 메인 페이지로 이동
+            },
+            error: function (xhr) {
+                alert("회원가입 실패: " + xhr.responseText);
             }
         });
     }

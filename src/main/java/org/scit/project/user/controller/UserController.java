@@ -62,16 +62,20 @@ public class UserController {
 	    return userService.isEmailExists(email);
 	}
 	
-	// 회원가입 처리
+//	회원가입 처리요청
 	@PostMapping("/joinProc")
 	@ResponseBody
 	public ResponseEntity<String> joinProc(@RequestBody UserDTO dto) {
-	    boolean result = userService.joinProc(dto);
+	    try {
+	        boolean result = userService.joinProc(dto);
 
-	    if (result) {
-	        return ResponseEntity.ok("회원가입이 완료되었습니다."); // 성공 시 메시지 반환
-	    } else {
-	        return ResponseEntity.status(400).body("이미 존재하는 이메일입니다."); // 중복 이메일 시 400 반환
+	        if (result) {
+	            return ResponseEntity.ok("회원가입이 완료되었습니다.");
+	        } else {
+	            return ResponseEntity.status(400).body("회원가입 실패");
+	        }
+	    } catch (IllegalStateException e) { // ✅ 예외 발생 시 catch
+	        return ResponseEntity.status(400).body(e.getMessage()); // ✅ 중복 이메일 예외 메시지 반환
 	    }
 	}
 }
