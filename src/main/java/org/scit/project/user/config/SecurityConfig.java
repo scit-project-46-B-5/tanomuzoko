@@ -30,6 +30,7 @@ public class SecurityConfig {
                                 "/user/join",
                                 "/user/joinProc",
                                 "/user/login",
+                                "/user/loginProc",
                                 "/image/**",
                                 "/css/**",
                                 "/js/**"
@@ -41,9 +42,10 @@ public class SecurityConfig {
                 // ✅ Custom Login 설정
                 .formLogin(auth -> auth
                         .loginPage("/user/login")
-                        .loginProcessingUrl("/user/login")
+                        .loginProcessingUrl("/user/loginProc")
                         .usernameParameter("userId")
-                        .passwordParameter("userPwd")
+                        .passwordParameter("userPassword")
+                        .defaultSuccessUrl("/", true) // 로그인 성공 시 메인 페이지 이동
                         .failureUrl("/user/login?error=true")
                         .permitAll())
 
