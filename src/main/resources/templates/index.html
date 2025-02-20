@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://thymeleaf.org">
+<html lang="ko" xmlns:th="http://thymeleaf.org" xmlns:sec="http://thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8" />
@@ -13,6 +13,7 @@
 
     <!-- jquery -->
     <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+    <script defer th:src="@{/js/main.js}"></script>
     <script defer>
         $(function () {
 
@@ -59,157 +60,138 @@
                 // $('#show-more-button').prop('disabled', true);
             }
         }
+
     </script>
 </head>
 
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="logo">
-                <a href="/src/main/resources/templates/index.html">
-                    <img src="/src/main/resources/static/image/logo.png" th:src="@{/image/logo.png}" alt="Logo" />
+    <!-- fragment/headerr사용하는 코드 -->
+    <div class="container" th:replace="fragment/header :: top-menu"></div>
+    <div class="cards">
+        <a class="card" href="/src/main/resources/templates/recipe/recommend.html">
+            <img src="https://imagescdn.gettyimagesbank.com/500/201703/a10679449.jpg" alt="이벤트 이미지" />
+            <div class="card-content">
+                <p>RECIPE</p>
+                <h4>
+                    오늘은 나도 집종원<br />
+                    레시피 추천받기
+                </h4>
+                <button>
+                    레시피 추천 받기
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                        width="16">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                    </svg>
+                </button>
+            </div>
+        </a>
+        <a class="card" th:href="@{/board/board}">
+            <img src="https://imagescdn.gettyimagesbank.com/500/201703/a10679449.jpg" alt="이벤트 이미지" />
+            <div class="card-content">
+                <p>BOARD</p>
+                <h4>
+                    내일은 나도 집종원<br />
+                    공유레시피 보러가기
+                </h4>
+                <button>
+                    레시피 보러가기
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                        width="16">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                    </svg>
+                </button>
+            </div>
+        </a>
+    </div>
+    <div class="footer">
+        <div class="badge">랭킹 2위</div>
+        <span>가성비 甲 요리도 가능한 된장찌개 만들기!</span>
+        <a href="/src/main/resources/templates/board/detail.html">게시글 바로가기 →</a>
+    </div>
+    <div class="popular-recipes">
+        <h2>인기 레시피</h2>
+        <p>최근 인기 레시피를 공유 받아 직접 만들어보세요</p>
+        <div class="filters">
+            <button style="background-color: black; color: white">주간</button>
+            <button>월간</button>
+        </div>
+        <div class="gallery">
+            <div class="gallery-item">
+                <a class="gallery-link" href="/src/main/resources/templates/board/detail.html"
+                    th:href="@{/board/boardDetail/1}">
+                    <img src="https://semie.cooking/image/contents/recipe/px/rh/jaowrvzg/IRD/143210130axpn.jpg"
+                        alt="레시피" />
+                    <div class="gallery-text">
+                        <h4>맛있는 파스타 만들기</h4>
+                        <p>간단하게 만들 수 있는 크림 파스타 레시피</p>
+                        <span>❤️ 124</span>
+                    </div>
                 </a>
             </div>
-            <nav class="nav">
-                <a href="/src/main/resources/templates/recipe/recommend.html">레시피 추천</a>
-                <a href="/src/main/resources/templates/board/board.html">게시판</a>
-            </nav>
-            <a href="/src/main/resources/templates/user/join.html" th:href="@{/user/join}">
-                <div class="topBarBtn" id="joinBtn">회원가입</div>
-            </a>
-            <a href="/src/main/resources/templates/user/login.html" th:href="@{/user/login}">
-                <div class="topBarBtn" id="loginBtn">로그인</div>
-            </a>
-            <a href="/src/main/resources/templates/user/mypage.html">
-                <div>오늘먹고죽자님</div>
-            </a>
-            <div class="topBarBtn" id="logoutBtn">로그아웃</div>
-        </div>
-        <div class="cards">
-            <a class="card" href="/src/main/resources/templates/recipe/recommend.html">
-                <img src="https://imagescdn.gettyimagesbank.com/500/201703/a10679449.jpg" alt="이벤트 이미지" />
-                <div class="card-content">
-                    <p>RECIPE</p>
-                    <h4>
-                        오늘은 나도 집종원<br />
-                        레시피 추천받기
-                    </h4>
-                    <button>
-                        레시피 추천 받기
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                            width="16">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                        </svg>
-                    </button>
-                </div>
-            </a>
-            <a class="card" th:href="@{/board/board}">
-                <img src="https://imagescdn.gettyimagesbank.com/500/201703/a10679449.jpg" alt="이벤트 이미지" />
-                <div class="card-content">
-                    <p>BOARD</p>
-                    <h4>
-                        내일은 나도 집종원<br />
-                        공유레시피 보러가기
-                    </h4>
-                    <button>
-                        레시피 보러가기
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                            width="16">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                        </svg>
-                    </button>
-                </div>
-            </a>
-        </div>
-        <div class="footer">
-            <div class="badge">랭킹 2위</div>
-            <span>가성비 甲 요리도 가능한 된장찌개 만들기!</span>
-            <a href="/src/main/resources/templates/board/detail.html">게시글 바로가기 →</a>
-        </div>
-        <div class="popular-recipes">
-            <h2>인기 레시피</h2>
-            <p>최근 인기 레시피를 공유 받아 직접 만들어보세요</p>
-            <div class="filters">
-                <button style="background-color: black; color: white">주간</button>
-                <button>월간</button>
-            </div>
-            <div class="gallery">
-                <div class="gallery-item">
-                    <a class="gallery-link" href="/src/main/resources/templates/board/detail.html"
-                        th:href="@{/board/boardDetail/1}">
-                        <img src="https://semie.cooking/image/contents/recipe/px/rh/jaowrvzg/IRD/143210130axpn.jpg"
-                            alt="레시피" />
-                        <div class="gallery-text">
-                            <h4>맛있는 파스타 만들기</h4>
-                            <p>간단하게 만들 수 있는 크림 파스타 레시피</p>
-                            <span>❤️ 124</span>
-                        </div>
-                    </a>
-                </div>
-                <div class="gallery-item">
-                    <a class="gallery-link" href="#">
-                        <img src="https://recipe1.ezmember.co.kr/cache/recipe/2023/08/26/41eb2344b4e6a719c209ca55ed91c3f31.jpg"
-                            alt="레시피" />
-                        <div class="gallery-text">
-                            <h4>자취생을 위한 초간단 김치볶음밥</h4>
-                            <p>10분이면 충분한 초스피드 요리</p>
-                            <span>❤️ 89</span>
-                        </div>
-                    </a>
-                </div>
-
-                <div class="gallery-item">
-                    <a class="gallery-link" href="#">
-                        <img src="https://recipe1.ezmember.co.kr/cache/recipe/2023/07/06/6d636a7976e5afb6d0050d167eb39fe01.jpg"
-                            alt="레시피" />
-                        <div class="gallery-text">
-                            <h4>엄마 손맛 된장찌개</h4>
-                            <p>진한 국물이 일품인 집밥 레시피</p>
-                            <span>❤️ 200</span>
-                        </div>
-                    </a>
-                </div>
-
-                <div class="gallery-item">
-                    <a class="gallery-link" href="#">
-                        <img src="https://image.ytn.co.kr/general/jpg/2021/1102/202111020854337568_d.jpg" alt="레시피" />
-                        <div class="gallery-text">
-                            <h4>초간단 디저트, 오레오 티라미수</h4>
-                            <p>3가지 재료만 있으면 OK!</p>
-                            <span>❤️ 56</span>
-                        </div>
-                    </a>
-                </div>
-
-                <div class="gallery-item">
-                    <a class="gallery-link" href="#">
-                        <img src="https://i.namu.wiki/i/poj3srIlqP-GipsjqmxWSwkTB9rC6SIeXC9EzE4t652HfKf4ottUP0RGOExdk9WRvDKFbTrp1lJW6ZXBjxUugQ.webp"
-                            alt="레시피" />
-                        <div class="gallery-text">
-                            <h4>초간단 닭도리탕 재료만있으면 뚝딱</h4>
-                            <p>3가지 재료만 있으면 OK!</p>
-                            <span>❤️ 56</span>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="popular-recipes">
-            <h2>최신 레시피</h2>
-            <p>최근 공유된 레시피를 공유 받아 직접 만들어보세요</p>
-
-            <div class="gallery recentPost">
-                <!-- AJAX로 동적으로 게시글 추가 -->
+            <div class="gallery-item">
+                <a class="gallery-link" href="#">
+                    <img src="https://recipe1.ezmember.co.kr/cache/recipe/2023/08/26/41eb2344b4e6a719c209ca55ed91c3f31.jpg"
+                        alt="레시피" />
+                    <div class="gallery-text">
+                        <h4>자취생을 위한 초간단 김치볶음밥</h4>
+                        <p>10분이면 충분한 초스피드 요리</p>
+                        <span>❤️ 89</span>
+                    </div>
+                </a>
             </div>
 
-            <div class="show-more">
-                <button id="show-more-button"><img src="../../static/image/down-arrow.png"
-                        th:src="@{/image/down-arrow.png}" alt="더보기"></button>
+            <div class="gallery-item">
+                <a class="gallery-link" href="#">
+                    <img src="https://recipe1.ezmember.co.kr/cache/recipe/2023/07/06/6d636a7976e5afb6d0050d167eb39fe01.jpg"
+                        alt="레시피" />
+                    <div class="gallery-text">
+                        <h4>엄마 손맛 된장찌개</h4>
+                        <p>진한 국물이 일품인 집밥 레시피</p>
+                        <span>❤️ 200</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="gallery-item">
+                <a class="gallery-link" href="#">
+                    <img src="https://image.ytn.co.kr/general/jpg/2021/1102/202111020854337568_d.jpg" alt="레시피" />
+                    <div class="gallery-text">
+                        <h4>초간단 디저트, 오레오 티라미수</h4>
+                        <p>3가지 재료만 있으면 OK!</p>
+                        <span>❤️ 56</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="gallery-item">
+                <a class="gallery-link" href="#">
+                    <img src="https://i.namu.wiki/i/poj3srIlqP-GipsjqmxWSwkTB9rC6SIeXC9EzE4t652HfKf4ottUP0RGOExdk9WRvDKFbTrp1lJW6ZXBjxUugQ.webp"
+                        alt="레시피" />
+                    <div class="gallery-text">
+                        <h4>초간단 닭도리탕 재료만있으면 뚝딱</h4>
+                        <p>3가지 재료만 있으면 OK!</p>
+                        <span>❤️ 56</span>
+                    </div>
+                </a>
             </div>
         </div>
+    </div>
+
+    <div class="popular-recipes">
+        <h2>최신 레시피</h2>
+        <p>최근 공유된 레시피를 공유 받아 직접 만들어보세요</p>
+
+        <div class="gallery recentPost">
+            <!-- AJAX로 동적으로 게시글 추가 -->
+        </div>
+
+        <div class="show-more">
+            <button id="show-more-button"><img src="../../static/image/down-arrow.png" th:src="@{/image/down-arrow.png}"
+                    alt="더보기"></button>
+        </div>
+    </div>
     </div>
 </body>
 
