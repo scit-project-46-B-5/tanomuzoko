@@ -13,7 +13,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Setter
 @Getter
-public class BoardHeartDTO {
-    private Integer sampleId;
-    private String sampleNmae;
+public class BoardHeartResponseDTO {
+    private Boolean isHearted;
+    private Integer heartCount;
 }
