@@ -18,9 +18,8 @@ import lombok.ToString;
 @Getter
 public class RecipeUserRequestDTO {
     String ingredients;
-    String option1;
-    String option2;
-    String option3;
-    String option4;
-    String option5;
+    String usage;
+    String menu;
+    String taste;
+    String level;
 }
