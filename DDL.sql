@@ -112,6 +112,7 @@ CREATE TABLE recipe_output_content
 (
     recipe_output_content_seq BIGINT AUTO_INCREMENT,
     recipe_seq BIGINT NOT NULL,
+    recipe_title varchar(100) NOT NULL,
     output_content VARCHAR(300) NOT NULL,
     CONSTRAINT recipe_output_content_PK PRIMARY KEY (recipe_output_content_seq),
     CONSTRAINT recipe_output_content_recipe_FK FOREIGN KEY (recipe_seq) REFERENCES recipe(recipe_seq) ON DELETE CASCADE
