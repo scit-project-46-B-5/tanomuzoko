@@ -5,9 +5,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>추천된 레시피</title>
         <!-- 내부 import -->
-        <link rel="stylesheet" href="../../static/css/globalstyles.css" th:href="@{/css/globalstyles.css}" />
-        <link rel="stylesheet" href="../../static/css/recommend_result.css" th:href="@{/css/globalstyles.css}" />
-        <script src="../../static/js/recommend_result.js" defer></script>
+        <link rel="stylesheet"  th:href="@{/css/globalstyles.css}" />
+        <link rel="stylesheet"  th:href="@{/css/globalstyles.css}" />
+        <script th:src="@{/js/recommend_result.js}" defer></script>
         <!-- 결과 페이지 스타일 -->
     </head>
     <body>
@@ -40,7 +40,7 @@
                 <div class="recipe-card">
                     <!-- ⭐ 즐겨찾기 버튼 (우측 상단 배치) -->
                     <button class="bookmark-btn" onclick="toggleBookmark()">
-                        <img src="../../static/image/star1.png" alt="즐겨찾기" id="bookmarkIcon" />
+                        <img th:src="@{/image/star1.png}" alt="즐겨찾기" id="bookmarkIcon" />
                     </button>
 
                     <div class="recipe-info">

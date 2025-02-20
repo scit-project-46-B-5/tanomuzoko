@@ -6,12 +6,12 @@
         <title>레시피 추천</title>
 
         <!-- 내부 import -->
-        <link rel="stylesheet" href="../../static/css/globalstyles.css" th:href="@{/css/globalstyles.css}" />
-        <link rel="stylesheet" href="../../static/css/recommend.css" th:href="@{/css/recommend.css}" />
+        <link rel="stylesheet" th:href="@{/css/globalstyles.css}" />
+        <link rel="stylesheet" th:href="@{/css/recommend.css}" />
         <script src="/js/recommend.js" defer></script>
 
         <!-- jquery-3.6.0.min.js 나중에 경로 바꿔주세요-->
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
 
         <!-- 외부 alert import -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css" />
