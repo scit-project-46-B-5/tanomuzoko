@@ -100,6 +100,9 @@
 </head>
 <body>
   <div class="container">
+    <!-- fragment/headerr사용하는 코드 -->
+	<div class="container" th:replace="fragment/header :: top-menu"></div>
+  
     <div class="board-container">
       <h2>게시글 작성하기</h2>
       <form id="board-form" th:action="@{/board/boardWrite}" method="POST" enctype="multipart/form-data">
@@ -130,7 +133,7 @@
             <span class="plus">+</span>
           </div>
         </div>
-
+        
         <!-- 선택된 썸네일 이미지 URL을 저장할 hidden input -->
         <input type="hidden" name="thumbnail" id="thumbnail" />
 
