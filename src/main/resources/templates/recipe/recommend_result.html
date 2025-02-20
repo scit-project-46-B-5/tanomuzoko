@@ -12,25 +12,7 @@
     </head>
     <body>
         <div class="container">
-            <div class="header">
-                <div class="logo">
-                    <a href="/src/main/resources/templates/index.html">
-                        <img src="/src/main/resources/static/image/logo.png" th:src="@{/image/logo.png}" alt="Logo" />
-                    </a>
-                </div>
-                <nav class="nav">
-                    <a href="/src/main/resources/templates/recipe/recommend.html">레시피 추천</a>
-                    <a href="/src/main/resources/templates/board/board.html">게시판</a>
-                </nav>
-                <a href="/src/main/resources/templates/user/join.html">
-                    <div class="topBarBtn" id="joinBtn">회원가입</div>
-                </a>
-                <a href="/src/main/resources/templates/user/login.html">
-                    <div class="topBarBtn" id="loginBtn">로그인</div>
-                </a>
-                <a href="/src/main/resources/templates/user/mypage.html"><div>오늘먹고죽자님</div></a>
-                <div class="topBarBtn" id="logoutBtn">로그아웃</div>
-            </div>
+            <div class="container" th:replace="fragment/header :: top-menu"></div>
 
             <!-- ✅ 레시피 결과 컨테이너 -->
             <div class="recipe-container">
