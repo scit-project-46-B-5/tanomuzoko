@@ -1,0 +1,108 @@
+/* ✅ 마이페이지 전체 컨테이너 */
+.mypage-container {
+    display: flex;
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+}
+
+/* ✅ 사이드바 (더 세련된 디자인 적용) */
+.sidebar {
+    width: 70px;
+    /* background: rgb(255, 144, 104 0.7) ; */
+    color: white;
+    height: calc(100vh - 80px);
+    transition: width 0.4s ease-in-out, background 0.3s ease-in-out;
+    overflow: hidden;
+    padding-top: 20px;
+    z-index: 999;
+    backdrop-filter: blur(5px); /* 블러 효과 추가 */
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ 마우스 오버 시 부드러운 확장 */
+.sidebar:hover {
+    width: 220px;
+    background: rgba(255, 127, 80, 1);
+}
+
+/* ✅ 사이드바 내부 메뉴 */
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar ul li {
+    padding: 15px 20px;
+    text-align: left;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 16px;
+    transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.sidebar ul li:hover {
+    background: rgba(0, 0, 0, 0.1);
+    transform: translateX(5px);
+    border-radius: 5px;
+}
+
+.sidebar ul li a {
+    color: black;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.sidebar ul li a span {
+    font-size: 1.7em; ;
+}
+/* ✅ 메인 컨텐츠 */
+.mypage-content {
+    flex: 1;
+    padding: 40px;
+    transition: margin-left 0.3s ease-in-out;
+    width: 100%;
+}
+
+/* ✅ 개인정보 컨텐츠 박스 (더 부드러운 디자인 적용) */
+.content-box {
+    background: white;
+    padding: 50px;
+    border-radius: 12px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 100%;
+    transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+/* ✅ 마우스 오버 시 박스 효과 */
+.content-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* 📌 반응형 디자인 */
+@media (max-width: 1024px) {
+    .mypage-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+    }
+
+    .mypage-content {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .content-box {
+        padding: 30px;
+    }
+}

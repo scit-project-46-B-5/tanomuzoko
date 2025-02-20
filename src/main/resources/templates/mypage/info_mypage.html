@@ -1,41 +1,31 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>마이페이지</title>
-    <link rel="stylesheet" href="globalstyles.css">
-    <link rel="stylesheet" href="mypage.css">
-    <link rel="stylesheet" href="info_mypage.css">
+    <link rel="stylesheet" href="../../static/css/globalstyles.css" th:href="@{/css/globalstyles.css}">
+    <link rel="stylesheet" href="../../static/css/mypage.css" th:href="@{/css/mypage.css}">
+    <link rel="stylesheet" href="../../static/css/info_mypage.css" th:href="@{/css/info_mypage.css}">
     <!-- fontawesome -->
     <script src="https://kit.fontawesome.com/b669fcd44b.js" crossorigin="anonymous"></script>
-    <script src="./info_mypage.js" defer></script>
+    <script th:src="@{/js/info_mypage.js}" defer></script>
+
 </head>
 <body>
     <div class="container">
-        <!-- ✅ 상단 네비게이션 -->
-        <div class="header">
-            <div class="logo"><a href="main.html"><img src="logo.png" alt="Logo"></a></div>
-            <nav class="nav">
-                <a href="recommend.html">레시피 추천</a>
-                <a href="#">명예의 전당</a>
-                <a href="board.html">게시판</a>
-            </nav>
-            <a href="join.html"><div class="topBarBtn" id="joinBtn">회원가입</div></a>
-            <a href="login.html"><div class="topBarBtn" id="loginBtn">로그인</div></a>
-            <div class="topBarBtn" id="logoutBtn">로그아웃</div>
-        </div>
+        <div class="container" th:replace="fragment/header :: top-menu"></div>
 
         <div class="mypage-container">
             <!-- ✅ 마우스 오버 시 확장되는 사이드바 -->
             <div class="sidebar">
                 <ul>
-                    <li><a href="./recipeSave_mypage.html"><span>📂</span> 내가 저장한 기록</a></li>
-                    <li><a href="./myBoard_mypage.html"><span>📝</span> 내가 쓴 게시물</a></li>
-                    <li><a href="./reply_mypage.html"><span>💬</span> 내가 쓴 댓글</a></li>
-                    <li><a href="./likedBoard_mypage.html"><span>❤️</span> 공감한 게시물</a></li>
-                    <li><a href="./info_mypage.html"><span>🔑</span> 내 정보 관리</a></li>
-                    <li><a href="./deleteAccount_mypage.html"><span>⚙️</span> 회원 탈퇴</a></li>
+                    <li><a th:href="@{/recipeSave_mypage.html}"><span>📂</span> 내가 저장한 기록</a></li>
+                    <li><a th:href="@{/myBoard_mypage.html}"><span>📝</span> 내가 쓴 게시물</a></li>
+                    <li><a th:href="@{/reply_mypage.html}"><span>💬</span> 내가 쓴 댓글</a></li>
+                    <li><a th:href="@{/likedBoard_mypage.html}"><span>❤️</span> 공감한 게시물</a></li>
+                    <li><a th:href="@{/info_mypage.html}"><span>🔑</span> 내 정보 관리</a></li>
+                    <li><a th:href="@{/deleteAccount_mypage.html}"><span>⚙️</span> 회원 탈퇴</a></li>
                 </ul>
             </div>
 
