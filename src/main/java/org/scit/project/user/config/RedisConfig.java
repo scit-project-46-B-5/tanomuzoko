@@ -11,12 +11,15 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
+import jakarta.annotation.PreDestroy;
+
 @Configuration
 public class RedisConfig {
 	
 	private static final String REDIS_HOST = "127.0.0.1";  // Redis 서버 주소
     private static final int REDIS_PORT = 6379;  // Redis 포트
     private static final String REDIS_EXEC_PATH = "C:\\Program Files\\Redis\\redis-server.exe";  // Redis 실행 파일 경로
+    private Process redisProcess; //실행된 Redis 프로세스를 저장할 변수
 
     public RedisConfig() {
         checkAndStartRedis();
@@ -51,6 +54,23 @@ public class RedisConfig {
             System.out.println("✅ Redis 서버가 이미 실행 중입니다.");
         }
     }
+//    Spring 종료시 Redis도 같이 종료
+    @PreDestroy
+    public void stopRedisServer() {
+        if (redisProcess != null) {
+            redisProcess.destroy(); // 🔥 실행된 Redis 프로세스 종료
+            System.out.println("🛑 Redis 서버가 종료되었습니다.");
+        } else {
+            System.out.println("🔎 실행된 Redis 프로세스가 없습니다.");
+            try {
+                // 🔥 Windows에서 실행 중인 redis-server.exe 강제 종료
+                Runtime.getRuntime().exec("taskkill /F /IM redis-server.exe");
+                System.out.println("🛑 Redis 서버 프로세스를 강제 종료했습니다.");
+            } catch (IOException e) {
+                System.err.println("❌ Redis 서버 강제 종료 실패: " + e.getMessage());
+            }
+        }
+    }
 
     /**
      * Redis 실행 여부 확인
@@ -70,7 +90,7 @@ public class RedisConfig {
     private void startRedisServer() {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(REDIS_EXEC_PATH);
-            processBuilder.start();
+            redisProcess = processBuilder.start();
             System.out.println("🚀 Redis 서버를 실행했습니다.");
         } catch (IOException e) {
             System.err.println("❌ Redis 서버 실행 실패: " + e.getMessage());
