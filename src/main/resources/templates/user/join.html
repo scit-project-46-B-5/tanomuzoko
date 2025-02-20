@@ -33,12 +33,12 @@
             placeholder="비밀번호를 한 번 더 입력해주세요">
         <span>이메일 인증</span>
         <div id="emailAuthentication">
-            <input type="email" id="email" name="email" class="input-field" placeholder="이메일을 입력해주세요">
+            <input type="email" id="userEmail" name="userEmail" class="input-field" placeholder="이메일을 입력해주세요">
             <button class="verify-button" id="requestButton">메일 인증받기</button>
         </div>
         <div id="verificationBox">
-            <input type="text" class="input-field" placeholder="인증번호">
-            <button class="verify-button">인증하기</button>
+            <input type="text" class="input-field" id="verificationCode" placeholder="인증번호">
+            <button class="verify-button" id="verifyButton">인증하기</button>
         </div>
         <div class="checkbox-container">
             <label><input type="checkbox" id="check_all"> 전체 동의</label>
