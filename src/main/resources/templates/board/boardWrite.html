@@ -34,11 +34,10 @@
       border-radius: 10px;
       position: relative;
     }
-
     /* 기본 메시지 영역 (카메라 아이콘 + 안내 문구) */
     .dz-message {
       text-align: center;
-      pointer-events: none; /* 클릭 불가 영역 */
+      pointer-events: none;
     }
     .dz-message img.camera-icon {
       width: 60px;
@@ -53,20 +52,17 @@
       color: #999;
       display: block;
     }
-
-    /* + 아이콘은 별도 span으로 두어 계속 유지 */
+    /* + 아이콘은 별도 span으로 계속 표시 */
     .plus {
       font-size: 30px;
       font-weight: bold;
       color: #999;
       margin-top: 10px;
     }
-
-    /* 파일이 하나라도 있으면 dz-started가 붙어 .dz-message 숨김 */
+    /* 파일이 하나라도 있으면 dz-started 클래스가 붙어 .dz-message 숨김 */
     .dropzone.dz-started .dz-message {
       display: none;
     }
-
     /* Quill 에디터 */
     #editor-container {
       width: 100%;
@@ -74,7 +70,6 @@
       border: 1px solid #ccc;
       cursor: text;
     }
-
     /* Dropzone 미리보기 스타일 */
     .dz-preview {
       position: relative;
@@ -100,8 +95,8 @@
 </head>
 <body>
   <div class="container">
-    <!-- fragment/headerr사용하는 코드 -->
-	<div class="container" th:replace="fragment/header :: top-menu"></div>
+    <!-- header fragment 삽입 -->
+    <div class="container" th:replace="fragment/header :: top-menu"></div>
   
     <div class="board-container">
       <h2>게시글 작성하기</h2>
@@ -113,7 +108,7 @@
 
         <!-- Quill 에디터 영역 -->
         <div class="form-group">
-          <label for="content">내용 작성 :</label>
+          <label for="boardContent">내용 작성 :</label>
           <div id="editor-container"></div>
           <input type="hidden" name="boardContent" id="boardContent" />
         </div>
@@ -122,14 +117,10 @@
         <div class="form-group">
           <label for="dropzone">사진 업로드 :</label>
           <div class="dropzone" id="dropzone">
-            <!-- 카메라 아이콘 + 안내 문구는 .dz-message 안에만 배치 -->
             <div class="dz-message">
-              <img class="camera-icon"
-                   src="http://www.freeiconspng.com/uploads/------------------------------iconpngm--22.png"
-                   alt="Camera" />
+              <img class="camera-icon" src="https://www.freeiconspng.com/uploads/------------------------------iconpngm--22.png" alt="Camera" />
               <span class="text-message">여기로 파일을 드래그하거나 클릭하여 업로드하세요!</span>
             </div>
-            <!-- + 아이콘은 별도로 분리해 계속 보여줌 -->
             <span class="plus">+</span>
           </div>
         </div>
@@ -151,20 +142,30 @@
     document.getElementById('editor-container').addEventListener('click', function () {
       quill.focus();
     });
-    document.querySelector('form').onsubmit = function () {
-      document.querySelector('#boardContent').value = quill.root.innerHTML;
+    
+    // 폼 제출 시, boardContent hidden input에 에디터 내용을 넣고, 썸네일 지정 여부를 확인
+    document.getElementById('board-form').onsubmit = function (e) {
+      document.getElementById('boardContent').value = quill.root.innerHTML;
+      
+      // 파일이 하나 이상 첨부된 경우 썸네일 지정 여부를 확인
+      if (dropzone.files.length > 0 && !document.getElementById('thumbnail').value) {
+        alert('썸네일로 사용할 사진을 선택해주세요');
+        e.preventDefault();
+        return false;
+      }
+      return true;
     };
 
     let uploadedFiles = new Map();
     Dropzone.autoDiscover = false;
 
     const dropzone = new Dropzone('#dropzone', {
-      url: '/board/upload', // 실제 업로드 서버 주소
+      url: '/board/upload',
       maxFiles: 5,
       maxFilesize: 5,
       acceptedFiles: 'image/*',
       addRemoveLinks: true,
-      dictDefaultMessage: '', // 메시지는 .dz-message 내부에서 관리
+      dictDefaultMessage: '',
       dictRemoveFile: '삭제',
       init: function () {
         this.on('addedfile', function (file) {
@@ -175,7 +176,6 @@
             this.removeFile(file);
             return;
           }
-          // 파일 추가 시 dz-started 클래스 부여 -> .dz-message 숨김
           this.element.classList.add('dz-started');
         });
 
@@ -205,20 +205,15 @@
           let fileKey = file.name + file.size;
           let fileData = uploadedFiles.get(fileKey);
           if (fileData) {
-            // Quill 에디터에서 해당 이미지 삭제
             let imgToRemove = quill.root.querySelector(`img[src="${fileData.url}"]`);
             if (imgToRemove) {
               imgToRemove.remove();
             }
           }
           uploadedFiles.delete(fileKey);
-
-          // 모든 파일이 삭제되면 dz-started 클래스 제거 -> .dz-message 다시 표시
           if (this.files.length === 0) {
             this.element.classList.remove('dz-started');
           }
-
-          // 썸네일 삭제 시 hidden input 초기화
           const currentThumbnail = document.getElementById('thumbnail').value;
           if (fileData && fileData.url === currentThumbnail) {
             document.getElementById('thumbnail').value = "";
@@ -262,7 +257,6 @@
       });
     }
 
-    // Quill 에디터에서 이미지 삭제 시 Dropzone 미리보기와 동기화
     quill.on('text-change', function () {
       let quillImages = new Set([...quill.root.querySelectorAll('img')].map(img => img.src));
       for (let [fileKey, fileData] of uploadedFiles.entries()) {
@@ -270,7 +264,6 @@
           console.log('Quill에서 이미지 삭제됨:', fileData.url);
           dropzone.removeFile(fileData.file);
           uploadedFiles.delete(fileKey);
-
           const currentThumbnail = document.getElementById('thumbnail').value;
           if (fileData.url === currentThumbnail) {
             document.getElementById('thumbnail').value = "";
