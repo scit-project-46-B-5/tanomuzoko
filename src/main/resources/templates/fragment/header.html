@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko" th:xmlns="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[[${title}]]</title>
+</head>
+
+<body>
+    <!-- ✅ 헤더 프래그먼트 -->
+    <div class="header" th:fragment="top-menu">
+        <div class="logo">
+            <a th:href="@{/}">
+                <img th:src="@{/image/logo.png}" alt="Logo" />
+            </a>
+        </div>
+
+        <nav class="nav">
+            <a th:href="@{/recipe/recommend}">레시피 추천</a>
+            <a th:href="@{/board/board}">게시판</a>
+        </nav>
+
+        <!-- ✅ 인증하지 않은 사용자 -->
+        <th:block sec:authorize="isAnonymous()">
+            <a th:href="@{/user/join}">
+                <div class="topBarBtn" id="joinBtn">회원가입</div>
+            </a>
+            <a th:href="@{/user/login}">
+                <div class="topBarBtn" id="loginBtn">로그인</div>
+            </a>
+        </th:block>
+
+        <!-- ✅ 로그인 한 사용자 -->
+        <th:block sec:authorize="isAuthenticated()">
+            <a th:href="@{/mypage/info_mypage}">
+                <div>[[${#authentication.name}]]님</div>
+            </a>
+
+            <!-- Spring Security 로그아웃은 반드시 form 태그로 -->
+            <form th:action="@{/user/logout}" method="post" style="display:inline;">
+                <button class="topBarBtn" id="logoutBtn" type="submit">로그아웃</button>
+            </form>
+        </th:block>
+    </div>
+</body>
+
+</html>
