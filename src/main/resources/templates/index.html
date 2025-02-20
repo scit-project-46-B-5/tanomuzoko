@@ -18,24 +18,48 @@
         $(function () {
 
             let currentPage = 0;
-            init(currentPage);
+            let currentFilter = "weekly"; // 기본값: 최신 게시글
 
+            // 초기 로드 (최신 게시글 + 인기 게시글)
+            initRecentPosts(currentPage);
+            initPopularPosts("weekly"); // 기본값: 주간 인기글
+
+            // "더보기" 버튼 클릭 시 추가 최신 게시글 로드
             $('#show-more-button').click(function () {
                 currentPage++;
-                init(currentPage);
+                initRecentPosts(currentPage);
             });
 
-        })
+            // "주간 인기글" 버튼 클릭 시
+            $('#weekly-button').click(function () {
+                initPopularPosts("weekly");
+            });
 
-        function init(page) {
+            // "월간 인기글" 버튼 클릭 시
+            $('#monthly-button').click(function () {
+                initPopularPosts("monthly");
+            });
+
+        });
+
+        function initRecentPosts(page) {
             $.ajax({
                 url: '/posts?page=' + page,
                 method: 'GET',
-                success: output
+                success: outputRecentPosts
             });
         }
 
-        function output(resp) {
+        // 주간/월간 인기 게시글 불러오기
+        function initPopularPosts(filter) {
+            $.ajax({
+                url: `/top-posts?filter=${filter}`,
+                method: 'GET',
+                success: outputPopularPosts
+            });
+        }
+
+        function outputRecentPosts(resp) {
 
             let tag = ``;
 
@@ -61,6 +85,25 @@
             }
         }
 
+        // 인기 게시글 출력
+        function outputPopularPosts(resp) {
+            let tag = ``;
+            $.each(resp, function (index, item) {
+                tag += `
+            <div class="gallery-item">
+                <a class="gallery-link" href="/board/boardDetail?boardSeq=${item['boardSeq']}">
+                    <img src="" alt="레시피">
+                    <div class="gallery-text">
+                        <h4>${item['boardTitle']}</h4>
+                        <p>${item['boardContent']}</p>
+                        <span>❤️ ${item['heartCount']}</span>
+                    </div>
+                </a>
+            </div>
+        `;
+            });
+            $('.popularPost').html(tag); // 기존 목록 초기화 후 새로 채우기
+        }
     </script>
 </head>
 
@@ -114,68 +157,11 @@
         <h2>인기 레시피</h2>
         <p>최근 인기 레시피를 공유 받아 직접 만들어보세요</p>
         <div class="filters">
-            <button style="background-color: black; color: white">주간</button>
-            <button>월간</button>
+            <button id="weekly-button" data-period="weekly" style="background-color: black; color: white">주간</button>
+            <button id="monthly-button" data-period="monthly">월간</button>
         </div>
-        <div class="gallery">
-            <div class="gallery-item">
-                <a class="gallery-link" href="/src/main/resources/templates/board/detail.html"
-                    th:href="@{/board/boardDetail/1}">
-                    <img src="https://semie.cooking/image/contents/recipe/px/rh/jaowrvzg/IRD/143210130axpn.jpg"
-                        alt="레시피" />
-                    <div class="gallery-text">
-                        <h4>맛있는 파스타 만들기</h4>
-                        <p>간단하게 만들 수 있는 크림 파스타 레시피</p>
-                        <span>❤️ 124</span>
-                    </div>
-                </a>
-            </div>
-            <div class="gallery-item">
-                <a class="gallery-link" href="#">
-                    <img src="https://recipe1.ezmember.co.kr/cache/recipe/2023/08/26/41eb2344b4e6a719c209ca55ed91c3f31.jpg"
-                        alt="레시피" />
-                    <div class="gallery-text">
-                        <h4>자취생을 위한 초간단 김치볶음밥</h4>
-                        <p>10분이면 충분한 초스피드 요리</p>
-                        <span>❤️ 89</span>
-                    </div>
-                </a>
-            </div>
-
-            <div class="gallery-item">
-                <a class="gallery-link" href="#">
-                    <img src="https://recipe1.ezmember.co.kr/cache/recipe/2023/07/06/6d636a7976e5afb6d0050d167eb39fe01.jpg"
-                        alt="레시피" />
-                    <div class="gallery-text">
-                        <h4>엄마 손맛 된장찌개</h4>
-                        <p>진한 국물이 일품인 집밥 레시피</p>
-                        <span>❤️ 200</span>
-                    </div>
-                </a>
-            </div>
-
-            <div class="gallery-item">
-                <a class="gallery-link" href="#">
-                    <img src="https://image.ytn.co.kr/general/jpg/2021/1102/202111020854337568_d.jpg" alt="레시피" />
-                    <div class="gallery-text">
-                        <h4>초간단 디저트, 오레오 티라미수</h4>
-                        <p>3가지 재료만 있으면 OK!</p>
-                        <span>❤️ 56</span>
-                    </div>
-                </a>
-            </div>
-
-            <div class="gallery-item">
-                <a class="gallery-link" href="#">
-                    <img src="https://i.namu.wiki/i/poj3srIlqP-GipsjqmxWSwkTB9rC6SIeXC9EzE4t652HfKf4ottUP0RGOExdk9WRvDKFbTrp1lJW6ZXBjxUugQ.webp"
-                        alt="레시피" />
-                    <div class="gallery-text">
-                        <h4>초간단 닭도리탕 재료만있으면 뚝딱</h4>
-                        <p>3가지 재료만 있으면 OK!</p>
-                        <span>❤️ 56</span>
-                    </div>
-                </a>
-            </div>
+        <div class="gallery popularPost">
+            <!-- AJAX로 게시글 추가 -->
         </div>
     </div>
 

@@ -1,7 +1,9 @@
 package org.scit.project.mainpage.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.scit.project.board.entity.BoardEntity;
 import org.scit.project.board_heart.repository.BoardHeartRepository;
@@ -39,6 +41,21 @@ public class MainService {
         });
 
         return list;
+    }
+
+    public List<MainDTO> getTopPosts(String period) {
+        LocalDateTime startDate = period.equals("monthly") 
+            ? LocalDateTime.now().minusMonths(1)
+            : LocalDateTime.now().minusWeeks(1);
+
+        List<BoardEntity> topPosts = mainRepository.findTopPostsByHeartCount(startDate, PageRequest.of(0, 5));
+
+        return topPosts.stream()
+            .map(entity -> {
+                    int heartCount = boardHeartRepository.countByBoardAndIsHeartedTrue(entity);
+                    return MainDTO.toDTO(entity, heartCount);
+            })
+            .collect(Collectors.toList());
     }
 
 }

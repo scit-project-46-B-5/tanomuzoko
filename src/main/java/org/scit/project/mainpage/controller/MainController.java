@@ -30,8 +30,16 @@ public class MainController {
     public List<MainDTO> getPosts(@RequestParam(value = "page", defaultValue = "0") int page) {
 
         List<MainDTO> list = mainService.getPosts(page);
-        
+
         return list;
+    }
+    
+    @GetMapping("/top-posts")
+    @ResponseBody
+    public List<MainDTO> getTopPosts(@RequestParam(name = "filter", defaultValue = "weekly") String filter) {
+        
+        List<MainDTO> topPosts = mainService.getTopPosts(filter);
+        return topPosts;
     }
 
 }
