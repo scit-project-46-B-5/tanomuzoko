@@ -14,31 +14,39 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class UserService {
 
-	private final UserRepository userRepository;
-	private final BCryptPasswordEncoder passwprdEncoder;
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder; // ✅ 변수명 오타 수정
 
-	public boolean existId(String userId) {
-		boolean result = userRepository.existsByUserId(userId);
-		return !result;
-	}
+    // ✅ 아이디 중복 체크
+    public boolean existId(String userId) {
+        return !userRepository.existsByUserId(userId);
+    }
 
-	public boolean existName(String userName) {
-		boolean result = userRepository.existsByUserName(userName);
-		return !result;
-	}
+    // ✅ 닉네임 중복 체크
+    public boolean existName(String userName) {
+        return !userRepository.existsByUserName(userName);
+    }
 
-	//	회원가입 처리
-	public boolean joinProc(UserDTO dto) {
-//		비밀번호 암호화
-	dto.setUserPassword(passwprdEncoder.encode(dto.getUserPassword()));
-		 
-		// DTO를 Entity로 변환하여 DB에 저장
-		UserEntity entity = UserEntity.toEntity(dto);
-		userRepository.save(entity);
+    // ✅ 이메일 중복 체크
+    public boolean isEmailExists(String email) {
+        return userRepository.existsByUserEmail(email);
+    }
 
-		// 저장 후 DB에 아이디가 존재하는지 확인
-		boolean result = userRepository.existsByUserId(dto.getUserId());
-		return result;	// 가입 성공 여부 반환
-	}
-	
+    // ✅ 회원가입 처리
+    public boolean joinProc(UserDTO dto) {
+        // 1️⃣ 이메일 중복 체크 (이미 존재하면 예외 발생)
+        if (isEmailExists(dto.getUserEmail())) {
+            throw new IllegalStateException("이미 사용 중인 이메일입니다."); // ✅ 예외 발생
+        }
+
+        // 2️⃣ 비밀번호 암호화
+        dto.setUserPassword(passwordEncoder.encode(dto.getUserPassword()));
+
+        // 3️⃣ DTO → Entity 변환 후 저장
+        UserEntity entity = UserEntity.toEntity(dto);
+        userRepository.save(entity);
+
+        // 4️⃣ 저장된 데이터 확인 (회원가입 성공 여부)
+        return userRepository.existsByUserId(dto.getUserId());
+    }
 }
