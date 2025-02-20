@@ -1,10 +1,17 @@
+@font-face {
+    font-family: 'GmarketSansMedium';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
 body {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 90vh;
     background-color: #f7f7f7;
-    font-family: Arial, sans-serif;
+        font-family: 'GmarketSansMedium', sans-serif;
 }
 .login-container {
     background: white;
@@ -21,7 +28,7 @@ body {
     color: #ff7f50;
 }
 .logo img {
-    width: 250px;
+    width: 100%;
     height: 150px;
     margin-right: 10px;
 }
@@ -46,7 +53,7 @@ body {
     font-size: 14px;
 }
 .input-field {
-    width: 100%;
+    width: 94%;
     padding: 10px;
     margin-bottom: 10px;
     border: 1px solid #ddd;
@@ -74,6 +81,7 @@ body {
 }
 .links a {
     text-decoration: none;
+    font-size: 110%;
     color: #ff7f50;
     margin: 0 5px;
 }
