@@ -503,7 +503,13 @@ $(document).on('click', '.option-btn', function () {
     let group = $(this).data('group');
     $(`.option-btn[data-group="${group}"]`).removeClass('selected');
     $(this).addClass('selected');
+
+    //selected 연결
+    let optionDom = $(this).siblings("input[type='radio']");
+    optionDom.prop('checked', true);
+
 });
+
 
 // 초기 재료 리스트 표시
 displayIngredients();
