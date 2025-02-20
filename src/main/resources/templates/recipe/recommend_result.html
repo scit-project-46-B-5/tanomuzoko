@@ -5,32 +5,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>추천된 레시피</title>
         <!-- 내부 import -->
-        <link rel="stylesheet" href="../../static/css/globalstyles.css" th:href="@{/css/globalstyles.css}" />
-        <link rel="stylesheet" href="../../static/css/recommend_result.css" th:href="@{/css/globalstyles.css}" />
-        <script src="../../static/js/recommend_result.js" defer></script>
+        <link rel="stylesheet"  th:href="@{/css/globalstyles.css}" />
+        <link rel="stylesheet"  th:href="@{/css/globalstyles.css}" />
+        <script th:src="@{/js/recommend_result.js}" defer></script>
         <!-- 결과 페이지 스타일 -->
     </head>
     <body>
         <div class="container">
-            <div class="header">
-                <div class="logo">
-                    <a href="/src/main/resources/templates/index.html">
-                        <img src="/src/main/resources/static/image/logo.png" th:src="@{/image/logo.png}" alt="Logo" />
-                    </a>
-                </div>
-                <nav class="nav">
-                    <a href="/src/main/resources/templates/recipe/recommend.html">레시피 추천</a>
-                    <a href="/src/main/resources/templates/board/board.html">게시판</a>
-                </nav>
-                <a href="/src/main/resources/templates/user/join.html">
-                    <div class="topBarBtn" id="joinBtn">회원가입</div>
-                </a>
-                <a href="/src/main/resources/templates/user/login.html">
-                    <div class="topBarBtn" id="loginBtn">로그인</div>
-                </a>
-                <a href="/src/main/resources/templates/user/mypage.html"><div>오늘먹고죽자님</div></a>
-                <div class="topBarBtn" id="logoutBtn">로그아웃</div>
-            </div>
+            <div class="container" th:replace="fragment/header :: top-menu"></div>
 
             <!-- ✅ 레시피 결과 컨테이너 -->
             <div class="recipe-container">
@@ -40,7 +22,7 @@
                 <div class="recipe-card">
                     <!-- ⭐ 즐겨찾기 버튼 (우측 상단 배치) -->
                     <button class="bookmark-btn" onclick="toggleBookmark()">
-                        <img src="../../static/image/star1.png" alt="즐겨찾기" id="bookmarkIcon" />
+                        <img th:src="@{/image/star1.png}" alt="즐겨찾기" id="bookmarkIcon" />
                     </button>
 
                     <div class="recipe-info">
