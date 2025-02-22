@@ -19,6 +19,7 @@
     height: 200px;
     border: 1px solid #ff7f50;
     overflow: hidden; /* 넘치는 부분 자르기 */
+    font-family: 'GmarketSansMedium', sans-serif;
 }
 .card img {
     position: absolute;
@@ -199,6 +200,14 @@
 .expanded {
     max-height: none !important;
 }
+
+
+h2 {
+    font-family: 'GmarketSansMedium', sans-serif;
+}
+.slick-dots{
+    display: none !important;
+}
 @media (max-width: 768px) {
     .cards {
         flex-direction: column;
@@ -214,3 +223,5 @@
         padding-left: 0;
     }
 }
+
+

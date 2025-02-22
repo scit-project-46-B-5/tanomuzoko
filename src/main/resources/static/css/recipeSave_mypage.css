@@ -1,0 +1,122 @@
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+.recipe-item {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 10px;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2.5px;
+    margin-bottom: 8px;
+    transition: all ease-in 250ms;
+}
+
+.recipe-item:hover {
+    background-color: #00000007;
+}
+
+.recipe-item .recipe-name {
+    font-weight: bold;
+    padding-left: 10px;
+}
+
+.recipe-item .option {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+.recipe-item .date {
+    font-size: 14px;
+    margin: 0 10px;
+}
+
+/* 모달 스타일 */
+.recipe-modal {
+    width: 100%;
+    height: 100%;
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+/* 모달 콘텐츠 스타일 */
+.modal-content {
+    position: relative;
+    width: 70%;
+    max-width: 600px;
+    padding: 30px 0;
+    border-radius: 14px;
+    background-color: #fff;
+    overflow-y: auto;
+    text-align: center;
+}
+
+.recipe-info {
+    margin-bottom: 12px;
+}
+
+/* 닫기 버튼 */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 200ms ease-in-out;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: black;
+    text-decoration: none;
+}
+
+.recipe-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.line {
+    height: 1px;
+    background-color: #d5d5d5;
+}
+
+.recipe-steps-header {
+    text-align: left;
+}
+
+.recipe-steps li {
+    text-align: left;
+    padding-left: 20px;
+}
+
+/* 게시글 작성하기 버튼 */
+.footer button {
+    font-size: 16px;
+    color: white;
+    background-color: #ff7f50;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 300ms ease-in-out;
+}
+
+.footer button:hover {
+    background: #e56b42;
+}

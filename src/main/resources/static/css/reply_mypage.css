@@ -1,0 +1,48 @@
+.reply-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+.reply-item{
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.reply-list li{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 12px 10px;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2.5px;
+    margin-bottom: 8px;
+    transition: all ease-in 250ms;
+}
+
+.reply-list li:hover {
+    background-color: #00000007;
+}
+
+.recipe-name {
+    width: 15%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 4px;
+    font-weight: 700;
+}
+
+.reply-content {
+    width: 75%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.date {
+    width: 10%;
+    font-size: 14px;
+    margin: 0 10px;
+    text-align: right;
+}

@@ -9,21 +9,20 @@
 </head>
 
 <body>
-    <form th:action="@{/user/login}" method="post">
+    <form th:action="@{/user/loginProc}" method="post">
         <div class="login-container">
             <div class="logo"></div>
             <div class="logo">
-                <a href="../index.html">
+                <a href="../index.html" th:href="@{/}">
                     <img src="../../static/image/logo.png" th:src="@{/image/logo.png}" alt="Logo" />
                 </a>
-                <br />쿰척쿰척 잘먹더라
             </div>
 
             <input type="text" class="input-field" id="userId" name="userId" placeholder="아이디" />
-            <input type="password" class="input-field" id="userPwd" name="userPwd" placeholder="비밀번호" />
+            <input type="password" class="input-field" id="userPassword" name="userPassword" placeholder="비밀번호" />
             <button class="login-button" id="loginBtn">로그인</button>
             <div class="links">
-                <a href="#">계정 찾기</a> | <a href="#">비밀번호 찾기</a> | <a href="#">회원가입</a>
+                <a href="#">계정 찾기</a> | <a href="#">비밀번호 찾기</a> | <a th:href="@{/user/join}">회원가입</a>
             </div>
         </div>
     </form>

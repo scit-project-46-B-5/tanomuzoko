@@ -1,5 +1,7 @@
 package org.scit.project.board.service;
 
+import java.util.Optional;
+
 import org.scit.project.board.dto.BoardDTO;
 import org.scit.project.board.entity.BoardEntity;
 import org.scit.project.board.repository.BoardRepository;
@@ -17,17 +19,25 @@ import lombok.RequiredArgsConstructor;
 public class BoardService {
 	private final BoardRepository boardRepository;
 	private final UserRepository userRepository;
-	
 
 	@Value("${spring.servlet.multipart.location}")
 	private String uploadPath;
-	
+
 	public void insertBoard(BoardDTO boardDTO) {
-		LoginUserDetails loginUser =  (LoginUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		LoginUserDetails loginUser = (LoginUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		String userId = loginUser.getUserId();
-		UserEntity user = userRepository.findByUserId(userId).orElseThrow(()->new RuntimeException("no such user"));
-		
-	    BoardEntity entity = BoardEntity.toEntity(boardDTO, user);
-	    boardRepository.save(entity);
+		UserEntity user = userRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("no such user"));
+
+		BoardEntity entity = BoardEntity.toEntity(boardDTO, user);
+		boardRepository.save(entity);
+	}
+
+	public BoardDTO selectOne(Long boardSeq) {
+		Optional<BoardEntity> temp = boardRepository.findById(boardSeq);
+		if (!temp.isPresent()) {
+			return null;
+		} else {
+			return BoardDTO.toDTO(temp.get());
+		}
 	}
 }
