@@ -41,11 +41,16 @@ public class MessageChatGPTDTO implements Serializable {
                 난이도: %s
                 100자 이내로 작성해줘. 출력은 다음과 같이 양식을 맞춰서 출력해줘
                 조리방법은 5개 step으로만 구성해줘.
-                --------------------
-                타이틀: 요리이름
-                재료: 재료1, 재료2, 재료3, 재료4, 재료5
-                조리방법: 1. ~~합니다
-                         2. ~~합니다
+                재료는 자취생 1인분용으로 몇개가 필요한 지까지 알려줘.
+                한자는 쓰지말아줘.
+                아래와 같이 구성해줘.
+                아래 예시의 양식을 지켜서 반드시 지켜서 만들어줘.
+                
+                예시)
+                    타이틀: 요리이름
+                    재료: 재료1, 재료2, 재료3, 재료4, 재료5 .....
+                    조리방법: ~~합니다.
+                            ~~합니다.
                 """, recipeUserRequestDTO.getIngredients(), 
                     recipeUserRequestDTO.getUsage(),
                     recipeUserRequestDTO.getMenu(),
