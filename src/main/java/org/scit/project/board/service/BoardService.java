@@ -1,43 +1,86 @@
 package org.scit.project.board.service;
 
 import java.util.Optional;
-
+import java.util.UUID;
 import org.scit.project.board.dto.BoardDTO;
 import org.scit.project.board.entity.BoardEntity;
+import org.scit.project.board.entity.BoardImageEntity;
 import org.scit.project.board.repository.BoardRepository;
+import org.scit.project.board.repository.BoardImageRepository;
 import org.scit.project.user.dto.LoginUserDetails;
 import org.scit.project.user.entity.UserEntity;
 import org.scit.project.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class BoardService {
-	private final BoardRepository boardRepository;
-	private final UserRepository userRepository;
 
-	@Value("${spring.servlet.multipart.location}")
-	private String uploadPath;
+    private final BoardRepository boardRepository;
+    private final UserRepository userRepository;
+    private final BoardImageRepository boardImageRepository;
 
-	public void insertBoard(BoardDTO boardDTO) {
-		LoginUserDetails loginUser = (LoginUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		String userId = loginUser.getUserId();
-		UserEntity user = userRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("no such user"));
+    @Value("${spring.servlet.multipart.location}")
+    private String uploadPath;
 
-		BoardEntity entity = BoardEntity.toEntity(boardDTO, user);
-		boardRepository.save(entity);
-	}
+    public void insertBoard(BoardDTO boardDTO) {
+        LoginUserDetails loginUser = (LoginUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userId = loginUser.getUserId();
+        UserEntity user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("no such user"));
 
-	public BoardDTO selectOne(Long boardSeq) {
-		Optional<BoardEntity> temp = boardRepository.findById(boardSeq);
-		if (!temp.isPresent()) {
-			return null;
-		} else {
-			return BoardDTO.toDTO(temp.get());
-		}
-	}
+        BoardEntity entity = BoardEntity.toEntity(boardDTO, user);
+        BoardEntity savedBoard = boardRepository.save(entity);
+
+        // 썸네일 값이 존재하면 board_image 테이블에 저장
+        // thumbnailUrl: 업로드된 파일의 URL (예: "/uploads/강아지1_UUID.jpg")
+        // thumbnail: 에디터에 삽입된 base64 데이터 (원본_file_name으로 저장)
+        if (boardDTO.getThumbnailUrl() != null && !boardDTO.getThumbnailUrl().isEmpty()) {
+            String thumbnailUrl = boardDTO.getThumbnailUrl();
+            String savedFileName = "";
+            // URL 형태라면 FileService에서 생성한 파일명을 그대로 사용
+            if (thumbnailUrl.startsWith("/uploads/")) {
+                savedFileName = thumbnailUrl.substring(9); // "/uploads/" 제거
+            } else {
+                // 혹시 base64 형식이면 (예외 상황)
+                String newUUID = UUID.randomUUID().toString();
+                String ext = "";
+                if (thumbnailUrl.startsWith("data:image/")) {
+                    int slashIndex = thumbnailUrl.indexOf("/");
+                    int semicolonIndex = thumbnailUrl.indexOf(";");
+                    if (slashIndex != -1 && semicolonIndex != -1) {
+                        ext = "." + thumbnailUrl.substring(slashIndex + 1, semicolonIndex);
+                    }
+                }
+                savedFileName = "thumbnail_" + newUUID + ext;
+            }
+            
+            BoardImageEntity imageEntity = BoardImageEntity.builder()
+                .boardEntity(savedBoard)
+                .originalFileName(boardDTO.getThumbnail())  // base64 데이터를 그대로 저장
+                .savedFileName(savedFileName)                // "원본파일이름_UUID.확장자" 형식
+                .build();
+            boardImageRepository.save(imageEntity);
+        }
+    }
+
+    public BoardDTO selectOne(Long boardSeq) {
+        Optional<BoardEntity> temp = boardRepository.findById(boardSeq);
+        if (!temp.isPresent()) {
+            return null;
+        } else {
+            BoardEntity boardEntity = temp.get();
+            BoardDTO boardDTO = BoardDTO.toDTO(boardEntity);
+            Optional<BoardImageEntity> imageOpt = boardImageRepository.findByBoardEntity(boardEntity);
+            if (imageOpt.isPresent()) {
+                BoardImageEntity image = imageOpt.get();
+                boardDTO.setBoardImageOriginalFileName(image.getOriginalFileName());
+                boardDTO.setBoardImageSavedFileName(image.getSavedFileName());
+            }
+            return boardDTO;
+        }
+    }
 }
