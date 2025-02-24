@@ -57,7 +57,10 @@
                 url: '/posts?page=' + page,
                 method: 'GET',
                 success: function(resp) {
-                    $('.recentPost').append(generatePostHTML(resp));
+                    $('.recentPost').append(generatePostHTML(resp.posts));
+                    if (resp.isLastPage) {
+                        $('#show-more-button').hide(); // 마지막 페이지면 버튼 숨기기
+                    }
                 }
             });
         }

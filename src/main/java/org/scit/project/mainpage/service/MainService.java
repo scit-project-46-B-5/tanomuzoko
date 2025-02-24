@@ -44,18 +44,24 @@ public class MainService {
     }
 
     public List<MainDTO> getTopPosts(String period) {
-        LocalDateTime startDate = period.equals("monthly") 
-            ? LocalDateTime.now().minusMonths(1)
-            : LocalDateTime.now().minusWeeks(1);
+        LocalDateTime startDate = period.equals("monthly")
+                ? LocalDateTime.now().minusMonths(1)
+                : LocalDateTime.now().minusWeeks(1);
 
         List<BoardEntity> topPosts = mainRepository.findTopPostsByHeartCount(startDate, PageRequest.of(0, 5));
 
         return topPosts.stream()
-            .map(entity -> {
+                .map(entity -> {
                     int heartCount = boardHeartRepository.countByBoardAndIsHeartedTrue(entity);
                     return MainDTO.toDTO(entity, heartCount);
-            })
-            .collect(Collectors.toList());
+                })
+                .collect(Collectors.toList());
+    }
+    
+    public boolean isLastPage(int page) {
+        int pageSize = 10;
+        Page<BoardEntity> nextPage = mainRepository.findAll(PageRequest.of(page + 1, pageSize));
+        return !nextPage.hasContent(); // 다음 페이지에 데이터가 없으면 마지막 페이지
     }
 
 }
