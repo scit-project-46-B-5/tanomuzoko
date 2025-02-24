@@ -56,7 +56,9 @@
             $.ajax({
                 url: '/posts?page=' + page,
                 method: 'GET',
-                success: outputRecentPosts
+                success: function(resp) {
+                    $('.recentPost').append(generatePostHTML(resp));
+                }
             });
         }
 
@@ -65,57 +67,28 @@
             $.ajax({
                 url: `/top-posts?filter=${filter}`,
                 method: 'GET',
-                success: outputPopularPosts
+                success: function(resp) {
+                    $('.popularPost').html(generatePostHTML(resp));
+                }
             });
         }
 
-        function outputRecentPosts(resp) {
-
+        function generatePostHTML(posts) {
             let tag = ``;
-
-            $.each(resp, function (index, item) {
-                tag += `
-                    <div class="gallery-item">
-                        <a class="gallery-link" href="/board/boardDetail?boardSeq=${item['boardSeq']}">
-                            <img src="" alt="레시피">
-                            <div class="gallery-text">
-                                <h4>${item['boardTitle']}</h4>
-                                <p>${item['boardContent']}</p>
-                                <span>❤️ ${item['heartCount']}</span>
-                            </div>
-                        </a>
-                    </div>
-                            `
-            });
-            $('.recentPost').append(tag);
-
-            if (resp.length < 10) {
-                $('#show-more-button').hide();
-                // $('#show-more-button').prop('disabled', true);
-            }
-        }
-
-
-
-
-        // 인기 게시글 출력
-        function outputPopularPosts(resp) {
-            let tag = ``;
-            $.each(resp, function (index, item) {
+            $.each(posts, function (index, item) {
                 tag += `
             <div class="gallery-item">
                 <a class="gallery-link" href="/board/boardDetail?boardSeq=${item['boardSeq']}">
                     <img src="" alt="레시피">
                     <div class="gallery-text">
                         <h4>${item['boardTitle']}</h4>
-                        <p>${item['boardContent']}</p>
                         <span>❤️ ${item['heartCount']}</span>
                     </div>
                 </a>
             </div>
         `;
             });
-            $('.popularPost').html(tag); // 기존 목록 초기화 후 새로 채우기
+            return tag;
         }
     </script>
 </head>
