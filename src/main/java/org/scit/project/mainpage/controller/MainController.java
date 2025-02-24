@@ -1,6 +1,8 @@
 package org.scit.project.mainpage.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.scit.project.mainpage.dto.MainDTO;
 import org.scit.project.mainpage.service.MainService;
@@ -27,11 +29,30 @@ public class MainController {
 
     @GetMapping("/posts")
     @ResponseBody
-    public List<MainDTO> getPosts(@RequestParam(value = "page", defaultValue = "0") int page) {
+    public Map<String, Object> getPosts(@RequestParam(value = "page", defaultValue = "0") int page) {
+        Map<String, Object> response = new HashMap<>();
 
         List<MainDTO> list = mainService.getPosts(page);
-        
-        return list;
+
+        boolean isLastPage = mainService.isLastPage(page);
+
+        response.put("posts", list);
+        response.put("isLastPage", isLastPage);
+
+        return response;
+    }
+    
+    @GetMapping("/top-posts")
+    @ResponseBody
+    public List<MainDTO> getTopPosts(@RequestParam(name = "filter", defaultValue = "weekly") String filter) {
+
+        List<MainDTO> topPosts = mainService.getTopPosts(filter);
+        return topPosts;
     }
 
+    @GetMapping("/top-liked")
+    @ResponseBody
+    public List<MainDTO> getTopLikedPosts() {
+        return mainService.getTopLikedPosts();
+    }
 }
