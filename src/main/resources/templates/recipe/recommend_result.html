@@ -26,27 +26,16 @@
                     </button>
 
                     <div class="recipe-info">
-                        <h2>닭볶음탕</h2>
+                        <h2 th:text="${recipe.title}"></h2>
 
                         <h3>🍽️ 재료</h3>
-                        <ul>
-                            <li>닭 1마리</li>
-                            <li>감자 2개</li>
-                            <li>당근 1개</li>
-                            <li>양파 1개</li>
-                            <li>고추장 3큰술</li>
-                            <li>간장 4큰술</li>
-                            <li>설탕 2큰술</li>
-                            <li>다진 마늘 1큰술</li>
+                        <ul >
+                            <li th:each="item, status : ${recipe.ingredients}" th:text="${item}"></li>
                         </ul>
 
                         <h3>👨‍🍳 만드는 방법</h3>
                         <ol>
-                            <li>닭을 깨끗이 씻어 물에 5분간 데친 후 헹궈줍니다.</li>
-                            <li>감자, 당근, 양파를 적당한 크기로 썰어줍니다.</li>
-                            <li>냄비에 닭과 양념장을 넣고 10분간 볶아줍니다.</li>
-                            <li>물을 넣고 끓이며 감자와 당근을 넣고 20분간 조립니다.</li>
-                            <li>양파를 넣고 5분 더 끓인 후 맛있게 즐깁니다!</li>
+                            <li th:each="item, status : ${recipe.cookingMethod}" th:text="${item}"></li>
                         </ol>
                     </div>
                 </div>

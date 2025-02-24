@@ -1,13 +1,17 @@
 package org.scit.project.recipe.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.scit.project.recipe.dto.RecipeUserRequestDTO;
+import org.scit.project.recipe.dto.RecipeUserResponseDTO;
 import org.scit.project.recipe.service.RecipeService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.RequiredArgsConstructor;
@@ -29,10 +33,11 @@ public class RecipeController {
     @PostMapping("/recipe/chatGPT")
     public String showExample(@ModelAttribute RecipeUserRequestDTO recipeUserRequestDTO, RedirectAttributes redirectAttributes) {
 
-        recipeService.sendRequestToChatGPT(recipeUserRequestDTO);
-        redirectAttributes.addFlashAttribute("recipe", recipeUserRequestDTO);
-        return "redirect:/recipe/recommend/output";
+        RecipeUserResponseDTO response = recipeService.sendRequestToChatGPT(recipeUserRequestDTO);
+        
+        redirectAttributes.addFlashAttribute("recipe", response);
 
+        return "redirect:/recipe/recommend/output";
     }
 
     @GetMapping("/recipe/recommend/output")
