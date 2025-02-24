@@ -5,6 +5,7 @@ import java.util.Map;
 import org.scit.project.board.dto.BoardDTO;
 import org.scit.project.board.service.BoardService;
 import org.scit.project.board.util.FileService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,6 +26,10 @@ import lombok.RequiredArgsConstructor;
 public class BoardController {
 
     private final BoardService boardService;
+    
+    // 실제 저장 경로 (application.properties에서 spring.servlet.multipart.location에 설정한 경로)
+    @Value("${spring.servlet.multipart.location}")
+    private String uploadPath;
 
     @GetMapping("/board")
     public String board() {
@@ -54,7 +59,6 @@ public class BoardController {
 
     @PostMapping("/upload")
     public ResponseEntity<Map<String, String>> uploadFile(@RequestParam("file") MultipartFile file) {
-        String uploadPath = "";  // 실제 저장 경로로 변경
         String savedFileName = FileService.saveFile(file, uploadPath);
 
         if (savedFileName == null) {
@@ -66,5 +70,24 @@ public class BoardController {
         Map<String, String> response = new HashMap<>();
         response.put("fileUrl", fileUrl);
         return ResponseEntity.ok(response);
+    }
+    
+    @PostMapping("/deleteFile")
+    public ResponseEntity<Map<String, String>> deleteFile(@RequestParam("fileUrl") String fileUrl) {
+        String savedFileName = "";
+        // 파일 URL이 "/uploads/..." 형태라면 이를 제거하여 저장된 파일 이름 추출
+        if(fileUrl.startsWith("/uploads/")) {
+            savedFileName = fileUrl.substring(9);
+        } else {
+            savedFileName = fileUrl;
+        }
+        String fullPath = uploadPath + "/" + savedFileName;
+        boolean result = FileService.deleteFile(fullPath);
+        if(result){
+            return ResponseEntity.ok(Map.of("message", "삭제 성공"));
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "파일 삭제 실패"));
+        }
     }
 }

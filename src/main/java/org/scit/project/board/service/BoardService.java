@@ -36,22 +36,32 @@ public class BoardService {
         BoardEntity savedBoard = boardRepository.save(entity);
 
         // 썸네일 값이 존재하면 board_image 테이블에 저장
-        if (boardDTO.getThumbnail() != null && !boardDTO.getThumbnail().isEmpty()) {
-            String fileUrl = boardDTO.getThumbnail();
-            // 파일 URL이 "/uploads/filename" 형태라면 파일명만 추출
-            String originalFileName = fileUrl.startsWith("/uploads/") ? fileUrl.substring(9) : fileUrl;
-            
-            // UUID 형식의 파일명 생성 (원본 파일명에 확장자가 있다면 그대로 사용)
-            String uuidFileName = UUID.randomUUID().toString();
-            if (originalFileName.contains(".")) {
-                String ext = originalFileName.substring(originalFileName.lastIndexOf("."));
-                uuidFileName += ext;
+        // thumbnailUrl: 업로드된 파일의 URL (예: "/uploads/강아지1_UUID.jpg")
+        // thumbnail: 에디터에 삽입된 base64 데이터 (원본_file_name으로 저장)
+        if (boardDTO.getThumbnailUrl() != null && !boardDTO.getThumbnailUrl().isEmpty()) {
+            String thumbnailUrl = boardDTO.getThumbnailUrl();
+            String savedFileName = "";
+            // URL 형태라면 FileService에서 생성한 파일명을 그대로 사용
+            if (thumbnailUrl.startsWith("/uploads/")) {
+                savedFileName = thumbnailUrl.substring(9); // "/uploads/" 제거
+            } else {
+                // 혹시 base64 형식이면 (예외 상황)
+                String newUUID = UUID.randomUUID().toString();
+                String ext = "";
+                if (thumbnailUrl.startsWith("data:image/")) {
+                    int slashIndex = thumbnailUrl.indexOf("/");
+                    int semicolonIndex = thumbnailUrl.indexOf(";");
+                    if (slashIndex != -1 && semicolonIndex != -1) {
+                        ext = "." + thumbnailUrl.substring(slashIndex + 1, semicolonIndex);
+                    }
+                }
+                savedFileName = "thumbnail_" + newUUID + ext;
             }
             
             BoardImageEntity imageEntity = BoardImageEntity.builder()
                 .boardEntity(savedBoard)
-                .originalFileName(originalFileName)  // 원본 파일명은 그대로 (base64 형식)
-                .savedFileName(uuidFileName)           // UUID 형식의 파일명 저장
+                .originalFileName(boardDTO.getThumbnail())  // base64 데이터를 그대로 저장
+                .savedFileName(savedFileName)                // "원본파일이름_UUID.확장자" 형식
                 .build();
             boardImageRepository.save(imageEntity);
         }
@@ -62,7 +72,15 @@ public class BoardService {
         if (!temp.isPresent()) {
             return null;
         } else {
-            return BoardDTO.toDTO(temp.get());
+            BoardEntity boardEntity = temp.get();
+            BoardDTO boardDTO = BoardDTO.toDTO(boardEntity);
+            Optional<BoardImageEntity> imageOpt = boardImageRepository.findByBoardEntity(boardEntity);
+            if (imageOpt.isPresent()) {
+                BoardImageEntity image = imageOpt.get();
+                boardDTO.setBoardImageOriginalFileName(image.getOriginalFileName());
+                boardDTO.setBoardImageSavedFileName(image.getSavedFileName());
+            }
+            return boardDTO;
         }
     }
 }
