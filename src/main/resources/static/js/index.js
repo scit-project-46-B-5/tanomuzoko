@@ -1,5 +1,71 @@
 $(document).ready(function () {
+    let currentPage = 0;
+    let currentFilter = "weekly"; // 기본값: 최신 게시글
+
+    // 초기 로드 (최신 게시글 + 인기 게시글 + 공감 수 상위 게시글)
+    initRecentPosts(currentPage);
+    initPopularPosts(currentFilter); // 기본값: 주간 인기글
     loadTopLikedPosts();
+
+    // "더보기" 버튼 클릭 시 추가 최신 게시글 로드
+    $('#show-more-button').click(function () {
+        currentPage++;
+        initRecentPosts(currentPage);
+    });
+
+    // "주간 인기글" 버튼 클릭 시
+    $('#weekly-button').click(function () {
+        currentFilter = "weekly";
+        initPopularPosts(currentFilter);
+    });
+
+    // "월간 인기글" 버튼 클릭 시
+    $('#monthly-button').click(function () {
+        currentFilter = "monthly";
+        initPopularPosts(currentFilter);
+    });
+
+    function initRecentPosts(page) {
+        $.ajax({
+            url: '/posts?page=' + page,
+            method: 'GET',
+            success: function (resp) {
+                $('.recentPost').append(generatePostHTML(resp.posts));
+                if (resp.isLastPage) {
+                    $('#show-more-button').hide(); // 마지막 페이지면 버튼 숨기기
+                }
+            }
+        });
+    }
+
+    // 주간/월간 인기 게시글 불러오기
+    function initPopularPosts(filter) {
+        $.ajax({
+            url: `/top-posts?filter=${filter}`,
+            method: 'GET',
+            success: function (resp) {
+                $('.popularPost').html(generatePostHTML(resp));
+            }
+        });
+    }
+
+    function generatePostHTML(posts) {
+        let tag = ``;
+        $.each(posts, function (index, item) {
+            tag += `
+            <div class="gallery-item">
+                <a class="gallery-link" href="/board/boardDetail?boardSeq=${item['boardSeq']}">
+                    <img src="" alt="레시피">
+                    <div class="gallery-text">
+                        <h4>${item['boardTitle']}</h4>
+                        <span>❤️ ${item['heartCount']}</span>
+                    </div>
+                </a>
+            </div>
+        `;
+        });
+        return tag;
+    }
 
     function loadTopLikedPosts() {
         $.ajax({
