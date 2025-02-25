@@ -11,12 +11,12 @@ import lombok.Setter;
 import lombok.ToString;
 
 @ToString
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Builder
 @AllArgsConstructor
 @Setter
 @Getter
-public class RecipeUserRequestDTO {
+public class RecipeUserRequestDTO  {
     String ingredients;
     String usage;
     String menu;
