@@ -14,6 +14,9 @@ import lombok.ToString;
 @Setter
 @Getter
 public class ReplyDTO {
-    private Integer sampleId;
-    private String sampleNmae;
+    
+    private Long replySeq;
+    private Long boardSeq;
+    private Long userSeq;
+    private String replyContent;
 }

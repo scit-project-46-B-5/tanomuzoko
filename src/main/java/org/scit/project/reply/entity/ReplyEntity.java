@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.scit.project.board.entity.BoardEntity;
+import org.scit.project.reply.dto.ReplyDTO;
 import org.scit.project.user.entity.UserEntity;
 
 import jakarta.persistence.Column;
@@ -48,7 +49,7 @@ public class ReplyEntity {
     @Column(name = "reply_content", nullable = false)
     private String replyContent;
 
-    @Column(name = "is_deleted")
+    @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 
     @Column(name = "create_date")
@@ -63,4 +64,11 @@ public class ReplyEntity {
         this.updateDate = LocalDateTime.now();
     }
 
+    public static ReplyEntity toEntity(ReplyDTO replyDTO, BoardEntity board, UserEntity user) {
+        return ReplyEntity.builder()
+            .board(board)
+            .user(user)
+            .replyContent(replyDTO.getReplyContent())
+            .build();
+    }
 }

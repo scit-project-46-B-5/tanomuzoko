@@ -46,33 +46,42 @@ $(document).ready(function () {
 });
 
 // 댓글 추가 함수
-function addComment() {
-    let commentInput = $("#comment-input");
-    let commentList = $("#comment-list");
+function addReply() {
+    let commentInput = $("#comment-input").val();
+    let boardSeq = $('#boardSeq').val();
 
-    if (commentInput.val().trim() !== '') {
-        let newComment = `<div class="comment">
-                            <div class="user-info">익명</div>
-                            <div class="user-text">${commentInput.val()}</div>
-                          </div>`;
-        commentList.append(newComment);
-        commentInput.val('');
-    }
+    // if (commentInput.trim() !== '') {
+    //     let newComment = `<div class="comment">
+    //                         <div class="user-info">익명</div>
+    //                         <div class="user-text">${commentInput.val()}</div>
+    //                       </div>`;
+    //     commentList.append(newComment);
+    //     commentInput.val('');
+    // }
+
+    $.ajax({
+        url: '/reply/addReply',
+        method: 'POST',
+        data: { "boardSeq": boardSeq, "replyContent": commentInput },
+        success: function () {
+            $("#comment-input").val('');
+        }
+    })
 }
 
-function addComment() {
-    let commentInput = document.getElementById('comment-input');
-    let commentList = document.getElementById('comment-list');
+// function addComment() {
+//     let commentInput = document.getElementById('comment-input');
+//     let commentList = document.getElementById('comment-list');
 
-    if (commentInput.value.trim() !== '') {
-        let newComment = document.createElement('div');
-        newComment.classList.add('comment');
-        newComment.innerHTML = `<div class="user-info">익명</div>
-                                        <div class="text">${commentInput.value}</div>`;
-        commentList.appendChild(newComment);
-        commentInput.value = '';
-    }
-}
+//     if (commentInput.value.trim() !== '') {
+//         let newComment = document.createElement('div');
+//         newComment.classList.add('comment');
+//         newComment.innerHTML = `<div class="user-info">익명</div>
+//                                         <div class="text">${commentInput.value}</div>`;
+//         commentList.appendChild(newComment);
+//         commentInput.value = '';
+//     }
+// }
 
 // 작성자의 다른 글을 동적으로 추가하는 함수
 function loadAuthorPosts(author) {
