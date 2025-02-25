@@ -1,4 +1,4 @@
-package org.scit.project.comment.entity;
+package org.scit.project.reply.entity;
 
 
 import jakarta.persistence.Column;
@@ -20,7 +20,7 @@ import lombok.Setter;
 @Builder
 @Entity
 @Table(name = "sample")
-public class CommentEntity {
+public class ReplyEntity {
     
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "sample")

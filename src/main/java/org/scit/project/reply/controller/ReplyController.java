@@ -1,10 +1,10 @@
-package org.scit.project.comment.controller;
+package org.scit.project.reply.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class CommentController {
+public class ReplyController {
     
 
     // @GetMapping({"/",""})

@@ -1,4 +1,4 @@
-package org.scit.project.comment.dto;
+package org.scit.project.reply.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +13,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Setter
 @Getter
-public class CommentDTO {
+public class ReplyDTO {
     private Integer sampleId;
     private String sampleNmae;
 }
