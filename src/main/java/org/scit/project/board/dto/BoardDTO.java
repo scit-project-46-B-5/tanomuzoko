@@ -1,10 +1,8 @@
 package org.scit.project.board.dto;
 
 import java.time.LocalDateTime;
-
 import org.scit.project.board.entity.BoardEntity;
 import org.springframework.web.multipart.MultipartFile;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,10 +28,20 @@ public class BoardDTO {
     private LocalDateTime updateDate;
     private Boolean isDeleted;
 
-	private MultipartFile uploadFile;
+    private MultipartFile uploadFile;
     
-	public static BoardDTO toDTO(BoardEntity boardEntity) {
-		return BoardDTO.builder()
+    // 드랍존에서 지정한 썸네일 파일의 base64 데이터 (원본_file_name으로 저장)
+    private String thumbnail;
+    
+    // 업로드된 파일의 URL (FileService에서 생성한, 원본파일이름과 확장자가 포함된 값)
+    private String thumbnailUrl;
+    
+    // 추가된 board_image 정보
+    private String boardImageOriginalFileName;
+    private String boardImageSavedFileName;
+    
+    public static BoardDTO toDTO(BoardEntity boardEntity) {
+        return BoardDTO.builder()
                 .boardSeq(boardEntity.getBoardSeq())
                 .boardWriter(boardEntity.getUserEntity().getUserName())
                 .boardTitle(boardEntity.getBoardTitle())
@@ -43,5 +51,5 @@ public class BoardDTO {
                 .updateDate(boardEntity.getUpdateDate())
                 .isDeleted(boardEntity.getIsDeleted())
                 .build();
-	}
+    }
 }
