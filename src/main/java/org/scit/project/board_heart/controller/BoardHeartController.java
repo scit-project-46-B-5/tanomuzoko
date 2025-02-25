@@ -41,8 +41,6 @@ public class BoardHeartController {
         boolean isHearted = boardHeartService.isHearted(boardSeq, userId);
         int heartCount = boardHeartService.getHeartCount(boardSeq);
 
-        log.info("====={}", heartCount);
-
         return ResponseEntity.ok(new BoardHeartResponseDTO(isHearted, heartCount));
     }
 }
