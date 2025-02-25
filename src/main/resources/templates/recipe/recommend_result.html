@@ -26,15 +26,15 @@
                     </button>
 
                     <div class="recipe-info">
-                        <h2 th:text="${recipe.title}"></h2>
+                        <h2 th:text="${recipe.title}" class="recipe-title"></h2>
 
                         <h3>🍽️ 재료</h3>
-                        <ul >
+                        <ul class="recipe-ingredients">
                             <li th:each="item, status : ${recipe.ingredients}" th:text="${item}"></li>
                         </ul>
 
-                        <h3>👨‍🍳 만드는 방법</h3>
-                        <ol>
+                        <h3 class="recipe-steps-header">👨‍🍳 만드는 방법</h3>
+                        <ol class="recipe-steps">
                             <li th:each="item, status : ${recipe.cookingMethod}" th:text="${item}"></li>
                         </ol>
                     </div>
