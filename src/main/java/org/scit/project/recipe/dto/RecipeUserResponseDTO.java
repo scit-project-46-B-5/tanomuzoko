@@ -17,15 +17,17 @@ import lombok.ToString;
 @Setter
 @Getter
 public class RecipeUserResponseDTO  {
-    String title;
-    String[] ingredients;
-    String[] cookingMethod;
+    private String title;
+    private String[] ingredients;
+    private String[] cookingMethods;
+    private RecipeConditionDTO recipeConditionDTO;
 
-    public static RecipeUserResponseDTO TODTO(String title, String[] ingredients, String[] cookingMethods) {
+    public static RecipeUserResponseDTO TODTO(String title, String[] ingredients, String[] cookingMethods, RecipeConditionDTO recipeConditionDTO) {
         return RecipeUserResponseDTO.builder()
                                     .title(title)
                                     .ingredients(ingredients)
-                                    .cookingMethod(cookingMethods)
+                                    .cookingMethods(cookingMethods)
+                                    .recipeConditionDTO(recipeConditionDTO)
                                     .build();
     }
 }

@@ -74,7 +74,9 @@ public class RecipeService {
                     steps.add(matcher.group(1).trim());
                 }
                 String[] cookingMethods = steps.toArray(new String[0]);
-                return RecipeUserResponseDTO.TODTO(title, ingredients, cookingMethods);
+                return RecipeUserResponseDTO.TODTO(title, ingredients, cookingMethods, 
+                                                            recipeUserRequestDTO.getRecipeConditionDTO()
+                                                    );
             } else {
                 throw new RuntimeException("choiesNode가 array형태가 아닙니다.");
             }

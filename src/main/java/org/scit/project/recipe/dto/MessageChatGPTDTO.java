@@ -52,14 +52,11 @@ public class MessageChatGPTDTO implements Serializable {
                     조리방법: ~~합니다.
                             ~~합니다.
                 """, recipeUserRequestDTO.getIngredients(), 
-                    recipeUserRequestDTO.getUsage(),
-                    recipeUserRequestDTO.getMenu(),
-                    recipeUserRequestDTO.getTaste(), 
-                    recipeUserRequestDTO.getLevel()
+                    recipeUserRequestDTO.getRecipeConditionDTO().getUsage(),
+                    recipeUserRequestDTO.getRecipeConditionDTO().getMenu(),
+                    recipeUserRequestDTO.getRecipeConditionDTO().getTaste(), 
+                    recipeUserRequestDTO.getRecipeConditionDTO().getLevel()
         );
-
-        log.info("content: {}", content);
-
 
         return MessageChatGPTDTO.builder()
                                     .role("user")

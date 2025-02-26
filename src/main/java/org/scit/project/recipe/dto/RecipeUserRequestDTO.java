@@ -17,9 +17,6 @@ import lombok.ToString;
 @Setter
 @Getter
 public class RecipeUserRequestDTO  {
-    String ingredients;
-    String usage;
-    String menu;
-    String taste;
-    String level;
+    private String ingredients;
+    private RecipeConditionDTO recipeConditionDTO;
 }
