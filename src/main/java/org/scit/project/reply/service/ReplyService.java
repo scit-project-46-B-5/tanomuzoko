@@ -48,12 +48,23 @@ public class ReplyService {
             throw new IllegalArgumentException("게시글이 존재하지 않습니다.");
         }
 
-        List<ReplyEntity> replyEntityList = replyRepository.findAllByBoardAndIsDeletedFalse(boardOpt, Sort.by(Sort.Direction.DESC, "replySeq"));
-        
+        List<ReplyEntity> replyEntityList = replyRepository.findAllByBoardAndIsDeletedFalse(boardOpt,
+                Sort.by(Sort.Direction.DESC, "replySeq"));
+
         List<ReplyDTO> list = new ArrayList<>();
 
         replyEntityList.forEach((entity) -> list.add(ReplyDTO.toDTO(entity)));
 
         return list;
+    }
+    
+    public void deleteReply(Long replySeq) {
+        Optional<ReplyEntity> replyOpt = replyRepository.findById(replySeq);
+        if (replyOpt.isPresent()) {
+            ReplyEntity replyEntity = replyOpt.get();
+            replyEntity.setIsDeleted(true);
+            replyRepository.save(replyEntity);
+        }
+
     }
 }

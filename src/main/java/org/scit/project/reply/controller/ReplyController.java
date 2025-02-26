@@ -36,4 +36,10 @@ public class ReplyController {
         List<ReplyDTO> list = replyService.getReply(boardSeq);
         return list;
     }
+
+    // 댓글 삭제
+    @GetMapping("/deleteReply")
+    public void deleteReply(@RequestParam(name = "replySeq") Long replySeq) {
+        replyService.deleteReply(replySeq);
+    }
 }

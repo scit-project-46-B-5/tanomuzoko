@@ -58,13 +58,12 @@ function initReplies() {
         data: { "boardSeq": boardSeq },
         success: function (resp) {
             let tag = ``;
-            console.log(resp);
             $.each(resp, function (index, item) { 
                 tag += `
                 <div class="comment">
                     <div class="user-info">${item['replyWriter']}</div>
                     <div class="user-text">${item['replyContent']}</div>
-                    
+                    <div><button onclick="deleteReply(${item['replySeq']})">삭제</button></div>
                 </div>
                 `
             })
@@ -91,6 +90,21 @@ function addReply() {
             $("#comment-input").val('');
         }
     })
+}
+
+// 댓글 삭제 함수
+function deleteReply(replySeq) {
+    let answer = confirm('삭제하시겠습니까?');
+
+    if (!answer) {
+        return;
+    }
+    $.ajax({
+        url: '/reply/deleteReply',
+        method: 'GET',
+        data: { "replySeq": replySeq },
+        success: initReplies
+    });
 }
 
 // 작성자의 다른 글을 동적으로 추가하는 함수
