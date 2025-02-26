@@ -51,6 +51,7 @@ $(document).ready(function () {
 // 댓글 초기화
 function initReplies() {
     let boardSeq = $('#boardSeq').val();
+    let loginId = $('#loginId').val();
 
     $.ajax({
         url: '/reply/getReply',
@@ -63,12 +64,18 @@ function initReplies() {
                 <div class="comment" data-reply-seq="${item['replySeq']}">
                     <div class="user-info">${item['replyWriter']}</div>
                     <div class="user-text">${item['replyContent']}</div>
-                    <div>
-                        <button onclick="deleteReply(${item['replySeq']})">삭제</button>
-                        <button onclick="editReply(${item['replySeq']}, '${item['replyContent']}')">수정</button>
-                    </div>
-                </div>
-                `
+                `;
+
+                if (loginId === item['userId']) {
+                    tag += `
+                        <div>
+                            <button onclick="deleteReply(${item['replySeq']})">삭제</button>
+                            <button onclick="editReply(${item['replySeq']}, '${item['replyContent']}')">수정</button>
+                        </div>
+                    `;
+                }
+
+                tag += `</div>`;              
             })
             $('#comment-list').html(tag);
         }
@@ -104,7 +111,7 @@ function deleteReply(replySeq) {
     }
     $.ajax({
         url: '/reply/deleteReply',
-        method: 'GET',
+        method: 'POST',
         data: { "replySeq": replySeq },
         success: initReplies
     });

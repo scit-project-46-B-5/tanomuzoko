@@ -38,14 +38,19 @@ public class ReplyController {
     }
 
     // 댓글 삭제
-    @GetMapping("/deleteReply")
-    public void deleteReply(@RequestParam(name = "replySeq") Long replySeq) {
-        replyService.deleteReply(replySeq);
+    @PostMapping("/deleteReply")
+    public void deleteReply(@RequestParam(name = "replySeq") Long replySeq, 
+                            @AuthenticationPrincipal LoginUserDetails loginUserDetails) {
+        Long userSeq = loginUserDetails.getUserSeq();
+        replyService.deleteReply(replySeq, userSeq);
     }
 
     // 댓글 수정
     @PostMapping("/updateReply")
-    public void updateReply(@RequestParam(name = "replySeq") Long replySeq, @RequestParam("replyContent") String replyContent) {
-        replyService.updateReply(replySeq, replyContent);
+    public void updateReply(@RequestParam(name = "replySeq") Long replySeq,
+                            @RequestParam("replyContent") String replyContent,
+                            @AuthenticationPrincipal LoginUserDetails loginUserDetails) {
+        Long userSeq = loginUserDetails.getUserSeq();
+        replyService.updateReply(replySeq, replyContent, userSeq);
     }
 }

@@ -113,6 +113,7 @@
             <div class="comment-section">
                 <div class="comment-wrapper">
                     <h2>댓글</h2>
+                    <input type="hidden" th:value="${#authentication.name}" id="loginId">
                     <div class="comment-box">
                         <input type="text" id="comment-input" placeholder="댓글을 입력하세요" />
                         <button onclick="addReply()">등록</button>

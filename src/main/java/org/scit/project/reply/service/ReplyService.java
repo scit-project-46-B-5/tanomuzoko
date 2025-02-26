@@ -58,22 +58,33 @@ public class ReplyService {
         return list;
     }
     
-    public void deleteReply(Long replySeq) {
+    public void deleteReply(Long replySeq, Long userSeq) {
         Optional<ReplyEntity> replyOpt = replyRepository.findById(replySeq);
-        if (replyOpt.isPresent()) {
-            ReplyEntity replyEntity = replyOpt.get();
-            replyEntity.setIsDeleted(true);
-            replyRepository.save(replyEntity);
+        if (replyOpt.isEmpty()) {
+            throw new IllegalArgumentException("댓글이 존재하지 않습니다.");
         }
-
+        
+        ReplyEntity replyEntity = replyOpt.get();
+        if (!replyEntity.getUser().getUserSeq().equals(userSeq)) {
+            throw new RuntimeException("본인의 댓글만 삭제할 수 있습니다.");
+        }
+        
+        replyEntity.setIsDeleted(true);
+        replyRepository.save(replyEntity);
     }
 
-    public void updateReply(Long replySeq, String replyContent) {
+    public void updateReply(Long replySeq, String replyContent, Long userSeq) {
         Optional<ReplyEntity> replyOpt = replyRepository.findById(replySeq);
-        if (replyOpt.isPresent()) {
-            ReplyEntity replyEntity = replyOpt.get();
-            replyEntity.setReplyContent(replyContent);
-            replyRepository.save(replyEntity);
+        if (replyOpt.isEmpty()) {
+            throw new IllegalArgumentException("댓글이 존재하지 않습니다.");
         }
+
+        ReplyEntity replyEntity = replyOpt.get();
+        if (!replyEntity.getUser().getUserSeq().equals(userSeq)) {
+            throw new RuntimeException("본인의 댓글만 수정할 수 있습니다.");
+        }
+
+        replyEntity.setReplyContent(replyContent);
+        replyRepository.save(replyEntity);
     }
 }
