@@ -50,7 +50,8 @@ public class ReplyEntity {
     private String replyContent;
 
     @Column(name = "is_deleted", nullable = false)
-    private Boolean isDeleted;
+    @Builder.Default
+    private Boolean isDeleted = false;
 
     @Column(name = "create_date")
     @CreationTimestamp
