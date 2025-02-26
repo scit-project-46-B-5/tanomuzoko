@@ -60,10 +60,13 @@ function initReplies() {
             let tag = ``;
             $.each(resp, function (index, item) { 
                 tag += `
-                <div class="comment">
+                <div class="comment" data-reply-seq="${item['replySeq']}">
                     <div class="user-info">${item['replyWriter']}</div>
                     <div class="user-text">${item['replyContent']}</div>
-                    <div><button onclick="deleteReply(${item['replySeq']})">삭제</button></div>
+                    <div>
+                        <button onclick="deleteReply(${item['replySeq']})">삭제</button>
+                        <button onclick="editReply(${item['replySeq']}, '${item['replyContent']}')">수정</button>
+                    </div>
                 </div>
                 `
             })
@@ -105,6 +108,51 @@ function deleteReply(replySeq) {
         data: { "replySeq": replySeq },
         success: initReplies
     });
+}
+
+// 댓글 수정 함수
+function editReply(replySeq, replyContent) {
+    let $commentDiv = $(`.comment[data-reply-seq="${replySeq}"]`);
+    
+    let editForm = `
+        <div class="edit-form">
+            <input type="text" id="edit-input-${replySeq}" value="${replyContent}">
+            <button onclick="updateReply(${replySeq})">저장</button>
+            <button onclick="cancelEdit(${replySeq}, '${replyContent}')">취소</button>
+        </div>
+    `;
+
+    $commentDiv.find('.user-text').hide();
+    $commentDiv.find('div:last-child').hide();
+    $commentDiv.append(editForm);
+}
+
+// 댓글 수정 요청
+function updateReply(replySeq) {
+    let newContent = $(`#edit-input-${replySeq}`).val();
+
+    if (newContent.trim() === '') {
+        alert('댓글 내용을 입력해주세요.');
+        return;
+    }
+
+    $.ajax({
+        url: '/reply/updateReply',
+        method: 'POST',
+        data: { "replySeq": replySeq, "replyContent": newContent },
+        success: function () {
+            initReplies();
+        }
+    });
+}
+
+// 댓글 수정 취소 함수
+function cancelEdit(replySeq, originalContent) {
+    let $commentDiv = $(`.comment[data-reply-seq="${replySeq}"]`);
+
+    $commentDiv.find('.edit-form').remove();
+    $commentDiv.find('.user-text').text(originalContent).show();
+    $commentDiv.find('div:last-child').show();
 }
 
 // 작성자의 다른 글을 동적으로 추가하는 함수

@@ -67,4 +67,13 @@ public class ReplyService {
         }
 
     }
+
+    public void updateReply(Long replySeq, String replyContent) {
+        Optional<ReplyEntity> replyOpt = replyRepository.findById(replySeq);
+        if (replyOpt.isPresent()) {
+            ReplyEntity replyEntity = replyOpt.get();
+            replyEntity.setReplyContent(replyContent);
+            replyRepository.save(replyEntity);
+        }
+    }
 }

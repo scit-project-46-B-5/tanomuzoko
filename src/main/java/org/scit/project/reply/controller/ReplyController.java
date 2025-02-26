@@ -42,4 +42,10 @@ public class ReplyController {
     public void deleteReply(@RequestParam(name = "replySeq") Long replySeq) {
         replyService.deleteReply(replySeq);
     }
+
+    // 댓글 수정
+    @PostMapping("/updateReply")
+    public void updateReply(@RequestParam(name = "replySeq") Long replySeq, @RequestParam("replyContent") String replyContent) {
+        replyService.updateReply(replySeq, replyContent);
+    }
 }
