@@ -43,45 +43,55 @@ $(document).ready(function () {
 
     // 페이지 로딩 시 공감 상태 가져오기
     fetchHeartStatus();
+
+    // 댓글 초기화( 댓글 전체 조회 )
+    initReplies();
 });
+
+// 댓글 초기화
+function initReplies() {
+    let boardSeq = $('#boardSeq').val();
+
+    $.ajax({
+        url: '/reply/getReply',
+        method: 'GET',
+        data: { "boardSeq": boardSeq },
+        success: function (resp) {
+            let tag = ``;
+            console.log(resp);
+            $.each(resp, function (index, item) { 
+                tag += `
+                <div class="comment">
+                    <div class="user-info">${item['replyWriter']}</div>
+                    <div class="user-text">${item['replyContent']}</div>
+                    
+                </div>
+                `
+            })
+            $('#comment-list').html(tag);
+        }
+    })
+}
 
 // 댓글 추가 함수
 function addReply() {
     let commentInput = $("#comment-input").val();
     let boardSeq = $('#boardSeq').val();
 
-    // if (commentInput.trim() !== '') {
-    //     let newComment = `<div class="comment">
-    //                         <div class="user-info">익명</div>
-    //                         <div class="user-text">${commentInput.val()}</div>
-    //                       </div>`;
-    //     commentList.append(newComment);
-    //     commentInput.val('');
-    // }
+    if (commentInput.trim() == '') {
+        return;
+    }
 
     $.ajax({
         url: '/reply/addReply',
         method: 'POST',
         data: { "boardSeq": boardSeq, "replyContent": commentInput },
         success: function () {
+            initReplies();
             $("#comment-input").val('');
         }
     })
 }
-
-// function addComment() {
-//     let commentInput = document.getElementById('comment-input');
-//     let commentList = document.getElementById('comment-list');
-
-//     if (commentInput.value.trim() !== '') {
-//         let newComment = document.createElement('div');
-//         newComment.classList.add('comment');
-//         newComment.innerHTML = `<div class="user-info">익명</div>
-//                                         <div class="text">${commentInput.value}</div>`;
-//         commentList.appendChild(newComment);
-//         commentInput.value = '';
-//     }
-// }
 
 // 작성자의 다른 글을 동적으로 추가하는 함수
 function loadAuthorPosts(author) {

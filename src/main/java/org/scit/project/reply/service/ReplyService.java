@@ -1,5 +1,7 @@
 package org.scit.project.reply.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.scit.project.board.entity.BoardEntity;
@@ -9,6 +11,7 @@ import org.scit.project.reply.entity.ReplyEntity;
 import org.scit.project.reply.repository.ReplyRepository;
 import org.scit.project.user.entity.UserEntity;
 import org.scit.project.user.repository.UserRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -30,12 +33,27 @@ public class ReplyService {
         }
 
         BoardEntity board = boardOpt.get();
-        UserEntity user = replyDTO.getUserSeq() != null 
-                          ? userRepository.findById(replyDTO.getUserSeq()).orElse(null)
+        UserEntity user = replyDTO.getUserSeq() != null
+                ? userRepository.findById(replyDTO.getUserSeq()).orElse(null)
                 : null; // 유저가 없을 경우 null 처리
 
         ReplyEntity replyEntity = ReplyEntity.toEntity(replyDTO, board, user);
 
         replyRepository.save(replyEntity);
+    }
+    
+    public List<ReplyDTO> getReply(Long boardSeq) {
+        Optional<BoardEntity> boardOpt = boardRepository.findById(boardSeq);
+        if (boardOpt.isEmpty()) {
+            throw new IllegalArgumentException("게시글이 존재하지 않습니다.");
+        }
+
+        List<ReplyEntity> replyEntityList = replyRepository.findAllByBoardAndIsDeletedFalse(boardOpt, Sort.by(Sort.Direction.DESC, "replySeq"));
+        
+        List<ReplyDTO> list = new ArrayList<>();
+
+        replyEntityList.forEach((entity) -> list.add(ReplyDTO.toDTO(entity)));
+
+        return list;
     }
 }
