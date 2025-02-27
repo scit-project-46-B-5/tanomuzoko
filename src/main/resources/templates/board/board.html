@@ -6,6 +6,11 @@
         <title>갤러리형 게시판</title>
         <link rel="stylesheet" href="../../static/css/globalstyles.css" th:href="@{/css/globalstyles.css}" />
         <link rel="stylesheet" href="../../static/css/board.css" th:href="@{/css/board.css}"/>
+	
+		<!-- jquery -->        
+    	<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+        <!-- board.js -->
+		<script defer th:src="@{/js/board.js}"></script>
     </head>
     <body>
         <div class="container">
@@ -24,78 +29,11 @@
 		        	<a th:href="@{/board/boardWrite}" class="write-btn">글쓰기</a>
 		        </div>
 			</div>
-
-            <div class="gallery">
-                <div class="gallery-item">
-                    <a class="gallery-link" href="detail.html">
-                        <img
-                            src="https://semie.cooking/image/contents/recipe/px/rh/jaowrvzg/IRD/143210130axpn.jpg"
-                            alt="레시피"
-                        />
-                        <div class="gallery-text">
-                            <h4>맛있는 파스타 만들기</h4>
-                            <p>간단하게 만들 수 있는 크림 파스타 레시피</p>
-                            <span>❤️ 124</span>
-                        </div>
-                    </a>
-                </div>
-
-                <div class="gallery-item">
-                    <a class="gallery-link" href="#">
-                        <img
-                            src="https://recipe1.ezmember.co.kr/cache/recipe/2023/08/26/41eb2344b4e6a719c209ca55ed91c3f31.jpg"
-                            alt="레시피"
-                        />
-                        <div class="gallery-text">
-                            <h4>자취생을 위한 초간단 김치볶음밥</h4>
-                            <p>10분이면 충분한 초스피드 요리</p>
-                            <span>❤️ 89</span>
-                        </div>
-                    </a>
-                </div>
-
-                <div class="gallery-item">
-                    <a class="gallery-link" href="#">
-                        <img
-                            src="https://recipe1.ezmember.co.kr/cache/recipe/2023/07/06/6d636a7976e5afb6d0050d167eb39fe01.jpg"
-                            alt="레시피"
-                        />
-                        <div class="gallery-text">
-                            <h4>엄마 손맛 된장찌개</h4>
-                            <p>진한 국물이 일품인 집밥 레시피</p>
-                            <span>❤️ 200</span>
-                        </div>
-                    </a>
-                </div>
-
-                <div class="gallery-item">
-                    <a class="gallery-link" href="#">
-                        <img
-                            src="https://image.ytn.co.kr/general/jpg/2021/1102/202111020854337568_d.jpg"
-                            alt="레시피"
-                        />
-                        <div class="gallery-text">
-                            <h4>초간단 디저트, 오레오 티라미수</h4>
-                            <p>3가지 재료만 있으면 OK!</p>
-                            <span>❤️ 56</span>
-                        </div>
-                    </a>
-                </div>
-
-                <div class="gallery-item">
-                    <a class="gallery-link" href="#">
-                        <img
-                            src="https://i.namu.wiki/i/poj3srIlqP-GipsjqmxWSwkTB9rC6SIeXC9EzE4t652HfKf4ottUP0RGOExdk9WRvDKFbTrp1lJW6ZXBjxUugQ.webp"
-                            alt="레시피"
-                        />
-                        <div class="gallery-text">
-                            <h4>초간단 닭도리탕 재료만있으면 뚝딱</h4>
-                            <p>3가지 재료만 있으면 OK!</p>
-                            <span>❤️ 56</span>
-                        </div>
-                    </a>
-                </div>
-            </div>
+			
+            <div class="gallery recentPost">
+    			<!-- AJAX로 동적으로 게시글 추가 -->
+			</div>
+            
             <div class="show-more">
                 <button id="show-more-button">
                     <img src="../../static/image/down-arrow.png" th:src="@{/image/down-arrow.png}" alt="더보기" />
