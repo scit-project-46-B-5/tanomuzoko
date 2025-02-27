@@ -23,6 +23,7 @@ public class SecurityConfig {
                                 "/recipe/**",
                                 "/api/v1/email/**",
                                 "/posts",
+                                "/reply/getReply",
                                 "/board/**",
                                 "/user/idCheck",
                                 "/user/nameCheck",
