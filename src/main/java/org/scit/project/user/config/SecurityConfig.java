@@ -25,6 +25,7 @@ public class SecurityConfig {
                                 "/posts",
                                 "/top-posts",
                                 "/top-liked",
+                                "/heart/status",
                                 "/board/**",
                                 "/user/idCheck",
                                 "/user/nameCheck",

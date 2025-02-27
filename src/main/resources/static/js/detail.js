@@ -11,8 +11,12 @@ $(document).ready(function () {
         $.ajax({
             url: `/heart/status?boardSeq=${boardSeq}`,
             type: "GET",
-            success: function (response) {
-                updateHeartUI(response.isHearted, response.heartCount);
+            success: function (resp) {
+                updateHeartUI(resp.isHearted, resp.heartCount);
+
+                if (!resp.isLoggedIn) {
+                    $("#like-btn").prop("disabled", true);
+                }
             },
             error: function () {
                 console.error("공감 상태를 불러오지 못했습니다.");
@@ -22,11 +26,15 @@ $(document).ready(function () {
 
     // 공감 버튼 클릭 이벤트
     $("#like-btn").click(function () {
+        if ($(this).prop("disabled")) {
+            return;
+        }
+
         $.ajax({
             url: `/heart/toggle?boardSeq=${boardSeq}`,
             type: "POST",
-            success: function (response) {
-                updateHeartUI(response.isHearted, response.heartCount);
+            success: function (resp) {
+                updateHeartUI(resp.isHearted, resp.heartCount);
             },
             error: function () {
                 console.error("공감 요청에 실패했습니다.");

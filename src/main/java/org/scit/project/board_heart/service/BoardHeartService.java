@@ -42,7 +42,7 @@ public class BoardHeartService {
 
         int heartCount = boardHeartRepository.countByBoardAndIsHeartedTrue(board);
 
-        return new BoardHeartResponseDTO(isHearted, heartCount);
+        return new BoardHeartResponseDTO(true, isHearted, heartCount);
     }
 
     public boolean isHearted(Long boardSeq, Long userId) {
@@ -60,5 +60,16 @@ public class BoardHeartService {
         BoardEntity board = boardRepository.findById(boardSeq)
                 .orElseThrow(() -> new RuntimeException("해당 게시글을 찾을 수 없습니다."));
         return boardHeartRepository.countByBoardAndIsHeartedTrue(board);
+    }
+
+    public BoardHeartResponseDTO getHeartStatus(Long boardSeq, Long userId) {
+        int heartCount = getHeartCount(boardSeq);
+
+        if (userId == null) {
+            return new BoardHeartResponseDTO(false, false, heartCount);
+        }
+
+        boolean isHearted = isHearted(boardSeq, userId);
+        return new BoardHeartResponseDTO(true, isHearted, heartCount);
     }
 }
