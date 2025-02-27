@@ -40,18 +40,15 @@ public class MainService {
                 .collect(Collectors.toList());
     }
 
-    public List<MainDTO> getTopPosts(String period) {
+    public List<MainDTO> getTop5LikedPostsByPeriod(String period) {
         LocalDateTime startDate = period.equals("monthly")
                 ? LocalDateTime.now().minusMonths(1)
                 : LocalDateTime.now().minusWeeks(1);
 
-        List<BoardEntity> topPosts = mainRepository.findTopPostsByHeartCount(startDate, PageRequest.of(0, 5));
-
+        List<BoardWithHeartCountDTO> topPosts = mainRepository.findTopPostsByPeriodAndHeartCount(startDate, PageRequest.of(0, 5));
+        
         return topPosts.stream()
-                .map(entity -> {
-                    int heartCount = boardHeartRepository.countByBoardAndIsHeartedTrue(entity);
-                    return MainDTO.toDTO(entity, heartCount);
-                })
+                .map(dto -> MainDTO.toDTO(dto.getBoard(), dto.getHeartCount()))
                 .collect(Collectors.toList());
     }
     
