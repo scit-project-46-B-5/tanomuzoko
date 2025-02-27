@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.scit.project.mainpage.dto.MainDTO;
+import org.scit.project.mainpage.dto.PostResponseDTO;
 import org.scit.project.mainpage.service.MainService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,17 +30,11 @@ public class MainController {
 
     @GetMapping("/posts")
     @ResponseBody
-    public Map<String, Object> getPosts(@RequestParam(value = "page", defaultValue = "0") int page) {
-        Map<String, Object> response = new HashMap<>();
-
+    public PostResponseDTO getPosts(@RequestParam(value = "page", defaultValue = "0") int page) {
         List<MainDTO> list = mainService.getPosts(page);
-
         boolean isLastPage = mainService.isLastPage(page);
 
-        response.put("posts", list);
-        response.put("isLastPage", isLastPage);
-
-        return response;
+        return new PostResponseDTO(list , isLastPage);
     }
     
     @GetMapping("/top-posts")
