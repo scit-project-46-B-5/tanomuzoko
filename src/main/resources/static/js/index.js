@@ -54,11 +54,11 @@ $(document).ready(function () {
         $.each(posts, function (index, item) {
             tag += `
             <div class="gallery-item">
-                <a class="gallery-link" href="/board/boardDetail?boardSeq=${item['boardSeq']}">
+                <a class="gallery-link" href="/board/boardDetail?boardSeq=${escapeHTML(item['boardSeq'].toString())}">
                     <img src="" alt="레시피">
                     <div class="gallery-text">
-                        <h4>${item['boardTitle']}</h4>
-                        <span>❤️ ${item['heartCount']}</span>
+                        <h4>${escapeHTML(item['boardTitle'])}</h4>
+                        <span>❤️ ${escapeHTML(item['heartCount'].toString())}</span>
                     </div>
                 </a>
             </div>
@@ -108,12 +108,20 @@ $(document).ready(function () {
                 <div>
                     <div class="footer">
                         <div class="badge">랭킹 ${index + 1}위</div>
-                        <span>${item['boardTitle']}</span>
-                        <a href="/board/boardDetail?boardSeq=${item['boardSeq']}">게시글 바로가기 →</a>
+                        <span>${escapeHTML(item['boardTitle'])}</span>
+                        <a href="/board/boardDetail?boardSeq=${escapeHTML(item['boardSeq'].toString())}"">게시글 바로가기 →</a>
                     </div>
                 </div>
             `;
         });
         return tag;
+    }
+
+    function escapeHTML(str) {
+        return str.replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
     }
 });
