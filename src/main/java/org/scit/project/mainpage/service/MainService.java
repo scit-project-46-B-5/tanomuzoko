@@ -58,19 +58,11 @@ public class MainService {
         return !nextPage.hasContent(); // 다음 페이지에 데이터가 없으면 마지막 페이지
     }
 
-    public List<MainDTO> getTopLikedPosts() {
-        List<Object[]> results = boardHeartRepository.findTopLikedBoards(PageRequest.of(0, 3));
+    public List<MainDTO> getTop3LikedPosts() {
+        List<BoardWithHeartCountDTO> topPosts = boardHeartRepository.findTop3LikedBoards(PageRequest.of(0, 3));
 
-        List<MainDTO> topPosts = new ArrayList<>();
-
-        for (Object[] result : results) {
-            Long boardSeq = (Long) result[0];
-            int heartCount = ((Number) result[1]).intValue();
-
-            Optional<BoardEntity> boardEntityOpt = mainRepository.findById(boardSeq);
-            boardEntityOpt.ifPresent(boardEntity -> topPosts.add(MainDTO.toDTO(boardEntity, heartCount)));
-        }
-
-        return topPosts;
+        return topPosts.stream()
+                .map(dto -> MainDTO.toDTO(dto.getBoard(), dto.getHeartCount()))
+                .collect(Collectors.toList());
     }
 }

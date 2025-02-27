@@ -40,14 +40,15 @@ public class MainController {
     @GetMapping("/top-posts")
     @ResponseBody
     public List<MainDTO> getTop5LikedPostsByPeriod(@RequestParam(name = "filter", defaultValue = "weekly") String filter) {
-
         List<MainDTO> topPosts = mainService.getTop5LikedPostsByPeriod(filter);
+        
         return topPosts;
     }
 
     @GetMapping("/top-liked")
     @ResponseBody
-    public List<MainDTO> getTopLikedPosts() {
-        return mainService.getTopLikedPosts();
+    public List<MainDTO> getTop3LikedPosts() {
+        
+        return mainService.getTop3LikedPosts();
     }
 }
