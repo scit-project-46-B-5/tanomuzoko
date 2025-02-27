@@ -62,6 +62,10 @@ public class BoardHeartEntity {
         this.updateDate = LocalDateTime.now();
     }
 
+    public void toggleHeartStatus() {
+        this.isHearted = !this.isHearted;
+    }
+
     public static BoardHeartEntity toEntity(BoardEntity board, UserEntity user, boolean isHearted) {
         return BoardHeartEntity.builder()
                 .board(board)

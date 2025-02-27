@@ -32,7 +32,7 @@ public class BoardHeartService {
         boolean isHearted;
         if (heartEntityOptional.isPresent()) {
             BoardHeartEntity heartEntity = heartEntityOptional.get();
-            heartEntity.setIsHearted(!heartEntity.getIsHearted()); // 공감 상태 반전
+            heartEntity.toggleHeartStatus(); // 공감 상태 반전
             isHearted = heartEntity.getIsHearted();
         } else {
             BoardHeartEntity heartEntity = BoardHeartEntity.toEntity(board, user, true); // ✅ `toEntity` 사용
