@@ -23,12 +23,14 @@ public class MainDTO {
     private Long boardSeq;
     private String boardTitle;
     private String boardContent;
+    private Integer heartCount;
 
-    public static MainDTO toDTO(BoardEntity boardEntity) {
+    public static MainDTO toDTO(BoardEntity boardEntity, int heartCount) {
         return MainDTO.builder()
                 .boardSeq(boardEntity.getBoardSeq())
                 .boardTitle(boardEntity.getBoardTitle())
                 .boardContent(boardEntity.getBoardContent())
+                .heartCount(heartCount)
                 .build();
     }
 }
