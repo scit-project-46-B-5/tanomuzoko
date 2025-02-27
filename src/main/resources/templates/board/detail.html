@@ -9,6 +9,10 @@
     <link rel="stylesheet" href="../../static/css/detail.css" th:href="@{/css/detail.css}"/>
     <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
     <script th:src="@{/js/detail.js}" defer></script>
+
+    <!-- 외부 alert import -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.all.min.js"></script>
 </head>
 
 <body>
@@ -59,6 +63,7 @@
 
             <!-- 📌 레시피 상세 내용 -->
             <div class="recipe-detail">
+                <input type="hidden" th:value="${board.boardSeq}" id="boardSeq">
                 <h1 class="recipe-title" th:text="${board.boardTitle}">레시피 제목</h1>
                 <div class="meta">
                     <span>📅 [[${#temporals.format(board.createDate, 'yyyy-MM-dd')}]]</span> | <span>✍️ 작성자: <span
@@ -112,19 +117,13 @@
             <div class="comment-section">
                 <div class="comment-wrapper">
                     <h2>댓글</h2>
+                    <input type="hidden" th:value="${#authentication.name}" id="loginId">
                     <div class="comment-box">
                         <input type="text" id="comment-input" placeholder="댓글을 입력하세요" />
-                        <button onclick="addComment()">등록</button>
+                        <button onclick="addReply()">등록</button>
                     </div>
                     <div class="comment-list" id="comment-list">
-                        <div class="comment">
-                            <div class="user-info">사용자1</div>
-                            <div class="user-text">이 레시피 정말 맛있어 보여요!</div>
-                        </div>
-                        <div class="comment">
-                            <div class="user-info">사용자2</div>
-                            <div class="user-text">이 레시피 정말 맛있어 보여요!</div>
-                        </div>
+                        <!-- Ajax로 댓글 출력 -->
                     </div>
                 </div>
             </div>
