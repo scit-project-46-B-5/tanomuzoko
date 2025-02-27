@@ -72,8 +72,8 @@ function initReplies() {
                 if (loginId === item['userId']) {
                     tag += `
                         <div>
-                            <button onclick="deleteReply(${item['replySeq']})">삭제</button>
-                            <button onclick="editReply(${item['replySeq']}, '${item['replyContent']}')">수정</button>
+                            <button class ="edit-input-btn" onclick="deleteReply(${item['replySeq']})">삭제</button>
+                            <button class ="edit-cancel-btn" onclick="editReply(${item['replySeq']}, '${item['replyContent']}')">수정</button>
                         </div>
                     `;
                 }
@@ -107,17 +107,36 @@ function addReply() {
 
 // 댓글 삭제 함수
 function deleteReply(replySeq) {
-    let answer = confirm('삭제하시겠습니까?');
+    Swal.fire({
+        title: '정말로 삭제하시겠습니까?',
+        text: "다시 되돌릴 수 없습니다. 신중하세요.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: '승인',
+        cancelButtonText: '취소',
+        reverseButtons: false, // 버튼 순서 거꾸로
+        
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire(
+                '삭제 되었습니다.',
+                '댓글이 삭제되었습니다.',
+                'success'
+            )
+            $.ajax({
+                url: '/reply/deleteReply',
+                method: 'POST',
+                data: { "replySeq": replySeq },
+                success: function () {
+                    initReplies();
+                }
+            });
+        }
 
-    if (!answer) {
-        return;
-    }
-    $.ajax({
-        url: '/reply/deleteReply',
-        method: 'POST',
-        data: { "replySeq": replySeq },
-        success: initReplies
     });
+
 }
 
 // 댓글 수정 함수
@@ -126,9 +145,9 @@ function editReply(replySeq, replyContent) {
     
     let editForm = `
         <div class="edit-form">
-            <input type="text" id="edit-input-${replySeq}" value="${replyContent}">
-            <button onclick="updateReply(${replySeq})">저장</button>
-            <button onclick="cancelEdit(${replySeq}, '${replyContent}')">취소</button>
+            <input class="edit-input" type="text" id="edit-input-${replySeq}" value="${replyContent}">
+            <button class = "edit-input-btn "onclick="updateReply(${replySeq})">저장</button>
+            <button class = "edit-cancel-btn" onclick="cancelEdit(${replySeq}, '${replyContent}')">취소</button>
         </div>
     `;
 
