@@ -30,7 +30,7 @@ public class RecipeHistoryService {
     private final RecipeRepository recipeRepository;
 
     @Transactional
-    public void saveRecipeHisotry(RecipeHistroyRequsetDTO recipeHistroyRequsetDTO) {
+    public Long saveRecipeHisotry(RecipeHistroyRequsetDTO recipeHistroyRequsetDTO) {
         LoginUserDetails loginUser = (LoginUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userId = loginUser.getUserId();
         UserEntity user = userRepository.findByUserId(userId)
@@ -53,7 +53,8 @@ public class RecipeHistoryService {
                 recipeEntity, 
                 recipeHistroyRequsetDTO.getTitle(), 
                 recipeHistroyRequsetDTO.getOutputContent()
-            )
-        );
+            ));
+            
+        return recipeEntity.getRecipeSeq();
     }
 }

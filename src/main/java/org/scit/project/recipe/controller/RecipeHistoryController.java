@@ -20,8 +20,8 @@ public class RecipeHistoryController {
     
     @PostMapping("/recipe/history/save")
     @ResponseBody
-    public void saveRecipeHistory(@RequestBody RecipeHistroyRequsetDTO recipeHistroyRequsetDTO) throws InterruptedException {
+    public ResponseEntity<Long> saveRecipeHistory(@RequestBody RecipeHistroyRequsetDTO recipeHistroyRequsetDTO) throws InterruptedException {
 
-        recipeHistoryService.saveRecipeHisotry(recipeHistroyRequsetDTO);
+        return ResponseEntity.ok(recipeHistoryService.saveRecipeHisotry(recipeHistroyRequsetDTO));
     }
 }

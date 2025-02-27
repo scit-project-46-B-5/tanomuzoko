@@ -9,6 +9,8 @@
         <link rel="stylesheet"  th:href="@{/css/globalstyles.css}" />
         <script th:src="@{/js/recommend_result.js}" defer></script>
         <!-- 결과 페이지 스타일 -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.all.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css" />
     </head>
     <body>
         <div class="container">
@@ -17,11 +19,10 @@
             <!-- ✅ 레시피 결과 컨테이너 -->
             <div class="recipe-container">
                 <h1>추천된 레시피</h1>
-
                 <!-- ✅ 레시피 카드 -->
                 <div class="recipe-card">
                     <!-- ⭐ 즐겨찾기 버튼 (우측 상단 배치) -->
-                    <button class="bookmark-btn" onclick="toggleBookmark()">
+                    <button class="bookmark-btn">
                         <img th:src="@{/image/star1.png}" alt="즐겨찾기" id="bookmarkIcon" />
                     </button>
 
@@ -35,14 +36,19 @@
 
                         <h3 class="recipe-steps-header">👨‍🍳 만드는 방법</h3>
                         <ol class="recipe-steps">
-                            <li th:each="item, status : ${recipe.cookingMethod}" th:text="${item}"></li>
+                            <li th:each="item, status : ${recipe.cookingMethods}" th:text="${item}"></li>
                         </ol>
+
+                        <input type="hidden" th:value="${recipe.recipeConditionDTO.usage}" name="usage" id="usage">
+                        <input type="hidden" th:value="${recipe.recipeConditionDTO.menu}" name="menu" id="menu">
+                        <input type="hidden" th:value="${recipe.recipeConditionDTO.taste}" name="taste" id="taste">
+                        <input type="hidden" th:value="${recipe.recipeConditionDTO.level}" name="level" id="level">
                     </div>
                 </div>
 
                 <!-- ✅ 다시 추천받기 버튼 -->
                 <div class="footer">
-                    <button onclick="window.location.href='/src/main/resources/templates/index.html'">
+                    <button onclick="window.location.href='/'">
                         메인페이지
                     </button>
                     <button onclick="window.location.href='recommend.html'">다시 추천받기</button>
