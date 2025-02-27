@@ -13,7 +13,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class BoardHeartService {
 
@@ -21,6 +20,7 @@ public class BoardHeartService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     public BoardHeartResponseDTO toggleHeart(Long boardSeq, Long userId) {
         BoardEntity board = boardRepository.findById(boardSeq)
                 .orElseThrow(() -> new RuntimeException("해당 게시글을 찾을 수 없습니다."));
