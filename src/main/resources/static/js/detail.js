@@ -30,7 +30,10 @@ $(document).ready(function () {
             },
             error: function () {
                 console.error("공감 요청에 실패했습니다.");
-            }
+            }, 
+			complete : function () {
+				updatePopularPosts();
+			}
         });
     });
 
@@ -46,6 +49,9 @@ $(document).ready(function () {
 
     // 페이지 로딩 시 공감 상태 가져오기
     fetchHeartStatus();
+	
+	// 인기 랭킹순위 가져오기
+	updatePopularPosts();
 
     // 댓글 초기화( 댓글 전체 조회 )
     initReplies();
@@ -178,3 +184,26 @@ function loadAuthorPosts(author) {
 // 작성자 정보 가져와서 적용
 let authorName = document.getElementById('author-name').textContent;
 loadAuthorPosts(authorName);
+
+
+// 실시간 인기 게시글 업데이트
+function updatePopularPosts() {
+  $.ajax({
+     url: '/board/popularPostsAjax',
+     method: 'GET',
+     success: function(data) {
+         let popularRank = '';
+         for (let i = 0; i < data.length; i++) {
+             popularRank += '<div class="popular-item">';
+             popularRank += '<a href="/board/boardDetail?boardSeq=' + data[i].boardSeq + '">';
+             popularRank += '<span>' + (i + 1) + '. ' + data[i].boardTitle + '</span>';
+             popularRank += '</a>';
+             popularRank += '</div>';
+         }
+         $('.popularPost').html(popularRank);
+     },
+     error: function(err) {
+         console.error('인기 게시글 업데이트 오류:', err);
+     }
+  });
+}
