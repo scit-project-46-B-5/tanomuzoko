@@ -1,8 +1,6 @@
 package org.scit.project.mainpage.controller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.scit.project.mainpage.dto.MainDTO;
 import org.scit.project.mainpage.dto.PostResponseDTO;

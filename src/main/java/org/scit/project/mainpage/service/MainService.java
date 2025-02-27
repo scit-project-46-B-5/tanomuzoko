@@ -1,9 +1,7 @@
 package org.scit.project.mainpage.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.scit.project.board.entity.BoardEntity;
@@ -13,7 +11,6 @@ import org.scit.project.mainpage.dto.MainDTO;
 import org.scit.project.mainpage.repository.MainRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
