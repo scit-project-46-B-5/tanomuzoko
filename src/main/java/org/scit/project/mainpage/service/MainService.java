@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.scit.project.board.entity.BoardEntity;
 import org.scit.project.board_heart.repository.BoardHeartRepository;
+import org.scit.project.mainpage.dto.BoardWithHeartCountDTO;
 import org.scit.project.mainpage.dto.MainDTO;
 import org.scit.project.mainpage.repository.MainRepository;
 import org.springframework.data.domain.Page;
@@ -32,16 +33,11 @@ public class MainService {
 
         int pageSize = 10;
 
-        Page<BoardEntity> temp = mainRepository.findAll(PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "createDate")));
+        Page<BoardWithHeartCountDTO> temp = mainRepository.findAllWithHeartCount(PageRequest.of(page, pageSize));
 
-        List<MainDTO> list = new ArrayList<>();
-
-        temp.forEach((entity) -> {
-            int heartCount = boardHeartRepository.countByBoardAndIsHeartedTrue(entity);
-            list.add(MainDTO.toDTO(entity, heartCount));
-        });
-
-        return list;
+        return temp.stream()
+                .map(dto -> MainDTO.toDTO(dto.getBoard(), dto.getHeartCount()))
+                .collect(Collectors.toList());
     }
 
     public List<MainDTO> getTopPosts(String period) {
