@@ -1,7 +1,10 @@
 $(document).ready(function () {
     const boardSeq = new URLSearchParams(window.location.search).get("boardSeq");
 
-    if (!boardSeq) return;
+    if (!boardSeq) {
+        return;
+    }
+        
 
     // 공감 상태 및 개수 불러오기
     function fetchHeartStatus() {
