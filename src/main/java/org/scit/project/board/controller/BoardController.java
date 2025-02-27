@@ -1,7 +1,9 @@
 package org.scit.project.board.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
 import org.scit.project.board.dto.BoardDTO;
 import org.scit.project.board.service.BoardService;
 import org.scit.project.board.util.FileService;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -52,8 +55,15 @@ public class BoardController {
             @AuthenticationPrincipal UserDetails userDetails,
             Model model) {
 
+        // 조회수는 별도의 bulk update로 처리하여 update_date가 변경되지 않도록 함
         BoardDTO boardDTO = boardService.selectOne(boardSeq);
+        // 작성자(userSeq)에 해당하는 최신 게시물 10개 조회 (게시글 작성자 기준)
+        List<BoardDTO> recentPosts = boardService.getRecentPostsByUser(boardDTO.getUserSeq());
+        // 인기 게시글 5개 조회 (hitCount 기준 내림차순)
+        List<BoardDTO> popularPosts = boardService.getPopularPosts();
         model.addAttribute("board", boardDTO);
+        model.addAttribute("recentPosts", recentPosts);
+        model.addAttribute("popularPosts", popularPosts);
         return "/board/detail";
     }
 

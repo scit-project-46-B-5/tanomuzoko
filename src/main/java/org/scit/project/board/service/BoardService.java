@@ -1,7 +1,10 @@
 package org.scit.project.board.service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.scit.project.board.dto.BoardDTO;
 import org.scit.project.board.entity.BoardEntity;
 import org.scit.project.board.entity.BoardImageEntity;
@@ -13,6 +16,8 @@ import org.scit.project.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -67,20 +72,35 @@ public class BoardService {
         }
     }
 
+    @Transactional
     public BoardDTO selectOne(Long boardSeq) {
-        Optional<BoardEntity> temp = boardRepository.findById(boardSeq);
-        if (!temp.isPresent()) {
+        // 조회수(hitCount)만 증가시키는 커스텀 쿼리 사용 → update_date에는 영향 없음
+        boardRepository.incrementHitCount(boardSeq);
+        BoardEntity boardEntity = boardRepository.findById(boardSeq).orElse(null);
+        if (boardEntity == null) {
             return null;
-        } else {
-            BoardEntity boardEntity = temp.get();
-            BoardDTO boardDTO = BoardDTO.toDTO(boardEntity);
-            Optional<BoardImageEntity> imageOpt = boardImageRepository.findByBoardEntity(boardEntity);
-            if (imageOpt.isPresent()) {
-                BoardImageEntity image = imageOpt.get();
-                boardDTO.setBoardImageOriginalFileName(image.getOriginalFileName());
-                boardDTO.setBoardImageSavedFileName(image.getSavedFileName());
-            }
-            return boardDTO;
         }
+        return BoardDTO.toDTO(boardEntity);
+    }
+    
+    @Transactional
+    public List<BoardDTO> getRecentPostsByUser(Long userSeq) {
+        // 해당 userSeq에 해당하는 UserEntity 조회
+        UserEntity user = userRepository.findById(userSeq)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        // 최신 게시물 10개 조회 (작성일 내림차순)
+        List<BoardEntity> boardEntities = boardRepository.findTop10ByUserEntityOrderByCreateDateDesc(user);
+        return boardEntities.stream()
+                .map(BoardDTO::toDTO)
+                .collect(Collectors.toList());
+    }
+    
+    @Transactional
+    public List<BoardDTO> getPopularPosts() {
+        // 인기 게시글 5개 조회 (hitCount 기준 내림차순)
+        List<BoardEntity> popularEntities = boardRepository.findTop5ByOrderByHitCountDesc();
+        return popularEntities.stream()
+                .map(BoardDTO::toDTO)
+                .collect(Collectors.toList());
     }
 }
