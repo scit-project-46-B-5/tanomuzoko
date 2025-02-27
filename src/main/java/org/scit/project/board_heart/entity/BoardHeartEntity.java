@@ -48,7 +48,8 @@ public class BoardHeartEntity {
     private UserEntity user;
 
     @Column(name = "is_hearted", nullable = false)
-    private Boolean isHearted = true;
+    @Builder.Default
+    private Boolean isHearted = false;
 
     @Column(name = "create_date", nullable = false, updatable = false)
     @CreationTimestamp
