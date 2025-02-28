@@ -19,7 +19,9 @@
 
 .recipe-detail img {
     width: 100%;
+    max-width: 850px !important;
     border-radius: 10px;
+    height: auto; /* 비율을 유지하려면 height를 auto로 설정 */
 }
 
 .recipe-title {
