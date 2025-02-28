@@ -55,7 +55,7 @@ $(document).ready(function () {
             tag += `
             <div class="gallery-item">
                 <a class="gallery-link" href="/board/boardDetail?boardSeq=${item['boardSeq']}">
-                    <img src="" alt="레시피">
+                    <img src="${item['boardImageOriginalFileName']}" alt="레시피">
                     <div class="gallery-text">
                         <h4>${item['boardTitle']}</h4>
                         <span>❤️ ${item['heartCount']}</span>
