@@ -20,32 +20,29 @@
         <div class="header" th:replace="/fragment/header :: top-menu"></div>
     </div>
 
-    <!-- 메인 콘텐츠 -->
-    <div class="content-wrapper">
-        <!-- 사이드바: 인기 랭킹 및 작성자의 다른 글 -->
-        <div class="sidebar">
-            <!-- 인기 랭킹 섹션 (실시간 업데이트를 위해 AJAX로 갱신) -->
-            <div class="popular-section">
-                <h3>🔥 인기 랭킹</h3>
-                <div class="gallery popularPost">
-                    <div class="popular-item" th:each="post, iterStat : ${popularPosts}">
-                        <a th:href="@{'/board/boardDetail?boardSeq=' + ${post.boardSeq}}">
-                            <span th:text="${iterStat.index + 1} + '. ' + ${post.boardTitle}">1. 게시글 제목</span>
-                        </a>
+        <!-- 🔥 메인 콘텐츠 (📌 Grid 적용) -->
+        <div class="content-wrapper">
+            <!-- 📌 사이드바 -->
+            <div class="sidebar">
+                <div class="sidebar-wrapper">
+                    <div class="ranking-section">
+                        <h3>🔥 인기 랭킹</h3>
+                        <ul>
+                            <li><a href="#">1. 초간단 김치볶음밥</a></li>
+                            <li><a href="#">2. 닭강정 레시피</a></li>
+                            <li><a href="#">3. 바삭한 감자튀김 만들기</a></li>
+                        </ul>
+                    </div>
+                    <div class="author-section">
+                        <h3>✍️ 작성자의 다른 글</h3>
+                        <ul class="author-posts">
+                            <li><a href="#">레시피 제목 1</a></li>
+                            <li><a href="#">레시피 제목 2</a></li>
+                            <li><a href="#">레시피 제목 3</a></li>
+                        </ul>
                     </div>
                 </div>
             </div>
-            <!-- 작성자의 다른 글 섹션 -->
-            <div class="author-section">
-                <h3>✍️ 작성자의 다른 글</h3>
-                <ul class="author-posts">
-                    <li th:each="post : ${recentPosts}">
-                        <a th:href="@{'/board/boardDetail?boardSeq=' + ${post.boardSeq}}"
-                           th:text="${post.boardTitle}">게시글 제목</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
 
         <!-- 📌 레시피 상세 내용 -->
         <div class="recipe-detail">
@@ -59,40 +56,49 @@
             
             <div th:utext="${board.boardContent}"></div>
 
-            <!-- 공감(좋아요) 버튼 -->
-            <button id="like-btn">
-                ❤️ 공감 <span id="like-count">0</span>
-            </button>
-        </div>
-        <!-- 📢 광고 섹션 -->
-        <div class="ad-section">
-            <div class="top-ad">
-                <h3>📢 광고</h3>
-                <img src="https://martmonster.com/files/attach/images/250807/983/059/7586795418ec6e3d14d92097b0c3111f.jpg"
-                    alt="광고 이미지" />
+                <!-- 공감(좋아요) 버튼 -->
+                <button id="like-btn">
+                    ❤️ 공감 <span id="like-count">0</span>
+                </button>
             </div>
-            <div class="bottom-ad">
-                <h3>📢 광고</h3>
-                <img src="https://martmonster.com/files/attach/images/250807/983/059/7586795418ec6e3d14d92097b0c3111f.jpg"
-                    alt="광고 이미지" />
-            </div>
-        </div>
-    </div>
 
-    <!-- ✍️ 댓글 섹션 -->
-    <div class="comment-section">
-        <div class="comment-wrapper">
-            <h2>댓글</h2>
-            <input type="hidden" th:value="${#authentication.name}" id="loginId">
-            <div class="comment-box">
-                <input type="text" id="comment-input" placeholder="댓글을 입력하세요" />
-                <button onclick="addReply()">등록</button>
+
+                        <!-- ✍️ 댓글 섹션 (🔥 게시글 아래 전체 너비) -->
+
+            <div class="comment-wrapper">
+                <h2>댓글</h2>
+                <input type="hidden" th:value="${#authentication.name}" id="loginId">
+                <div class="comment-box">
+                    <input type="text" id="comment-input" placeholder="댓글을 입력하세요" />
+                    <button onclick="addReply()">등록</button>
+                </div>
+                <div class="comment-list" id="comment-list">
+                    <!-- Ajax로 댓글 출력 -->
+                </div>
             </div>
-            <div class="comment-list" id="comment-list">
-                <!-- Ajax로 댓글 출력 -->
+
+
             </div>
-        </div>
-    </div>
+            
+            <!-- 📢 광고 섹션 -->
+            <div class="ad-section">
+                <div class="ad-wrapper">
+                    <div class="top-ad">
+                        <h3>📢 광고</h3>
+                        <img src="https://martmonster.com/files/attach/images/250807/983/059/7586795418ec6e3d14d92097b0c3111f.jpg"
+                            alt="광고 이미지" />
+                    </div>
+                    <div class="bottom-ad">
+                        <h3>📢 광고</h3>
+                        <img src="https://martmonster.com/files/attach/images/250807/983/059/7586795418ec6e3d14d92097b0c3111f.jpg"
+                            alt="광고 이미지" />
+                    </div>
+                </div>
+            </div>
+
+
+        </div> <!-- ✅ content-wrapper 닫기 -->
+    </div> <!-- ✅ container 닫기 -->
 </body>
 
 </html>
