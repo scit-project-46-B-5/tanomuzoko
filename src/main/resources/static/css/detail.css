@@ -14,6 +14,7 @@
     border-radius: 10px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
+    max-width: 900px;
 }
 
 .recipe-detail img {
@@ -49,6 +50,11 @@
     display: flex;
     flex-direction: column; /* 아이템을 세로 방향으로 배치 */
     text-align: left;
+}
+.sidebar-wrapper  {
+    position: sticky;
+    top: 50px;
+
 }
 
 /* ❤️ 공감(좋아요) 버튼 */
@@ -110,6 +116,10 @@
     display: flex;
     flex-direction: column; /* 아이템을 세로 방향으로 배치 */
 }
+.ad-wrapper{
+    position: sticky;
+    top: 50px;
+}
 
 .ad-section h3 {
     font-size: 18px;
@@ -122,20 +132,15 @@
 }
 
 /* ✍️ 댓글 스타일 */
-.comment-section {
+.comment-wrapper {
     width: 100%;
-    margin: 30px auto;
     padding: 20px;
     background: white;
     border-radius: 10px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     margin-top: 0px;
     padding-top: 0px;
-}
-
-.comment-wrapper {
-    width: 80%;
-    margin-left: 200px;
+    max-width: 900px;
 }
 .comment-wrapper h2 {
     /* border-top-width: 20px; */
@@ -147,7 +152,6 @@
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
-    width: 75%;
 }
 
 .comment-box input {
@@ -178,12 +182,163 @@
     margin-bottom: 5px;
 }
 
-.user-text {
-    margin-bottom: 15px;
-}
 .comment-box button:hover {
     background: #e56b42;
 }
+/* 📌 댓글 목록 전체 스타일 */
+.comment-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    max-width: 1000px; /* 최대 너비 설정 */
+}
+
+/* 📌 개별 댓글 스타일 */
+.comment {
+    background: #f9f9f9; /* 댓글 배경 */
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: row;
+    align-items: center; /* 내용과 버튼을 세로로 가운데 정렬 */
+    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 추가 */
+}
+
+/* 📌 댓글 작성자 이름 (수평 중앙 정렬) */
+.comment .user-info {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin-right: 15px;
+    flex-shrink: 0; /* 이름이 줄어들지 않도록 설정 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* 📌 댓글 내용 (상하 중앙 정렬) */
+.comment .user-text {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.6;
+    flex-grow: 1; /* 댓글 내용이 남은 공간을 채우도록 설정 */
+    display: flex;
+    align-items: center; /* 텍스트를 상하 중앙 정렬 */
+}
+
+/* 📌 댓글 수정/삭제 버튼 (오른쪽 끝에 배치) */
+.comment .buttons {
+    display: flex;
+    gap: 10px;
+}
+
+/* 📌 버튼 스타일 */
+.comment .buttons button {
+    background: #ff7f50;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s ease;
+}
+
+/* 버튼 호버 효과 */
+.comment .buttons button:hover {
+    background: #e56b42;
+}
+
+/* 📌 댓글 입력 박스 스타일 */
+.comment-box {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+/* 📌 댓글 입력 스타일 */
+.comment-box input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+/* 📌 댓글 입력 버튼 스타일 */
+.comment-box button {
+    padding: 10px 15px;
+    background: #ff7f50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+/* 버튼 호버 효과 */
+.comment-box button:hover {
+    background: #e56b42;
+}
+
+/* 📌 작성자 이름에 마우스를 올리면 스타일 변경 */
+.comment .user-info:hover {
+    color: #ff7f50;
+    cursor: pointer;
+}
+
+/* 📌 수정 폼 스타일 */
+.edit-form {
+    display: flex; /* 가로 방향으로 배치 */
+    align-items: center; /* 세로 가운데 정렬 */
+    gap: 10px; /* 각 요소 간 간격 */
+    width: 100%; /* 폼 전체의 너비를 100%로 설정 */
+}
+
+/* 📌 수정 텍스트 입력창 */
+.edit-input {
+    flex: 1; /* 가능한 공간을 모두 차지 */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #555;
+    background-color: #f9f9f9;
+    transition: all 0.3s ease;
+    box-sizing: border-box; /* 패딩 포함해서 너비 조정 */
+}
+
+/* 📌 수정용 입력창에 포커스를 주면 스타일 변경 */
+.edit-input:focus {
+    border-color: #ff7f50; /* 포커스 시 테두리 색상 */
+    outline: none; /* 기본 포커스 외곽선 제거 */
+    background-color: #fff; /* 배경색 변경 */
+}
+
+/* 📌 저장/취소 버튼 텍스트 스타일 */
+.edit-input-btn, .edit-cancel-btn {
+    background: none; /* 배경 제거 */
+    color: #ff7f50; /* 텍스트 색상 오렌지로 설정 */
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: underline; /* 텍스트에 밑줄 추가 */
+    transition: color 0.3s ease;
+    margin-top: 0;
+    padding: 0;
+}
+
+
+/* 📌 저장/취소 버튼 호버 효과 */
+.edit-input-btn:hover, .edit-cancel-btn:hover {
+    color: #e56b42; /* 호버 시 색상 변경 */
+}
+
 /* 📌 태블릿(1024px 이하) & 모바일(768px 이하)에서 사이드바 & 광고 숨기기 */
 @media (max-width: 1024px) {
     .content-wrapper {
@@ -191,6 +346,7 @@
     }
     .recipe-detail {
         width: 100%;
+
     }
     .sidebar,
     .ad-section {

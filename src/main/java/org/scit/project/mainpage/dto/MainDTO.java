@@ -1,10 +1,6 @@
 package org.scit.project.mainpage.dto;
 
-import java.time.LocalDateTime;
-
 import org.scit.project.board.entity.BoardEntity;
-import org.springframework.web.multipart.MultipartFile;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,12 +19,17 @@ public class MainDTO {
     private Long boardSeq;
     private String boardTitle;
     private String boardContent;
+    private Integer heartCount;
 
-    public static MainDTO toDTO(BoardEntity boardEntity) {
+    private String boardImageOriginalFileName;
+
+    public static MainDTO toDTO(BoardEntity boardEntity, int heartCount, String boardImageOriginalFileName) {
         return MainDTO.builder()
                 .boardSeq(boardEntity.getBoardSeq())
                 .boardTitle(boardEntity.getBoardTitle())
                 .boardContent(boardEntity.getBoardContent())
+                .heartCount(heartCount)
+                .boardImageOriginalFileName(boardImageOriginalFileName)
                 .build();
     }
 }
