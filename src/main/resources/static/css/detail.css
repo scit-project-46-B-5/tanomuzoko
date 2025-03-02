@@ -14,6 +14,7 @@
     border-radius: 10px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
+    max-width: 900px;
 }
 
 .recipe-detail img {
@@ -49,6 +50,11 @@
     display: flex;
     flex-direction: column; /* 아이템을 세로 방향으로 배치 */
     text-align: left;
+}
+.sidebar-wrapper  {
+    position: sticky;
+    top: 50px;
+
 }
 
 /* ❤️ 공감(좋아요) 버튼 */
@@ -110,6 +116,10 @@
     display: flex;
     flex-direction: column; /* 아이템을 세로 방향으로 배치 */
 }
+.ad-wrapper{
+    position: sticky;
+    top: 50px;
+}
 
 .ad-section h3 {
     font-size: 18px;
@@ -122,20 +132,15 @@
 }
 
 /* ✍️ 댓글 스타일 */
-.comment-section {
+.comment-wrapper {
     width: 100%;
-    margin: 30px auto;
     padding: 20px;
     background: white;
     border-radius: 10px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     margin-top: 0px;
     padding-top: 0px;
-}
-
-.comment-wrapper {
-    width: 80%;
-    margin-left: 200px;
+    max-width: 900px;
 }
 .comment-wrapper h2 {
     /* border-top-width: 20px; */
@@ -147,7 +152,6 @@
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
-    width: 75%;
 }
 
 .comment-box input {
@@ -187,7 +191,7 @@
     padding: 0;
     margin: 0;
     width: 100%;
-    max-width: 800px; /* 최대 너비 설정 */
+    max-width: 1000px; /* 최대 너비 설정 */
 }
 
 /* 📌 개별 댓글 스타일 */
@@ -254,7 +258,7 @@
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
-    width: 75%;
+    width: 100%;
 }
 
 /* 📌 댓글 입력 스타일 */
@@ -342,6 +346,7 @@
     }
     .recipe-detail {
         width: 100%;
+
     }
     .sidebar,
     .ad-section {
