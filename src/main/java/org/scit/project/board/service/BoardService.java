@@ -1,18 +1,24 @@
 package org.scit.project.board.service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.scit.project.board.dto.BoardDTO;
 import org.scit.project.board.entity.BoardEntity;
 import org.scit.project.board.entity.BoardImageEntity;
 import org.scit.project.board.repository.BoardRepository;
 import org.scit.project.board.repository.BoardImageRepository;
+import org.scit.project.board_heart.repository.BoardHeartRepository;
 import org.scit.project.user.dto.LoginUserDetails;
 import org.scit.project.user.entity.UserEntity;
 import org.scit.project.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -22,6 +28,8 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final BoardImageRepository boardImageRepository;
+    // BoardHeartRepository를 주입받아 공감수 기준 정렬에 사용
+    private final BoardHeartRepository boardHeartRepository;
 
     @Value("${spring.servlet.multipart.location}")
     private String uploadPath;
@@ -35,17 +43,13 @@ public class BoardService {
         BoardEntity entity = BoardEntity.toEntity(boardDTO, user);
         BoardEntity savedBoard = boardRepository.save(entity);
 
-        // 썸네일 값이 존재하면 board_image 테이블에 저장
-        // thumbnailUrl: 업로드된 파일의 URL (예: "/uploads/강아지1_UUID.jpg")
-        // thumbnail: 에디터에 삽입된 base64 데이터 (원본_file_name으로 저장)
         if (boardDTO.getThumbnailUrl() != null && !boardDTO.getThumbnailUrl().isEmpty()) {
             String thumbnailUrl = boardDTO.getThumbnailUrl();
             String savedFileName = "";
-            // URL 형태라면 FileService에서 생성한 파일명을 그대로 사용
+
             if (thumbnailUrl.startsWith("/uploads/")) {
-                savedFileName = thumbnailUrl.substring(9); // "/uploads/" 제거
+                savedFileName = thumbnailUrl.substring(9);
             } else {
-                // 혹시 base64 형식이면 (예외 상황)
                 String newUUID = UUID.randomUUID().toString();
                 String ext = "";
                 if (thumbnailUrl.startsWith("data:image/")) {
@@ -57,30 +61,55 @@ public class BoardService {
                 }
                 savedFileName = "thumbnail_" + newUUID + ext;
             }
-            
+
             BoardImageEntity imageEntity = BoardImageEntity.builder()
                 .boardEntity(savedBoard)
-                .originalFileName(boardDTO.getThumbnail())  // base64 데이터를 그대로 저장
-                .savedFileName(savedFileName)                // "원본파일이름_UUID.확장자" 형식
+                .originalFileName(boardDTO.getThumbnail())
+                .savedFileName(savedFileName)
                 .build();
             boardImageRepository.save(imageEntity);
         }
     }
 
+    @Transactional
     public BoardDTO selectOne(Long boardSeq) {
-        Optional<BoardEntity> temp = boardRepository.findById(boardSeq);
-        if (!temp.isPresent()) {
+        boardRepository.incrementHitCount(boardSeq);
+        BoardEntity boardEntity = boardRepository.findById(boardSeq).orElse(null);
+        if (boardEntity == null) {
             return null;
-        } else {
-            BoardEntity boardEntity = temp.get();
-            BoardDTO boardDTO = BoardDTO.toDTO(boardEntity);
-            Optional<BoardImageEntity> imageOpt = boardImageRepository.findByBoardEntity(boardEntity);
-            if (imageOpt.isPresent()) {
-                BoardImageEntity image = imageOpt.get();
-                boardDTO.setBoardImageOriginalFileName(image.getOriginalFileName());
-                boardDTO.setBoardImageSavedFileName(image.getSavedFileName());
-            }
-            return boardDTO;
         }
+        return BoardDTO.toDTO(boardEntity);
+    }
+
+    @Transactional
+    public List<BoardDTO> getRecentPostsByUser(Long userSeq, Long currentBoardSeq) {
+        UserEntity user = userRepository.findById(userSeq)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<BoardEntity> boardEntities = boardRepository.findTop10ByUserEntityOrderByCreateDateDesc(user)
+                .stream()
+                .filter(board -> !board.getBoardSeq().equals(currentBoardSeq)) // 현재 게시글 제외
+                .limit(10)
+                .collect(Collectors.toList());
+
+        return boardEntities.stream()
+                .map(BoardDTO::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<BoardDTO> getPopularPosts() {
+        // 모든 게시글을 가져와 각 게시글의 공감 수를 기준으로 내림차순 정렬한 후 상위 5개 반환
+        List<BoardEntity> allBoards = boardRepository.findAll();
+        List<BoardDTO> popularPosts = allBoards.stream()
+            .sorted((b1, b2) -> {
+                int heartCount1 = boardHeartRepository.countByBoardAndIsHeartedTrue(b1);
+                int heartCount2 = boardHeartRepository.countByBoardAndIsHeartedTrue(b2);
+                return Integer.compare(heartCount2, heartCount1);
+            })
+            .limit(5)
+            .map(BoardDTO::toDTO)
+            .collect(Collectors.toList());
+        return popularPosts;
     }
 }
