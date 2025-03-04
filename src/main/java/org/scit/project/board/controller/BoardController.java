@@ -49,6 +49,18 @@ public class BoardController {
         boardService.insertBoard(boardDTO);
         return "redirect:/";
     }
+    
+    @GetMapping("/boardUpdate")
+    public String boardUpdate() {
+    	
+    	return "index";
+    }
+    
+    @GetMapping("/boardDelete")
+    public String boardDelete() {
+    	
+    	return "index";
+    }
 
     @GetMapping("/boardDetail")
     public String boardDetail(@RequestParam(name = "boardSeq") Long boardSeq,
