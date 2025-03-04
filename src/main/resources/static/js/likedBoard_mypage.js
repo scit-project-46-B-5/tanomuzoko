@@ -6,7 +6,7 @@ showMoreBtn.addEventListener("click", showBoardLists);
 
 async function showBoardLists() {
     try {
-        const response = await fetch(`/mypage/myBoard/more?page=${page}`);
+        const response = await fetch(`/mypage/likedBoard/more?page=${page}`);
         const data = await response.json();
 
         if (data.length <= 4 ) {
