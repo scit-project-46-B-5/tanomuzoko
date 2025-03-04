@@ -74,7 +74,7 @@
                 
            		<th:block th:if="${board.boardWriter == #authentication.principal.userName}">
 	                <!-- 수정버튼 -->
-	                <a th:href="@{/board/boardUpdate}" class="updateAndDelete-btn">수정</a>
+	                <a th:href="@{/board/boardUpdate(boardSeq=${board.boardSeq})}" class="updateAndDelete-btn">수정</a>
 	                
 	                <!-- 삭제버튼 -->
 	                <a th:href="@{/board/boardDelete}" class="updateAndDelete-btn">삭제</a>
