@@ -72,6 +72,11 @@ public class LoginUserDetails implements UserDetails {
 	public String getUserName() {
 		return this.userName;
 	}
+	
+	public Long getUserSeq() {
+        return userSeq;
+    }
+	
 	@Override
     public boolean isAccountNonExpired() {
         return true;
