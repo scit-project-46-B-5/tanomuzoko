@@ -10,19 +10,17 @@ import org.scit.project.board.entity.BoardEntity;
 import org.scit.project.board.entity.BoardImageEntity;
 import org.scit.project.board.repository.BoardImageRepository;
 import org.scit.project.board_heart.repository.BoardHeartRepository;
+import org.scit.project.mainpage.dto.BoardWithHeartCountDTO;
 import org.scit.project.mainpage.dto.MainDTO;
 import org.scit.project.mainpage.repository.MainRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class MainService {
@@ -33,30 +31,30 @@ public class MainService {
 
     public List<MainDTO> getPosts(int page) {
         int pageSize = 10;
-        Page<BoardEntity> temp = mainRepository.findAll(PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "createDate")));
-        List<MainDTO> list = new ArrayList<>();
 
-        temp.forEach(entity -> {
-            int heartCount = boardHeartRepository.countByBoardAndIsHeartedTrue(entity);
-            Optional<BoardImageEntity> imageOpt = boardImageRepository.findByBoardEntity(entity);
-            String boardImageOriginalFileName = imageOpt.isPresent() ? imageOpt.get().getOriginalFileName() : "";
-            list.add(MainDTO.toDTO(entity, heartCount, boardImageOriginalFileName));
-        });
-        return list;
+        Page<BoardWithHeartCountDTO> temp = mainRepository.findAllWithHeartCount(PageRequest.of(page, pageSize));
+
+        return temp.stream()
+                .map(dto -> {
+                    Optional<BoardImageEntity> imageOpt = boardImageRepository.findByBoardEntity(dto.getBoard());
+                    String boardImageOriginalFileName = imageOpt.map(BoardImageEntity::getOriginalFileName).orElse("");
+                    return MainDTO.toDTO(dto.getBoard(), dto.getHeartCount(), boardImageOriginalFileName);
+                })
+                .collect(Collectors.toList());
     }
 
-    public List<MainDTO> getTopPosts(String period) {
+    public List<MainDTO> getTop5LikedPostsByPeriod(String period) {
         LocalDateTime startDate = period.equals("monthly")
                 ? LocalDateTime.now().minusMonths(1)
                 : LocalDateTime.now().minusWeeks(1);
 
-        List<BoardEntity> topPosts = mainRepository.findTopPostsByHeartCount(startDate, PageRequest.of(0, 5));
+        List<BoardWithHeartCountDTO> topPosts = mainRepository.findTopPostsByPeriodAndHeartCount(startDate, PageRequest.of(0, 5));
+        
         return topPosts.stream()
-                .map(entity -> {
-                    int heartCount = boardHeartRepository.countByBoardAndIsHeartedTrue(entity);
-                    Optional<BoardImageEntity> imageOpt = boardImageRepository.findByBoardEntity(entity);
-                    String boardImageOriginalFileName = imageOpt.isPresent() ? imageOpt.get().getOriginalFileName() : "";
-                    return MainDTO.toDTO(entity, heartCount, boardImageOriginalFileName);
+                .map(dto -> {
+                    Optional<BoardImageEntity> imageOpt = boardImageRepository.findByBoardEntity(dto.getBoard());
+                    String boardImageOriginalFileName = imageOpt.map(BoardImageEntity::getOriginalFileName).orElse("");
+                    return MainDTO.toDTO(dto.getBoard(), dto.getHeartCount(), boardImageOriginalFileName);
                 })
                 .collect(Collectors.toList());
     }
@@ -67,20 +65,15 @@ public class MainService {
         return !nextPage.hasContent();
     }
 
-    public List<MainDTO> getTopLikedPosts() {
-        List<Object[]> results = boardHeartRepository.findTopLikedBoards(PageRequest.of(0, 3));
-        List<MainDTO> topPosts = new ArrayList<>();
+    public List<MainDTO> getTop3LikedPosts() {
+        List<BoardWithHeartCountDTO> topPosts = boardHeartRepository.findTop3LikedBoards(PageRequest.of(0, 3));
 
-        for (Object[] result : results) {
-            Long boardSeq = (Long) result[0];
-            int heartCount = ((Number) result[1]).intValue();
-            Optional<BoardEntity> boardEntityOpt = mainRepository.findById(boardSeq);
-            boardEntityOpt.ifPresent(boardEntity -> {
-                Optional<BoardImageEntity> imageOpt = boardImageRepository.findByBoardEntity(boardEntity);
-                String boardImageOriginalFileName = imageOpt.isPresent() ? imageOpt.get().getOriginalFileName() : "";
-                topPosts.add(MainDTO.toDTO(boardEntity, heartCount, boardImageOriginalFileName));
-            });
-        }
-        return topPosts;
+        return topPosts.stream()
+                .map(dto -> {
+                    Optional<BoardImageEntity> imageOpt = boardImageRepository.findByBoardEntity(dto.getBoard());
+                    String boardImageOriginalFileName = imageOpt.map(BoardImageEntity::getOriginalFileName).orElse("");
+                    return MainDTO.toDTO(dto.getBoard(), dto.getHeartCount(), boardImageOriginalFileName);
+                })
+                .collect(Collectors.toList());
     }
 }
