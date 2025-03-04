@@ -79,15 +79,15 @@ function initReplies() {
             $.each(resp, function (index, item) { 
                 tag += `
                 <div class="comment" data-reply-seq="${item['replySeq']}">
-                    <div class="user-info">${item['replyWriter']}</div>
-                    <div class="user-text">${item['replyContent']}</div>
+                    <div class="user-info">${escapeHTML(item['replyWriter'])}</div>
+                    <div class="user-text">>${escapeHTML(item['replyContent'])}</div>
                 `;
 
                 if (loginId === item['userId']) {
                     tag += `
                         <div>
                             <button class ="edit-input-btn" onclick="deleteReply(${item['replySeq']})">삭제</button>
-                            <button class ="edit-cancel-btn" onclick="editReply(${item['replySeq']}, '${item['replyContent']}')">수정</button>
+                            <button class ="edit-cancel-btn" onclick="editReply(${item['replySeq']}, '${escapeHTML(item['replyContent'])}')">수정</button>
                         </div>
                     `;
                 }
@@ -233,4 +233,12 @@ function updatePopularPosts() {
          console.error('인기 게시글 업데이트 오류:', err);
      }
   });
+}
+
+function escapeHTML(str) {
+    return str.replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
