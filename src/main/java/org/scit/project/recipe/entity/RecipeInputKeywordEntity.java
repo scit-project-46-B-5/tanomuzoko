@@ -34,4 +34,10 @@ public class RecipeInputKeywordEntity {
     @JoinColumn(name = "recipe_seq", referencedColumnName = "recipe_seq")
     private RecipeEntity recipeEntity;
 
+    public static RecipeInputKeywordEntity TOENTITY(RecipeEntity recipeEntity, String keyword) {
+        return RecipeInputKeywordEntity.builder().recipeComplicatedPK(RecipeComplicatedPK.of(recipeEntity.getRecipeSeq(), keyword))
+                                                    .recipeEntity(recipeEntity)
+                                                    .build();
+    }
+
 }
