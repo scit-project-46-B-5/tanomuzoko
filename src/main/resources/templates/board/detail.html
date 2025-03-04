@@ -67,18 +67,21 @@
                     레시피 공유합니다 어쩌구 저쩌구
                 </p>
 
-                <!-- 공감(좋아요) 버튼 -->
-                <button id="like-btn">
-                    ❤️ 공감 <span id="like-count">0</span>
-                </button>
+                <div class="btn-wrapper">
+                    <button id="like-btn">
+                    ❤️ <span>공감 </span><span id="like-count">0</span>
+                    </button>
                 
-           		<th:block th:if="${board.boardWriter == #authentication.principal.userName}">
-	                <!-- 수정버튼 -->
-	                <a th:href="@{/board/boardUpdate(boardSeq=${board.boardSeq})}" class="updateAndDelete-btn">수정</a>
-	                
-	                <!-- 삭제버튼 -->
-	                <a th:href="@{/board/boardDelete}" class="updateAndDelete-btn">삭제</a>
-                </th:block>
+                    <th:block th:if="${board.boardWriter == #authentication.principal.userName}">
+                        <!-- 수정버튼 -->
+                        <a th:href="@{/board/boardUpdate(boardSeq=${board.boardSeq})}" class="updateAndDelete-btn">수정</a>
+                        
+                        <!-- 삭제버튼 -->
+                        <a th:href="@{/board/boardDelete}" class="updateAndDelete-btn">삭제</a>
+                    </th:block>
+                </div>
+                <!-- 공감(좋아요) 버튼 -->
+                
             </div>
 
                 <!-- ✍️ 댓글 섹션 -->
@@ -113,4 +116,3 @@
 </body>
 
 </html>
-    
