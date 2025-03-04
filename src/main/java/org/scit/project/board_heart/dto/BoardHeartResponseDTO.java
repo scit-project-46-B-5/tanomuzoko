@@ -14,6 +14,7 @@ import lombok.ToString;
 @Setter
 @Getter
 public class BoardHeartResponseDTO {
+    private Boolean isLoggedIn;
     private Boolean isHearted;
     private Integer heartCount;
 }
