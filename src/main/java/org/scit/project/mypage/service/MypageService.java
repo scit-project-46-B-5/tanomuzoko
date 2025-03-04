@@ -23,4 +23,10 @@ public class MypageService {
 		
 	    return boardRepository.findMyBoards(userSeq, pageable);
 	}
+
+	public List<MyBoardDto> getLikedBoards(Long userSeq, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		
+		return boardRepository.findBoardsWithLikes(userSeq, pageable);
+	}
 }
