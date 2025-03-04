@@ -48,7 +48,8 @@ public class BoardHeartEntity {
     private UserEntity user;
 
     @Column(name = "is_hearted", nullable = false)
-    private Boolean isHearted = true;
+    @Builder.Default
+    private Boolean isHearted = false;
 
     @Column(name = "create_date", nullable = false, updatable = false)
     @CreationTimestamp
@@ -60,6 +61,10 @@ public class BoardHeartEntity {
     @PreUpdate
     public void onUpdate() {
         this.updateDate = LocalDateTime.now();
+    }
+
+    public void toggleHeartStatus() {
+        this.isHearted = !this.isHearted;
     }
 
     public static BoardHeartEntity toEntity(BoardEntity board, UserEntity user, boolean isHearted) {

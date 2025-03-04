@@ -11,8 +11,12 @@ $(document).ready(function () {
         $.ajax({
             url: `/heart/status?boardSeq=${boardSeq}`,
             type: "GET",
-            success: function (response) {
-                updateHeartUI(response.isHearted, response.heartCount);
+            success: function (resp) {
+                updateHeartUI(resp.isHearted, resp.heartCount);
+
+                if (!resp.isLoggedIn) {
+                    $("#like-btn").prop("disabled", true);
+                }
             },
             error: function () {
                 console.error("공감 상태를 불러오지 못했습니다.");
@@ -22,15 +26,22 @@ $(document).ready(function () {
 
     // 공감 버튼 클릭 이벤트
     $("#like-btn").click(function () {
+        if ($(this).prop("disabled")) {
+            return;
+        }
+
         $.ajax({
             url: `/heart/toggle?boardSeq=${boardSeq}`,
             type: "POST",
-            success: function (response) {
-                updateHeartUI(response.isHearted, response.heartCount);
+            success: function (resp) {
+                updateHeartUI(resp.isHearted, resp.heartCount);
             },
             error: function () {
                 console.error("공감 요청에 실패했습니다.");
-            }
+            }, 
+			complete : function () {
+				updatePopularPosts();
+			}
         });
     });
 
@@ -46,6 +57,9 @@ $(document).ready(function () {
 
     // 페이지 로딩 시 공감 상태 가져오기
     fetchHeartStatus();
+	
+	// 인기 랭킹순위 가져오기
+	updatePopularPosts();
 
     // 댓글 초기화( 댓글 전체 조회 )
     initReplies();
@@ -72,8 +86,8 @@ function initReplies() {
                 if (loginId === item['userId']) {
                     tag += `
                         <div>
-                            <button onclick="deleteReply(${item['replySeq']})">삭제</button>
-                            <button onclick="editReply(${item['replySeq']}, '${item['replyContent']}')">수정</button>
+                            <button class ="edit-input-btn" onclick="deleteReply(${item['replySeq']})">삭제</button>
+                            <button class ="edit-cancel-btn" onclick="editReply(${item['replySeq']}, '${item['replyContent']}')">수정</button>
                         </div>
                     `;
                 }
@@ -107,17 +121,36 @@ function addReply() {
 
 // 댓글 삭제 함수
 function deleteReply(replySeq) {
-    let answer = confirm('삭제하시겠습니까?');
+    Swal.fire({
+        title: '정말로 삭제하시겠습니까?',
+        text: "다시 되돌릴 수 없습니다. 신중하세요.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: '승인',
+        cancelButtonText: '취소',
+        reverseButtons: false, // 버튼 순서 거꾸로
+        
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire(
+                '삭제 되었습니다.',
+                '댓글이 삭제되었습니다.',
+                'success'
+            )
+            $.ajax({
+                url: '/reply/deleteReply',
+                method: 'POST',
+                data: { "replySeq": replySeq },
+                success: function () {
+                    initReplies();
+                }
+            });
+        }
 
-    if (!answer) {
-        return;
-    }
-    $.ajax({
-        url: '/reply/deleteReply',
-        method: 'POST',
-        data: { "replySeq": replySeq },
-        success: initReplies
     });
+
 }
 
 // 댓글 수정 함수
@@ -126,9 +159,9 @@ function editReply(replySeq, replyContent) {
     
     let editForm = `
         <div class="edit-form">
-            <input type="text" id="edit-input-${replySeq}" value="${replyContent}">
-            <button onclick="updateReply(${replySeq})">저장</button>
-            <button onclick="cancelEdit(${replySeq}, '${replyContent}')">취소</button>
+            <input class="edit-input" type="text" id="edit-input-${replySeq}" value="${replyContent}">
+            <button class = "edit-input-btn "onclick="updateReply(${replySeq})">저장</button>
+            <button class = "edit-cancel-btn" onclick="cancelEdit(${replySeq}, '${replyContent}')">취소</button>
         </div>
     `;
 
@@ -178,3 +211,26 @@ function loadAuthorPosts(author) {
 // 작성자 정보 가져와서 적용
 let authorName = document.getElementById('author-name').textContent;
 loadAuthorPosts(authorName);
+
+
+// 실시간 인기 게시글 업데이트
+function updatePopularPosts() {
+  $.ajax({
+     url: '/board/popularPostsAjax',
+     method: 'GET',
+     success: function(data) {
+         let popularRank = '';
+         for (let i = 0; i < data.length; i++) {
+             popularRank += '<div class="popular-item">';
+             popularRank += '<a href="/board/boardDetail?boardSeq=' + data[i].boardSeq + '">';
+             popularRank += '<span>' + (i + 1) + '. ' + data[i].boardTitle + '</span>';
+             popularRank += '</a>';
+             popularRank += '</div>';
+         }
+         $('.popularPost').html(popularRank);
+     },
+     error: function(err) {
+         console.error('인기 게시글 업데이트 오류:', err);
+     }
+  });
+}

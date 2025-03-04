@@ -1,7 +1,9 @@
 package org.scit.project.board.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
 import org.scit.project.board.dto.BoardDTO;
 import org.scit.project.board.service.BoardService;
 import org.scit.project.board.util.FileService;
@@ -17,7 +19,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -26,8 +30,7 @@ import lombok.RequiredArgsConstructor;
 public class BoardController {
 
     private final BoardService boardService;
-    
-    // 실제 저장 경로 (application.properties에서 spring.servlet.multipart.location에 설정한 경로)
+
     @Value("${spring.servlet.multipart.location}")
     private String uploadPath;
 
@@ -53,11 +56,27 @@ public class BoardController {
             Model model) {
 
         BoardDTO boardDTO = boardService.selectOne(boardSeq);
+        
+        List<BoardDTO> recentPosts = boardService.getRecentPostsByUser(boardDTO.getUserSeq(), boardSeq);
+        
+        List<BoardDTO> popularPosts = boardService.getPopularPosts();
+        
         model.addAttribute("board", boardDTO);
+        model.addAttribute("recentPosts", recentPosts);
+        model.addAttribute("popularPosts", popularPosts);
+        
         return "/board/detail";
+    }
+    
+    @GetMapping("/popularPostsAjax")
+    @ResponseBody
+    public ResponseEntity<List<BoardDTO>> popularPostsAjax() {
+        List<BoardDTO> popularPosts = boardService.getPopularPosts();
+        return ResponseEntity.ok(popularPosts);
     }
 
     @PostMapping("/upload")
+    @ResponseBody
     public ResponseEntity<Map<String, String>> uploadFile(@RequestParam("file") MultipartFile file) {
         String savedFileName = FileService.saveFile(file, uploadPath);
 
@@ -66,16 +85,16 @@ public class BoardController {
                     .body(Map.of("error", "파일 업로드 실패"));
         }
 
-        String fileUrl = "/uploads/" + savedFileName;  // 클라이언트에서 접근할 URL
+        String fileUrl = "/uploads/" + savedFileName;
         Map<String, String> response = new HashMap<>();
         response.put("fileUrl", fileUrl);
         return ResponseEntity.ok(response);
     }
-    
+
     @PostMapping("/deleteFile")
+    @ResponseBody
     public ResponseEntity<Map<String, String>> deleteFile(@RequestParam("fileUrl") String fileUrl) {
         String savedFileName = "";
-        // 파일 URL이 "/uploads/..." 형태라면 이를 제거하여 저장된 파일 이름 추출
         if(fileUrl.startsWith("/uploads/")) {
             savedFileName = fileUrl.substring(9);
         } else {
