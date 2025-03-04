@@ -2,22 +2,22 @@ let idCheck = false;
 let userNameCheck = false;
 let emailCheck = false;
 let emailCodeCheck = false;
-$(function () {
-    $('#userId').on('blur', confirmId);
-    $('#check_all').on('change', toggleAllCheckboxes);
-    $('.check-item').on('change', handleCheckItemChange);
-    $('#userPassword').on('focus', clearPwdCheck);
-    $('#requestButton').on('click', emailDuplication);
-    $('#joinBtn').on('click', join);
-    $('#userName').on('blur', nickNameCheck);
-    $('#verifyButton').on('click', verifyCode);
-});
+
+$('#userId').on('keyup', confirmId);
+$('#check_all').on('change', toggleAllCheckboxes);
+$('.check-item').on('change', handleCheckItemChange);
+$('#userPassword').on('focus', clearPwdCheck);
+$('#requestButton').on('click', emailDuplication);
+$('#joinBtn').on('click', join);
+$('#userName').on('keyup', nickNameCheck);
+$('#verifyButton').on('click', verifyCode);
+
 // 입력값과 인증코드가 같은지 확인
 function verifyCode() {
     let email = $('#userEmail').val().trim();
     let code = $('#verificationCode').val().trim();
 
-    if (code === "") {
+    if (!code) {
         alert('인증번호를 입력해주세요.')
         return;
     }
@@ -57,7 +57,7 @@ function mailAuthentication() {
     let email = $("#userEmail").val().trim();
     let emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-    if (email === "") {
+    if (!email) {
         alert("이메일을 입력해주세요.");
         return;
     }
@@ -97,7 +97,7 @@ function mailAuthentication() {
 // 닉네임 중복체크
 function nickNameCheck() {
     let userName = $('#userName').val();
-    if (userName === "") {
+    if (!userName) {
         $('#confirmName').html("");
         userNameCheck = false;
         return;
@@ -139,7 +139,7 @@ function confirmId() {
     //  아이디 길이체크, 아이디를 적지않았을경우 메세지가 안보이게 설정
     let userId = $('#userId').val();
 
-    if (userId === "") {
+    if (!userId) {
         $('#confirmId').html("");
         idCheck = false;
         return;
@@ -175,7 +175,7 @@ function clearPwdCheck() {
 function emailDuplication() {
     let userEmail = $("#userEmail").val().trim();
 
-    if (userEmail === "") {
+    if (!userEmail) {
         alert("이메일을 입력해주세요.");
         return;
     }
@@ -233,7 +233,7 @@ function join() {
     let userEmail = $("#userEmail").val().trim();
     let emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-    if (userEmail === "") {
+    if (!userEmail) {
         alert("이메일을 입력해주세요.");
         return false;
     }
