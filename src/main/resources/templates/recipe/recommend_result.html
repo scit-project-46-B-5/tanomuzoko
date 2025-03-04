@@ -6,7 +6,7 @@
         <title>추천된 레시피</title>
         <!-- 내부 import -->
         <link rel="stylesheet"  th:href="@{/css/globalstyles.css}" />
-        <link rel="stylesheet"  th:href="@{/css/globalstyles.css}" />
+        <link rel="stylesheet"  th:href="@{/css/recommend_result.css}" />
         <script th:src="@{/js/recommend_result.js}" defer></script>
         <!-- 결과 페이지 스타일 -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.all.min.js"></script>
@@ -48,11 +48,11 @@
 
                 <!-- ✅ 다시 추천받기 버튼 -->
                 <div class="footer">
-                    <button onclick="window.location.href='/'">
+                    <button onclick="window.location.href='/'" class="recommend-btn">
                         메인페이지
                     </button>
-                    <button onclick="window.location.href='recommend.html'">다시 추천받기</button>
-                    <button onclick="window.location.href='/src/main/resources/templates/user/mypage.html'">
+                    <button onclick="window.location.href='/recipe/recommend'" class="recommend-btn">다시 추천받기</button>
+                    <button onclick="window.location.href='/mypage/recipeSave'" class="recommend-btn">
                         나의 레시피
                     </button>
                 </div>
