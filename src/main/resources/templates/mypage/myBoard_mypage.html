@@ -36,7 +36,8 @@
                     </div>
                 </div>
 
-                <div class="show-more">
+                <!-- show-more 버튼을 myBoards의 크기가 4 이상일 때만 표시 -->
+                <div class="show-more" th:if="${#lists.size(myBoard) >= 4}">
                     <button class="show-more-btn">
                         <i class="fa-solid fa-angles-down"></i>
                     </button>
