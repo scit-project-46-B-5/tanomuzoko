@@ -37,10 +37,8 @@ public class BoardHeartController {
             @RequestParam(name = "boardSeq") Long boardSeq,
             @AuthenticationPrincipal LoginUserDetails loginUser) {
 
-        Long userId = loginUser.getUserSeq();
-        boolean isHearted = boardHeartService.isHearted(boardSeq, userId);
-        int heartCount = boardHeartService.getHeartCount(boardSeq);
+        Long userId = (loginUser != null) ? loginUser.getUserSeq() : null;
 
-        return ResponseEntity.ok(new BoardHeartResponseDTO(isHearted, heartCount));
+        return ResponseEntity.ok(boardHeartService.getHeartStatus(boardSeq, userId));
     }
 }
