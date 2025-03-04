@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.scit.project.board.entity.BoardEntity;
 import org.scit.project.board_heart.entity.BoardHeartEntity;
+import org.scit.project.mainpage.dto.BoardWithHeartCountDTO;
 import org.scit.project.user.entity.UserEntity;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,6 +16,13 @@ public interface BoardHeartRepository extends JpaRepository<BoardHeartEntity, Lo
 
     int countByBoardAndIsHeartedTrue(BoardEntity board); // 공감 개수 조회
 
-    @Query("SELECT b.boardSeq, COUNT(h) FROM BoardHeartEntity h JOIN h.board b WHERE h.isHearted = true GROUP BY b.boardSeq ORDER BY COUNT(h) DESC")
-    List<Object[]> findTopLikedBoards(Pageable pageable);
+    @Query("""
+                SELECT b AS board, COUNT(h) AS heartCount
+                FROM BoardHeartEntity h
+                JOIN h.board b
+                WHERE h.isHearted = true
+                GROUP BY b
+                ORDER BY heartCount DESC
+            """)
+    List<BoardWithHeartCountDTO> findTop3LikedBoards(Pageable pageable);
 }

@@ -1,10 +1,9 @@
 package org.scit.project.mainpage.controller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.scit.project.mainpage.dto.MainDTO;
+import org.scit.project.mainpage.dto.PostResponseDTO;
 import org.scit.project.mainpage.service.MainService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,30 +28,25 @@ public class MainController {
 
     @GetMapping("/posts")
     @ResponseBody
-    public Map<String, Object> getPosts(@RequestParam(value = "page", defaultValue = "0") int page) {
-        Map<String, Object> response = new HashMap<>();
-
+    public PostResponseDTO getPosts(@RequestParam(value = "page", defaultValue = "0") int page) {
         List<MainDTO> list = mainService.getPosts(page);
-
         boolean isLastPage = mainService.isLastPage(page);
 
-        response.put("posts", list);
-        response.put("isLastPage", isLastPage);
-
-        return response;
+        return new PostResponseDTO(list , isLastPage);
     }
     
     @GetMapping("/top-posts")
     @ResponseBody
-    public List<MainDTO> getTopPosts(@RequestParam(name = "filter", defaultValue = "weekly") String filter) {
-
-        List<MainDTO> topPosts = mainService.getTopPosts(filter);
+    public List<MainDTO> getTop5LikedPostsByPeriod(@RequestParam(name = "filter", defaultValue = "weekly") String filter) {
+        List<MainDTO> topPosts = mainService.getTop5LikedPostsByPeriod(filter);
+        
         return topPosts;
     }
 
     @GetMapping("/top-liked")
     @ResponseBody
-    public List<MainDTO> getTopLikedPosts() {
-        return mainService.getTopLikedPosts();
+    public List<MainDTO> getTop3LikedPosts() {
+        
+        return mainService.getTop3LikedPosts();
     }
 }
