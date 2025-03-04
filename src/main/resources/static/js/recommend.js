@@ -1,6 +1,6 @@
 $(document).on('submit', '#recommend-form', function (e) {
+    e.preventDefault(); // 폼 제출 방지
     if (!$('#ingredients-input').val().trim()) {
-        e.preventDefault(); // 폼 제출 방지
         Swal.fire({
             icon: 'error',
             title: '재료를 선택해주세요',
@@ -8,7 +8,46 @@ $(document).on('submit', '#recommend-form', function (e) {
             confirmButtonColor: '#ff7f50',
             confirmButtonText: '확인',
         });
+        return;
     }
+
+    const ingredients = document.querySelector("input[name='ingredients']").value;
+    const usage = document.querySelector("input[name='usage']:checked").value;
+    const menu = document.querySelector("input[name='menu']:checked").value;
+    const taste = document.querySelector("input[name='taste']:checked").value;
+    const level = document.querySelector("input[name='level']:checked").value;
+    const sendData = {
+        ingredients,
+        recipeConditionDTO: {
+            usage,
+            menu,
+            taste,
+            level
+        }
+    }
+
+    fetch('/recipe/chatGPT', {
+        body:JSON.stringify(sendData),
+        headers:{
+            'content-type':'application/json'
+        },
+        method:'post'
+    }).then((response) => {
+        if(!response.ok) {
+            Swal.fire({
+                icon: 'error',
+                title: '오류가 발생하였습니다.',
+                text: '네트워크가 연결되어있는지 확인해주세요',
+                confirmButtonColor: '#ff7f50',
+                confirmButtonText: '확인',
+            });
+            return;
+        }
+
+        location.href='/recipe/recommend/output';
+    })
+    .catch((error)=> console.log(error));
+
 });
 
 const ingredients = [
