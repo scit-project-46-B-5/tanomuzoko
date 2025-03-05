@@ -64,6 +64,7 @@ $(document).ready(function () {
 function initReplies(page = 0) {
     let boardSeq = $('#boardSeq').val();
     let loginId = $('#loginId').val();
+    let maxLength = 50;
 
     $.ajax({
         url: '/reply/getReplies',
@@ -73,10 +74,18 @@ function initReplies(page = 0) {
             currentPage = page;
             let tag = ``;
             $.each(resp.content, function (index, item) {
+                let fullText = escapeHTML(item['replyContent']);
+                let shortText = fullText.length > maxLength ? fullText.substring(0, maxLength) + "..." : fullText;
+                let hasMore = fullText.length > maxLength;
+
                 tag += `
                 <div class="comment" data-reply-seq="${item['replySeq']}">
                     <div class="user-info">${escapeHTML(item['replyWriter'])}</div>
-                    <div class="user-text">${escapeHTML(item['replyContent'])}</div>
+                    <div class="user-text">
+                        <span class="short-text">${shortText}</span>
+                        <span class="full-text" style="display: none;">${fullText}</span>
+                        ${hasMore ? '<button class="more-btn" onclick="toggleText(this)">자세히 보기</button>' : ''}
+                    </div>
                 `;
 
                 if (loginId === item['userId']) {
@@ -95,6 +104,23 @@ function initReplies(page = 0) {
             generatePagination(resp);
         }
     })
+}
+
+// 댓글 내용 토글 (자세히 보기 / 간략히 보기)
+function toggleText(button) {
+    let commentDiv = $(button).closest(".user-text");
+    let shortText = commentDiv.find(".short-text");
+    let fullText = commentDiv.find(".full-text");
+
+    if (shortText.is(":visible")) {
+        shortText.hide();
+        fullText.show();
+        $(button).text("간략히 보기");
+    } else {
+        shortText.show();
+        fullText.hide();
+        $(button).text("자세히 보기");
+    }
 }
 
 // 페이지네이션 버튼 생성 함수
