@@ -11,6 +11,8 @@ import org.scit.project.reply.entity.ReplyEntity;
 import org.scit.project.reply.repository.ReplyRepository;
 import org.scit.project.user.entity.UserEntity;
 import org.scit.project.user.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -42,20 +44,15 @@ public class ReplyService {
         replyRepository.save(replyEntity);
     }
     
-    public List<ReplyDTO> getReply(Long boardSeq) {
+    public Page<ReplyDTO> getReplies(Long boardSeq, int page) {
         Optional<BoardEntity> boardOpt = boardRepository.findById(boardSeq);
         if (boardOpt.isEmpty()) {
             throw new IllegalArgumentException("게시글이 존재하지 않습니다.");
         }
 
-        List<ReplyEntity> replyEntityList = replyRepository.findAllByBoardAndIsDeletedFalse(boardOpt,
-                Sort.by(Sort.Direction.DESC, "replySeq"));
+        Page<ReplyEntity> replyPage = replyRepository.findAllByBoardAndIsDeletedFalse(boardOpt.get(), PageRequest.of(page, 10, Sort.by(Sort.Direction.ASC, "createDate")));
 
-        List<ReplyDTO> list = new ArrayList<>();
-
-        replyEntityList.forEach((entity) -> list.add(ReplyDTO.toDTO(entity)));
-
-        return list;
+        return replyPage.map(ReplyDTO::toDTO);
     }
     
     public void deleteReply(Long replySeq, Long userSeq) {
