@@ -112,4 +112,22 @@ public class BoardService {
             .collect(Collectors.toList());
         return popularPosts;
     }
+
+	public BoardDTO updateSelectOne(Long boardSeq) {
+		Optional<BoardEntity> temp = boardRepository.findById(boardSeq);
+
+		if(!temp.isPresent()) return null;
+
+		return BoardDTO.toDTO(temp.get());
+	}
+
+    @Transactional
+    public void updateBoard(BoardDTO boardDTO) {
+        BoardEntity entity = boardRepository.findById(boardDTO.getBoardSeq())
+                .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
+
+        entity.setBoardTitle(boardDTO.getBoardTitle());
+        entity.setBoardContent(boardDTO.getBoardContent());
+        boardRepository.save(entity);
+    }
 }
