@@ -1,5 +1,6 @@
 $(document).ready(function () {
     const boardSeq = new URLSearchParams(window.location.search).get("boardSeq");
+    let currentPage = 0;
 
     if (!boardSeq) {
         return;
@@ -60,21 +61,22 @@ $(document).ready(function () {
 });
 
 // 댓글 초기화
-function initReplies() {
+function initReplies(page = 0) {
     let boardSeq = $('#boardSeq').val();
     let loginId = $('#loginId').val();
 
     $.ajax({
-        url: '/reply/getReply',
+        url: '/reply/getReplies',
         method: 'GET',
-        data: { "boardSeq": boardSeq },
+        data: { "boardSeq": boardSeq, "page": page },
         success: function (resp) {
+            currentPage = page;
             let tag = ``;
-            $.each(resp, function (index, item) { 
+            $.each(resp.content, function (index, item) {
                 tag += `
                 <div class="comment" data-reply-seq="${item['replySeq']}">
                     <div class="user-info">${escapeHTML(item['replyWriter'])}</div>
-                    <div class="user-text">>${escapeHTML(item['replyContent'])}</div>
+                    <div class="user-text">${escapeHTML(item['replyContent'])}</div>
                 `;
 
                 if (loginId === item['userId']) {
@@ -89,8 +91,34 @@ function initReplies() {
                 tag += `</div>`;              
             })
             $('#comment-list').html(tag);
+
+            generatePagination(resp);
         }
     })
+}
+
+// 페이지네이션 버튼 생성 함수
+function generatePagination(resp) {
+    let pagination = '';
+    let currentPage = resp.number;
+    let totalPages = resp.totalPages;
+    let groupSize = 10;
+    let startPage = Math.floor(currentPage / groupSize) * groupSize;
+    let endPage = Math.min(startPage + groupSize, totalPages);
+
+    if (startPage > 0) {
+        pagination += `<button onclick="initReplies(${startPage - 1})">◀ 이전</button>`;
+    }
+
+    for (let i = startPage; i < endPage; i++) {
+        pagination += `<button onclick="initReplies(${i})" class="${i === currentPage ? 'active' : ''}">${i + 1}</button>`;
+    }
+
+    if (endPage < totalPages) {
+        pagination += `<button onclick="initReplies(${endPage})">다음 ▶</button>`;
+    }
+
+    $('#pagination').html(pagination);
 }
 
 // 댓글 추가 함수
@@ -178,7 +206,7 @@ function updateReply(replySeq) {
         method: 'POST',
         data: { "replySeq": replySeq, "replyContent": newContent },
         success: function () {
-            initReplies();
+            initReplies(currentPage);
         }
     });
 }
