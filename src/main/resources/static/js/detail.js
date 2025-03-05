@@ -38,10 +38,7 @@ $(document).ready(function () {
             },
             error: function () {
                 console.error("공감 요청에 실패했습니다.");
-            }, 
-			complete : function () {
-				updatePopularPosts();
-			}
+            }
         });
     });
 
@@ -57,9 +54,6 @@ $(document).ready(function () {
 
     // 페이지 로딩 시 공감 상태 가져오기
     fetchHeartStatus();
-	
-	// 인기 랭킹순위 가져오기
-	updatePopularPosts();
 
     // 댓글 초기화( 댓글 전체 조회 )
     initReplies();
@@ -197,22 +191,6 @@ function cancelEdit(replySeq, originalContent) {
     $commentDiv.find('.user-text').text(originalContent).show();
     $commentDiv.find('div:last-child').show();
 }
-
-// 작성자의 다른 글을 동적으로 추가하는 함수
-function loadAuthorPosts(author) {
-    let authorPosts = document.getElementById('author-posts');
-    authorPosts.innerHTML = `
-                <li><a href="#">${author}의 초간단 오므라이스</a></li>
-                <li><a href="#">${author}의 감바스 만들기</a></li>
-                <li><a href="#">${author}의 특별한 샐러드</a></li>
-            `;
-}
-
-// 작성자 정보 가져와서 적용
-let authorName = document.getElementById('author-name').textContent;
-loadAuthorPosts(authorName);
-
-
 
 function escapeHTML(str) {
     return str.replace(/&/g, "&amp;")
