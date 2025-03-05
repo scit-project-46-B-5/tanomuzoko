@@ -48,10 +48,10 @@ $(document).ready(function () {
     // UI 업데이트 함수
     function updateHeartUI(isHearted, heartCount) {
         if (isHearted) {
-            $("#like-btn").addClass("liked").text("❤️ 취소 " + heartCount);
+            $("#like-btn").addClass("liked").text("❤️ 취소 " + heartCount).css("font-family", "NPSfontBold, sans-serif");
             
         } else {
-            $("#like-btn").removeClass("liked").text("🤍 공감 " + heartCount);
+            $("#like-btn").removeClass("liked").text("🤍 공감 " + heartCount).css("font-family", "NPSfontBold, sans-serif");
         }
     }
 
@@ -213,27 +213,6 @@ let authorName = document.getElementById('author-name').textContent;
 loadAuthorPosts(authorName);
 
 
-// 실시간 인기 게시글 업데이트
-function updatePopularPosts() {
-  $.ajax({
-     url: '/board/popularPostsAjax',
-     method: 'GET',
-     success: function(data) {
-         let popularRank = '';
-         for (let i = 0; i < data.length; i++) {
-             popularRank += '<div class="popular-item">';
-             popularRank += '<a href="/board/boardDetail?boardSeq=' + data[i].boardSeq + '">';
-             popularRank += '<span>' + (i + 1) + '. ' + data[i].boardTitle + '</span>';
-             popularRank += '</a>';
-             popularRank += '</div>';
-         }
-         $('.popularPost').html(popularRank);
-     },
-     error: function(err) {
-         console.error('인기 게시글 업데이트 오류:', err);
-     }
-  });
-}
 
 function escapeHTML(str) {
     return str.replace(/&/g, "&amp;")
