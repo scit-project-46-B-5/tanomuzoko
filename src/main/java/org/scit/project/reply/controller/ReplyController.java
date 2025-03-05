@@ -5,6 +5,7 @@ import java.util.List;
 import org.scit.project.reply.dto.ReplyDTO;
 import org.scit.project.reply.service.ReplyService;
 import org.scit.project.user.dto.LoginUserDetails;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -31,10 +32,11 @@ public class ReplyController {
     }
 
     // 댓글 출력
-    @GetMapping("/getReply")
-    public List<ReplyDTO> getReply(@RequestParam(name = "boardSeq") Long boardSeq) {
-        List<ReplyDTO> list = replyService.getReply(boardSeq);
-        return list;
+    @GetMapping("/getReplies")
+    public Page<ReplyDTO> getReplies(@RequestParam(name = "boardSeq") Long boardSeq, 
+                                     @RequestParam(name = "page", defaultValue = "0") int page) {
+        
+        return replyService.getReplies(boardSeq, page);
     }
 
     // 댓글 삭제
