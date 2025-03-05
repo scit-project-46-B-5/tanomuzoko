@@ -50,7 +50,7 @@ public class ReplyService {
             throw new IllegalArgumentException("게시글이 존재하지 않습니다.");
         }
 
-        Page<ReplyEntity> replyPage = replyRepository.findAllByBoardAndIsDeletedFalse(boardOpt.get(), PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createDate")));
+        Page<ReplyEntity> replyPage = replyRepository.findAllByBoardAndIsDeletedFalse(boardOpt.get(), PageRequest.of(page, 10, Sort.by(Sort.Direction.ASC, "createDate")));
 
         return replyPage.map(ReplyDTO::toDTO);
     }
