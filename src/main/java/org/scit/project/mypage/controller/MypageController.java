@@ -24,10 +24,4 @@ public class MypageController {
     	return "mypage/reply_mypage";
     }
     
-    @GetMapping("/likedBoard")
-    public String likedBoard() {
-    	
-    	return "mypage/likedBoard_mypage";
-    }
-
 }
