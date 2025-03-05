@@ -39,7 +39,7 @@ public class UserInfoService {
 
     // 회원 정보 수정
     @Transactional
-    public boolean updateUserInfo(String username, String newNickName, String newPassword) {
+    public String updateUserInfo(String username, String newNickName, String newPassword) {
         try {
             UserEntity user = userRepository.findByUserId(username)
                     .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + username));
@@ -49,10 +49,10 @@ public class UserInfoService {
             if (newPassword != null && !newPassword.trim().isEmpty()) {
                 user.setUserPassword(passwordEncoder.encode(newPassword.trim()));
             }
-            return true;
+            return user.getUserPassword();
         } catch (Exception e) {
             log.error("사용자 정보 업데이트 중 오류 발생: ", e);
-            return false;
+            throw new RuntimeException("사용자를 찾을 수 없습니다.");
         }
     }
 }
