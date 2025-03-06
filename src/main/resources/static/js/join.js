@@ -18,7 +18,13 @@ function verifyCode() {
     let code = $('#verificationCode').val().trim();
 
     if (!code) {
-        alert('인증번호를 입력해주세요.')
+        Swal.fire({
+            icon: 'warning',
+            title: '인증 실패.',
+            text: '인증번호를 입력해주세요.',
+            confirmButtonColor: '#ff7f50',
+            confirmButtonText: '확인',
+        });
         return;
     }
     $.ajax({
@@ -26,22 +32,40 @@ function verifyCode() {
         type: "POST",
         contentType: "application/json",
         dataType: "json",
-        data: JSON.stringify({ email: email, verifyCode: code }),
+        data: JSON.stringify({ userEmail: email, verifyCode: code }),
         success: function (resp) {
             if (resp) {
-                alert("이메일 인증 성공!");
+                Swal.fire({
+                    icon: 'success',
+                    title: '인증 성공!',
+                    text: '이메일 인증 성공!',
+                    confirmButtonColor: '#ff7f50',
+                    confirmButtonText: '확인',
+                });
                 emailCodeCheck = true;  // 인증 성공 시 회원가입 가능
                 $("#verificationCode").prop("disabled", true); // 입력 칸 비활성화
                 $("#verifyButton").prop("disabled", true); // 인증 버튼 비활성화
             } else {
-                alert("인증 실패: 인증번호가 올바르지 않습니다.");
+                Swal.fire({
+                    icon: 'warning',
+                    title: '인증 실패',
+                    text: '인증번호가 올바르지 않습니다.',
+                    confirmButtonColor: '#ff7f50',
+                    confirmButtonText: '확인',
+                });
                 emailCodeCheck = false;
                 $('#verificationCode').val(''); // 인증 실패 시 입력 필드 초기화
             }
         },
         error: function (xhr, status, error) {
-            console.error("인증 실패 응답: ", xhr.responseTexts)
-            alert("인증 실패: 인증번호가 올바르지 않습니다.");
+            console.error("인증 실패 응답: ", xhr.responseText);
+            Swal.fire({
+                icon: 'warning',
+                title: '인증 실패',
+                text: '서버와의 통신 중 오류가 발생했습니다. 다시 시도해주세요.',
+                confirmButtonColor: '#ff7f50',
+                confirmButtonText: '확인',
+            });
             emailCheck = false;  // 인증 실패 시 회원가입 불가
             $('#verificationCode').val(''); // 인증 실패 시 입력 필드 초기화
         }
@@ -59,10 +83,23 @@ function mailAuthentication() {
 
     if (!email) {
         alert("이메일을 입력해주세요.");
+        Swal.fire({
+            icon: 'warning',
+            title: '인증 실패',
+            text: '이메일을 입력해주세요.',
+            confirmButtonColor: '#ff7f50',
+            confirmButtonText: '확인',
+        });
         return;
     }
     if (!emailPattern.test(email)) {
-        alert("올바른 이메일 형식을 입력해주세요.");
+        Swal.fire({
+            icon: 'warning',
+            title: '인증 실패',
+            text: '올바른 이메일 형식을 입력해주세요.',
+            confirmButtonColor: '#ff7f50',
+            confirmButtonText: '확인',
+        });
         return;
     }
     // ✅ 버튼 비활성화 (중복 클릭 방지)
@@ -82,14 +119,27 @@ function mailAuthentication() {
         xhrFields: {
             withCredentials: true  // ✅ 인증 정보를 포함하여 요청
         },
-        data: JSON.stringify({ email: email }),
+        data: JSON.stringify({ userEmail: email }),
         success: function (data) {
-            alert("인증번호가 이메일로 발송되었습니다.");
+            Swal.fire({
+                icon: 'success',
+                title: '메일 송신',
+                text: '메일이 송신되었습니다.',
+                confirmButtonColor: '#ff7f50',
+                confirmButtonText: '확인',
+            });
             $("#Confirm").attr("value", data);
             // alert(data.message); // ✅ JSON 응답에서 메시지 출력
         },
         error: function (xhr, status, error) {
-            alert("이메일 전송 실패: " + xhr.responseText + "\n상태 코드: " + xhr.status);
+            console.error("이메일 전송 실패 응답: ", xhr.responseText);
+            Swal.fire({
+                icon: 'warning',
+                title: '메일 송신 실패',
+                text: '이메일 전송에 실패했습니다. 다시 시도해주세요.\n오류 코드: ' + xhr.status,
+                confirmButtonColor: '#ff7f50',
+                confirmButtonText: '확인',
+            });
         }
     });
 }
@@ -176,7 +226,13 @@ function emailDuplication() {
     let userEmail = $("#userEmail").val().trim();
 
     if (!userEmail) {
-        alert("이메일을 입력해주세요.");
+        Swal.fire({
+            icon: 'warning',
+            title: '인증 실패',
+            text: '이메일을 입력해주세요.',
+            confirmButtonColor: '#ff7f50',
+            confirmButtonText: '확인',
+        });
         return;
     }
 
@@ -188,7 +244,13 @@ function emailDuplication() {
         data: JSON.stringify({ "userEmail": userEmail }),  // 이메일 데이터를 JSON 형식으로 전송
         success: function (isDuplicate) {
             if (isDuplicate) {
-                alert("이미 사용 중인 이메일입니다. 다른 이메일을 입력해주세요.");
+                Swal.fire({
+                    icon: 'warning',
+                    title: '인증 실패',
+                    text: '중복된 이메일 입니다.',
+                    confirmButtonColor: '#ff7f50',
+                    confirmButtonText: '확인',
+                });
                 emailCheck = false;  // 이메일이 중복된 경우
             } else {
                 emailCheck = true;   // 이메일이 중복되지 않은 경우
@@ -196,7 +258,14 @@ function emailDuplication() {
             }
         },
         error: function (xhr) {
-            alert("이메일 중복 확인 실패: " + xhr.responseText);
+            console.error("이메일 중복 확인 실패 응답: ", xhr.responseText);
+            Swal.fire({
+                icon: 'warning',
+                title: '이메일 확인 실패',
+                text: '이메일 중복 확인 중 오류가 발생했습니다. 다시 시도해주세요.\n오류 코드: ' + xhr.status,
+                confirmButtonColor: '#ff7f50',
+                confirmButtonText: '확인',
+            });
         }
     });
 }
@@ -204,29 +273,60 @@ function emailDuplication() {
 function join() {
     // ✅ 이메일 중복 체크가 완료되어야 회원가입을 진행
     if (!emailCheck) {
-        alert("이메일 중복을 먼저 확인해 주세요.");
+        Swal.fire({
+            icon: 'warning',
+            title: '메일 인증 실패',
+            text: '이메일 중복을 먼저 확인해 주세요.',
+            confirmButtonColor: '#ff7f50',
+            confirmButtonText: '확인',
+        });
         return false;
     }
     let userId = $('#userId').val();
     // 아이디 체크
     if (userId.trim().length < 3 || userId.trim().length > 12) {
-        alert('아이디는 3~12자 사이로 입력해주세요.');
+        Swal.fire({
+            icon: 'warning',
+            title: '인증 실패',
+            text: '아이디는 3~12자 사이로 입력해주세요.',
+            confirmButtonColor: '#ff7f50',
+            confirmButtonText: '확인',
+        });
         return false;
     }
     // 비밀번호 체크
     let userPassword = $('#userPassword').val();
     if (userPassword.trim().length < 8 || userPassword.trim().length > 20) {
-        alert('비밀번호는 8~20자 사이로 입력해주세요.');
+        Swal.fire({
+            icon: 'warning',
+            title: '인증 실패',
+            text: '비밀번호는 8~20자 사이로 입력해주세요.',
+            confirmButtonColor: '#ff7f50',
+            confirmButtonText: '확인',
+        });
+
         return false;
     }
     let userPwdCheck = $('#userPwdCheck').val();
     if (userPassword !== userPwdCheck) {
-        alert('비밀번호가 일치하지 않습니다.');
+        Swal.fire({
+            icon: 'warning',
+            title: '인증 실패',
+            text: '비밀번호가 일치하지 않습니다.',
+            confirmButtonColor: '#ff7f50',
+            confirmButtonText: '확인',
+        });
         return false;
     }
     // 필수 체크박스 검사
     if (!$('#terms').prop('checked') || !$('#privacy').prop('checked') || !$('#age').prop('checked')) {
-        alert('필수 항목에 동의해야 가입이 가능합니다.');
+        Swal.fire({
+            icon: 'warning',
+            title: '체크 확인',
+            text: '필수 항목에 동의해야 가입이 가능합니다.',
+            confirmButtonColor: '#ff7f50',
+            confirmButtonText: '확인',
+        });
         return false;
     }
     // 이메일 유효성 검사
@@ -234,16 +334,34 @@ function join() {
     let emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
     if (!userEmail) {
-        alert("이메일을 입력해주세요.");
+        Swal.fire({
+            icon: 'warning',
+            title: '인증 실패',
+            text: '이메일을 입력해주세요.',
+            confirmButtonColor: '#ff7f50',
+            confirmButtonText: '확인',
+        });
         return false;
     }
     if (!emailPattern.test(userEmail)) {
-        alert("올바른 이메일 형식을 입력해주세요.");
+        Swal.fire({
+            icon: 'warning',
+            title: '인증 실패',
+            text: '올바른 형식의 이메일을 입력해주세요.',
+            confirmButtonColor: '#ff7f50',
+            confirmButtonText: '확인',
+        });
         return false;
     }
     let userName = $('#userName').val();
     if (userName.trim().length < 2 || userName.trim().length > 11) {
-        alert('닉네임은 2~11자 사이로 입력해 주세요.')
+        Swal.fire({
+            icon: 'warning',
+            title: '인증 실패',
+            text: '닉네임은 2~11자 사이로 입력해 주세요.',
+            confirmButtonColor: '#ff7f50',
+            confirmButtonText: '확인',
+        });
         return false;
     }
     // 회원가입을 위한 처리요청
@@ -259,11 +377,24 @@ function join() {
                 "userEmail": userEmail
             }),
             success: function (resp) {
-                alert(resp); // "회원가입이 완료되었습니다." 메시지 출력
+                Swal.fire({
+                    icon: 'success',
+                    title: '가입 성공!',
+                    text: '회원가입이 완료되었습니다.',
+                    confirmButtonColor: '#ff7f50',
+                    confirmButtonText: '확인',
+                });
                 window.location.href = "/"; // ✅ 메인 페이지로 이동
             },
             error: function (xhr) {
-                alert("회원가입 실패: " + xhr.responseText);
+                console.error("회원가입 실패 응답: ", xhr.responseText);
+                Swal.fire({
+                    icon: 'error', // ❗ 에러 알림 스타일 적용
+                    title: '회원가입 실패',
+                    text: '회원가입 중 오류가 발생했습니다. 다시 시도해주세요.\n오류 코드: ' + xhr.status,
+                    confirmButtonColor: '#ff7f50',
+                    confirmButtonText: '확인',
+                });
             }
         });
     }
