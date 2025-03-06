@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
+import org.scit.project.mypage.dto.UserUpdateDTO;
 import org.scit.project.user.entity.UserEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -56,6 +57,19 @@ public class LoginUserDetails implements UserDetails {
         this.updatedAt = entity.getUpdatedAt();
         this.isDeleted = entity.isDeleted();
         this.roles = entity.getRoles();
+    }
+
+    // update userInfo 시에 Spring Session에 갱신
+    public LoginUserDetails(LoginUserDetails loginUserDetails, String encodedPassword, String udpatedUserNickName) {
+        this.userSeq = loginUserDetails.getUserSeq();
+        this.userId = loginUserDetails.getUserId();
+        this.userPassword = encodedPassword;
+        this.userName = udpatedUserNickName;
+        this.userEmail = loginUserDetails.getUserEmail();
+        this.createdAt = loginUserDetails.getCreatedAt();
+        this.updatedAt = loginUserDetails.getUpdatedAt();
+        this.isDeleted = loginUserDetails.isDeleted();
+        this.roles = loginUserDetails.getRoles();
     }
 
 	@Override
