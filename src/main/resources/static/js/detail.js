@@ -147,12 +147,24 @@ function generatePagination(resp) {
     $('#pagination').html(pagination);
 }
 
+// 댓글 최대 글자 수 설정
+const maxContentLength = 300;
+
 // 댓글 추가 함수
 function addReply() {
     let commentInput = $("#comment-input").val();
     let boardSeq = $('#boardSeq').val();
 
     if (commentInput.trim() == '') {
+        return;
+    } else if (commentInput.trim().length > maxContentLength) {
+        Swal.fire({
+            icon: 'warning',
+            title: '등록할 수 없습니다',
+            text: '최대 300자까지 입력 가능합니다',
+            confirmButtonColor: '#ff7f50',
+            confirmButtonText: '확인',
+        });
         return;
     }
 
