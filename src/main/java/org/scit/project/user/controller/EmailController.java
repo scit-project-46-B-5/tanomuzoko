@@ -24,13 +24,13 @@ public class EmailController {
 
     @PostMapping("/send")
     public ResponseEntity<Map<String, String>> sendEmail(@RequestBody EmailDTO emailDto) throws MessagingException {
-        log.info("EmailController.mailSend() - 이메일 전송 요청: {}", emailDto.getEmail());
+        log.info("EmailController.mailSend() - 이메일 전송 요청: {}", emailDto.getUserEmail());
 
-        if (emailDto.getEmail() == null || emailDto.getEmail().isEmpty()) {
+        if (emailDto.getUserEmail() == null || emailDto.getUserEmail().isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("message", "이메일을 입력해주세요."));
         }
 
-        emailService.sendEmail(emailDto.getEmail());
+        emailService.sendEmail(emailDto.getUserEmail());
 
         // ✅ JSON 형식으로 응답 반환
         return ResponseEntity.ok(Map.of("message", "인증코드가 발송되었습니다."));
@@ -41,13 +41,13 @@ public class EmailController {
     // ✅ 올바르게 Boolean 값을 반환하도록 수정!
     @PostMapping("/verify")
     public ResponseEntity<Boolean> verifyEmail(@RequestBody EmailDTO emailDto) {
-        log.info("EmailController.verify() - 이메일 인증 요청: {}", emailDto.getEmail());
+        log.info("EmailController.verify() - 이메일 인증 요청: {}", emailDto.getUserEmail());
 
-        if (emailDto.getEmail() == null || emailDto.getVerifyCode() == null) {
+        if (emailDto.getUserEmail() == null || emailDto.getVerifyCode() == null) {
             return ResponseEntity.badRequest().body(false);  // 🔹 Boolean 값 반환
         }
 
-        boolean isVerified = emailService.verifyEmailCode(emailDto.getEmail(), emailDto.getVerifyCode());
+        boolean isVerified = emailService.verifyEmailCode(emailDto.getUserEmail(), emailDto.getVerifyCode());
 
         log.info("✅ 최종 인증 결과: {}", isVerified);
 
