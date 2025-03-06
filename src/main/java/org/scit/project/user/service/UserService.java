@@ -5,6 +5,7 @@ import org.scit.project.user.entity.UserEntity;
 import org.scit.project.user.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,7 @@ public class UserService {
     }
 
     // ✅ 회원가입 처리
+    @Transactional				
     public boolean joinProc(UserDTO dto) {
         // 1️⃣ 이메일 중복 체크 (이미 존재하면 예외 발생)
         if (isEmailExists(dto.getUserEmail())) {
@@ -43,10 +45,16 @@ public class UserService {
         dto.setUserPassword(passwordEncoder.encode(dto.getUserPassword()));
 
         // 3️⃣ DTO → Entity 변환 후 저장
-        UserEntity entity = UserEntity.toEntity(dto);
-        userRepository.save(entity);
-
-        // 4️⃣ 저장된 데이터 확인 (회원가입 성공 여부)
-        return userRepository.existsByUserId(dto.getUserId());
+        try {
+        	UserEntity entity = userRepository.save(UserEntity.toEntity(dto));
+        	if (entity != null) {
+        		return true;
+        	} else {
+        		return false;
+        	}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
     }
 }
