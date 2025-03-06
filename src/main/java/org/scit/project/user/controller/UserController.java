@@ -1,7 +1,5 @@
 package org.scit.project.user.controller;
 
-import java.util.Map;
-
 import org.scit.project.user.dto.EmailDTO;
 import org.scit.project.user.dto.UserDTO;
 import org.scit.project.user.service.UserService;
@@ -59,7 +57,7 @@ public class UserController {
 	@PostMapping("/emailCheck")
 	@ResponseBody
 	public boolean emailCheck(@RequestBody EmailDTO emailDTO) {
-	    String email = emailDTO.getEmail();
+	    String email = emailDTO.getUserEmail();
 	    return userService.isEmailExists(email);
 	}
 	
