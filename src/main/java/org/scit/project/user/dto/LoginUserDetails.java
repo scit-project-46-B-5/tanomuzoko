@@ -98,6 +98,9 @@ public class LoginUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
+    	if(this.isDeleted == true) {
+    		return false;
+    	}
         return true;
     }
 
