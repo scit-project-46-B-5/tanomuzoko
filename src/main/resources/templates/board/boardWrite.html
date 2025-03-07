@@ -148,7 +148,14 @@
     
     // 폼 제출 시, 에디터 내 이미지들의 현재 크기를 style 속성에 적용한 후 boardContent hidden input에 HTML 넣기
     document.getElementById('board-form').onsubmit = function (e) {
-      // 에디터 내 모든 <img> 태그를 순회하면서 현재 표시되는 크기를 가져와 인라인 style로 설정
+      // 첨부된 이미지 파일이 없으면 alert 창 띄움
+      if (dropzone.files.length === 0) {
+        alert('이미지 파일을 첨부해주세요');
+        e.preventDefault();
+        return false;
+      }
+
+      // 에디터 내 모든 <img> 태그의 현재 표시 크기를 가져와 인라인 style로 설정
       var imgs = quill.root.querySelectorAll('img');
       imgs.forEach(function(img) {
          var rect = img.getBoundingClientRect();
@@ -160,7 +167,7 @@
       // 업데이트된 HTML을 hidden input에 설정
       document.getElementById('boardContent').value = quill.root.innerHTML;
       
-      // 파일이 하나 이상 첨부된 경우 썸네일 지정 여부 확인
+      // 파일이 하나 이상 첨부된 경우, 썸네일 지정 여부 확인
       if (dropzone.files.length > 0 && !document.getElementById('thumbnailUrl').value) {
         alert('썸네일로 사용할 사진을 선택해주세요');
         e.preventDefault();

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.RequiredArgsConstructor;
 
@@ -48,6 +49,31 @@ public class BoardController {
     public String boardWrite(@ModelAttribute BoardDTO boardDTO) {
         boardService.insertBoard(boardDTO);
         return "redirect:/";
+    }
+    
+    @GetMapping("/boardUpdate")
+    public String boardUpdate(
+    		@RequestParam(name="boardSeq") Long boardSeq
+    		, Model model) {
+    	
+    	BoardDTO board = boardService.updateSelectOne(boardSeq);  	
+    	model.addAttribute("board", board);
+    	
+    	return "/board/boardUpdate";
+    }
+    
+    @PostMapping("/boardUpdate")
+    public String boardUpdate(@ModelAttribute BoardDTO boardDTO) {
+        boardService.updateBoard(boardDTO);
+        
+        return "redirect:/";
+    }
+    
+    
+    @GetMapping("/boardDelete")
+    public String boardDelete() {
+    	
+    	return "index";
     }
 
     @GetMapping("/boardDetail")

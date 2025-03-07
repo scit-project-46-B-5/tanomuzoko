@@ -33,8 +33,9 @@
 
         <!-- ✅ 로그인 한 사용자 -->
         <th:block sec:authorize="isAuthenticated()">
-            <a th:href="@{/mypage/info_mypage}">
-                <div>[[${#authentication.name}]]님</div>
+
+            <a th:href="@{/mypage/info}">
+                <div>[[${#authentication.principal.userName}]]님</div>
             </a>
 
             <!-- Spring Security 로그아웃은 반드시 form 태그로 -->

@@ -18,16 +18,26 @@ let isPasswordCorrect = false;
 // 새 비밀번호 입력란 숨기기
 newPasswordSection.style.display = "none";
 
-function checkPw() {
+// Debounce 함수 정의
+function debounce(func, delay) {
+    let timer;
+    return function (...args) {
+        clearTimeout(timer); // 기존 타이머 제거
+        timer = setTimeout(() => func.apply(this, args), delay); 
+    };
+}
+
+// 비밀번호 확인
+const checkPw = debounce(async function () {
     if (password.value.length !== 0) {
-        fetch("/mypage/checkPassword", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ currentPassword: password.value })
-        })
-        .then(response => response.json())
-        .then(data => {
-            isPasswordCorrect = data; 
+        try {
+            const response = await fetch("/mypage/checkPassword", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ currentPassword: password.value })
+            });
+            const data = await response.json(); 
+            isPasswordCorrect = data;
             if (isPasswordCorrect) {
                 changePwBtn.disabled = false;
                 pwIconBox.innerHTML = `<i class="fa-solid fa-circle-check pwCheckIcon" style="color: #5cd85a;"></i>`;
@@ -36,18 +46,19 @@ function checkPw() {
                 pwIconBox.innerHTML = `<i class="fa-solid fa-circle-xmark pwCheckIcon" style="color: #f55735;"></i>`;
             }
             validateForm();
-        })
-        .catch(error => console.error('Error:', error));
+        } catch (error) {
+            console.error('Error:', error);
+        }
     } else {
         isPasswordCorrect = false;
         pwIconBox.innerHTML = "";
         changePwBtn.disabled = true;
         validateForm();
     }
-}
+}, 300);
 
 // 새 비밀번호 확인 및 길이 체크
-function checkNewPw() {
+const checkNewPw = debounce(function () {
     const newPassword = newPW.value.trim();
     const newPasswordCheck = newPWCheck.value.trim();
     const passwordLengthMessage = document.getElementById("passwordLengthMessage");
@@ -58,23 +69,20 @@ function checkNewPw() {
     // 새 비밀번호와 비밀번호 확인 일치 여부
     const isPasswordMatch = newPassword === newPasswordCheck;
 
-    // 비밀번호 길이가 유효하지 않으면 메시지 표시
     if (!isLengthValid) {
         passwordLengthMessage.style.display = "block"; 
     } else {
         passwordLengthMessage.style.display = "none";
     }
 
-    // 새 비밀번호와 비밀번호 확인이 일치하고 길이가 유효하면 스타일 변경
     if (isLengthValid && isPasswordMatch) {
         newPWCheck.style.borderBottom = "2px solid #5cd85a";
     } else {
         newPWCheck.style.borderBottom = "2px solid #f55735";
     }
 
-    // 비밀번호 입력이 유효한지 체크 후 폼 검증
     validateForm();
-}
+}, 300); 
 
 // 변경하기 버튼 클릭 시 새 비밀번호 입력란 표시/숨김
 changePwBtn.addEventListener("click", function () {
@@ -101,31 +109,17 @@ changePwBtn.addEventListener("click", function () {
 // 정보 변경 버튼 활성화 조건 확인
 function validateForm() {
     const isNickNameValid = nickName.value.trim().length >= 2 && nickName.value.trim().length <= 11;
-    const isNewPwValid = newPW.value.length > 0 && newPW.value === newPWCheck.value;
+    const isNewPwValid = newPW.value.length >= 8 && newPW.value === newPWCheck.value;
 
     // 닉네임 길이 조건을 체크하고 안내 메시지 표시/숨기기
     const nickNameLengthMessage = document.getElementById("nickNameLengthMessage");
+    nickNameLengthMessage.style.display = (nickName.value.trim().length < 2 || nickName.value.trim().length > 11) ? "block" : "none";
 
-    if (nickName.value.trim().length < 2 || nickName.value.trim().length > 11) {
-        nickNameLengthMessage.style.display = "block"; // 유효하지 않으면 메시지 보이기
-    } else {
-        nickNameLengthMessage.style.display = "none"; // 유효하면 메시지 숨기기
-    }
+    const isPasswordSectionValid = isPasswordCorrect && (newPasswordSection.style.display === "none" || isNewPwValid);
+    changeInfoBtn.disabled = !(isNickNameValid && isPasswordSectionValid);
 
-    if (newPasswordSection.style.display === "none") {
-        // 비밀번호 변경 없이 닉네임만 변경하는 경우
-        changeInfoBtn.disabled = !(isPasswordCorrect && isNickNameValid);
-    } else {
-        // 비밀번호도 변경하는 경우
-        changeInfoBtn.disabled = !(isNickNameValid && isNewPwValid);
-    }
-
-    // 비밀번호 변경 버튼 활성화
-    if (isPasswordCorrect && isNickNameValid) {
-        changePwBtn.disabled = false;
-    } else {
-        changePwBtn.disabled = true;
-    }
+    // 비밀번호 변경 버튼 유효성 체크
+    changePwBtn.disabled = !(isPasswordCorrect && isNickNameValid);
 }
 
 // 비밀번호 입력 확인
@@ -136,39 +130,38 @@ newPWCheck.addEventListener("keyup", checkNewPw);
 nickName.addEventListener("keyup", validateForm);
 changeInfoBtn.addEventListener('click', changeInfo);
 
-function changeInfo() {
+async function changeInfo() {
     const newNickName = nickName.value.trim();
     const newPassword = newPW.value.trim();
 
     const requestData = {
         newNickName,
-        newPassword: newPassword.length > 0 ? newPassword : null // 명확하게 null을 지정
+        newPassword: newPassword.length > 0 ? newPassword : null
     };
 
-    fetch("/mypage/updateInfo", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(requestData)
-    })
-    .then(response => response.json())
-    .then(data => {
+    try {
+        const response = await fetch("/mypage/updateInfo", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(requestData)
+        });
+
+        const data = await response.json();
+
         if (data.success) {
             modal.style.display = "block";
         } else {
             alert("정보 변경에 실패했습니다.");
         }
-    })
-    .catch(error => {
+    } catch (error) {
         console.error("Error:", error);
-    });
+    }
 }
 
 // 모달 창 닫기
 closeModal.addEventListener('click', function () {
     modal.style.display = "none";
-     location.reload();
+    location.reload();
 });
 
 // 모달 창 내 확인 버튼 클릭 시 모달 닫기

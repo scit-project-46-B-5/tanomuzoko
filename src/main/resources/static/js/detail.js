@@ -1,5 +1,6 @@
 $(document).ready(function () {
     const boardSeq = new URLSearchParams(window.location.search).get("boardSeq");
+    let currentPage = 0;
 
     if (!boardSeq) {
         return;
@@ -11,8 +12,12 @@ $(document).ready(function () {
         $.ajax({
             url: `/heart/status?boardSeq=${boardSeq}`,
             type: "GET",
-            success: function (response) {
-                updateHeartUI(response.isHearted, response.heartCount);
+            success: function (resp) {
+                updateHeartUI(resp.isHearted, resp.heartCount);
+
+                if (!resp.isLoggedIn) {
+                    $("#like-btn").prop("disabled", true);
+                }
             },
             error: function () {
                 console.error("공감 상태를 불러오지 못했습니다.");
@@ -22,64 +27,72 @@ $(document).ready(function () {
 
     // 공감 버튼 클릭 이벤트
     $("#like-btn").click(function () {
+        if ($(this).prop("disabled")) {
+            return;
+        }
+
         $.ajax({
             url: `/heart/toggle?boardSeq=${boardSeq}`,
             type: "POST",
-            success: function (response) {
-                updateHeartUI(response.isHearted, response.heartCount);
+            success: function (resp) {
+                updateHeartUI(resp.isHearted, resp.heartCount);
             },
             error: function () {
                 console.error("공감 요청에 실패했습니다.");
-            }, 
-			complete : function () {
-				updatePopularPosts();
-			}
+            }
         });
     });
 
     // UI 업데이트 함수
     function updateHeartUI(isHearted, heartCount) {
         if (isHearted) {
-            $("#like-btn").addClass("liked").text("❤️ 취소 " + heartCount);
+            $("#like-btn").addClass("liked").text("❤️ 취소 " + heartCount).css("font-family", "NPSfontBold, sans-serif");
             
         } else {
-            $("#like-btn").removeClass("liked").text("🤍 공감 " + heartCount);
+            $("#like-btn").removeClass("liked").text("🤍 공감 " + heartCount).css("font-family", "NPSfontBold, sans-serif");
         }
     }
 
     // 페이지 로딩 시 공감 상태 가져오기
     fetchHeartStatus();
-	
-	// 인기 랭킹순위 가져오기
-	updatePopularPosts();
 
     // 댓글 초기화( 댓글 전체 조회 )
     initReplies();
 });
 
 // 댓글 초기화
-function initReplies() {
+function initReplies(page = 0) {
     let boardSeq = $('#boardSeq').val();
     let loginId = $('#loginId').val();
+    let maxLength = 50;
 
     $.ajax({
-        url: '/reply/getReply',
+        url: '/reply/getReplies',
         method: 'GET',
-        data: { "boardSeq": boardSeq },
+        data: { "boardSeq": boardSeq, "page": page },
         success: function (resp) {
+            currentPage = page;
             let tag = ``;
-            $.each(resp, function (index, item) { 
+            $.each(resp.content, function (index, item) {
+                let fullText = escapeHTML(item['replyContent']);
+                let shortText = fullText.length > maxLength ? fullText.substring(0, maxLength) + "..." : fullText;
+                let hasMore = fullText.length > maxLength;
+
                 tag += `
                 <div class="comment" data-reply-seq="${item['replySeq']}">
-                    <div class="user-info">${item['replyWriter']}</div>
-                    <div class="user-text">${item['replyContent']}</div>
+                    <div class="user-info">${escapeHTML(item['replyWriter'])}</div>
+                    <div class="user-text">
+                        <span class="short-text">${shortText}</span>
+                        <span class="full-text" style="display: none;">${fullText}</span>
+                        ${hasMore ? '<button class="more-btn" onclick="toggleText(this)">자세히 보기</button>' : ''}
+                    </div>
                 `;
 
                 if (loginId === item['userId']) {
                     tag += `
                         <div>
                             <button class ="edit-input-btn" onclick="deleteReply(${item['replySeq']})">삭제</button>
-                            <button class ="edit-cancel-btn" onclick="editReply(${item['replySeq']}, '${item['replyContent']}')">수정</button>
+                            <button class ="edit-cancel-btn" onclick="editReply(${item['replySeq']}, '${escapeHTML(item['replyContent'])}')">수정</button>
                         </div>
                     `;
                 }
@@ -87,8 +100,51 @@ function initReplies() {
                 tag += `</div>`;              
             })
             $('#comment-list').html(tag);
+
+            generatePagination(resp);
         }
     })
+}
+
+// 댓글 내용 토글 (자세히 보기 / 간략히 보기)
+function toggleText(button) {
+    let commentDiv = $(button).closest(".user-text");
+    let shortText = commentDiv.find(".short-text");
+    let fullText = commentDiv.find(".full-text");
+
+    if (shortText.is(":visible")) {
+        shortText.hide();
+        fullText.show();
+        $(button).text("간략히 보기");
+    } else {
+        shortText.show();
+        fullText.hide();
+        $(button).text("자세히 보기");
+    }
+}
+
+// 페이지네이션 버튼 생성 함수
+function generatePagination(resp) {
+    let pagination = '';
+    let currentPage = resp.number;
+    let totalPages = resp.totalPages;
+    let groupSize = 10;
+    let startPage = Math.floor(currentPage / groupSize) * groupSize;
+    let endPage = Math.min(startPage + groupSize, totalPages);
+
+    if (startPage > 0) {
+        pagination += `<button onclick="initReplies(${startPage - 1})">◀ 이전</button>`;
+    }
+
+    for (let i = startPage; i < endPage; i++) {
+        pagination += `<button onclick="initReplies(${i})" class="${i === currentPage ? 'active' : ''}">${i + 1}</button>`;
+    }
+
+    if (endPage < totalPages) {
+        pagination += `<button onclick="initReplies(${endPage})">다음 ▶</button>`;
+    }
+
+    $('#pagination').html(pagination);
 }
 
 // 댓글 추가 함수
@@ -176,7 +232,7 @@ function updateReply(replySeq) {
         method: 'POST',
         data: { "replySeq": replySeq, "replyContent": newContent },
         success: function () {
-            initReplies();
+            initReplies(currentPage);
         }
     });
 }
@@ -190,39 +246,10 @@ function cancelEdit(replySeq, originalContent) {
     $commentDiv.find('div:last-child').show();
 }
 
-// 작성자의 다른 글을 동적으로 추가하는 함수
-function loadAuthorPosts(author) {
-    let authorPosts = document.getElementById('author-posts');
-    authorPosts.innerHTML = `
-                <li><a href="#">${author}의 초간단 오므라이스</a></li>
-                <li><a href="#">${author}의 감바스 만들기</a></li>
-                <li><a href="#">${author}의 특별한 샐러드</a></li>
-            `;
-}
-
-// 작성자 정보 가져와서 적용
-let authorName = document.getElementById('author-name').textContent;
-loadAuthorPosts(authorName);
-
-
-// 실시간 인기 게시글 업데이트
-function updatePopularPosts() {
-  $.ajax({
-     url: '/board/popularPostsAjax',
-     method: 'GET',
-     success: function(data) {
-         let popularRank = '';
-         for (let i = 0; i < data.length; i++) {
-             popularRank += '<div class="popular-item">';
-             popularRank += '<a href="/board/boardDetail?boardSeq=' + data[i].boardSeq + '">';
-             popularRank += '<span>' + (i + 1) + '. ' + data[i].boardTitle + '</span>';
-             popularRank += '</a>';
-             popularRank += '</div>';
-         }
-         $('.popularPost').html(popularRank);
-     },
-     error: function(err) {
-         console.error('인기 게시글 업데이트 오류:', err);
-     }
-  });
+function escapeHTML(str) {
+    return str.replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
