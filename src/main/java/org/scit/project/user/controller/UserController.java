@@ -77,4 +77,33 @@ public class UserController {
 	        return ResponseEntity.status(400).body(e.getMessage()); // ✅ 중복 이메일 예외 메시지 반환
 	    }
 	}
+//	아이디 찾기 페이지 요청
+	@GetMapping("/idSearch")
+	public String idSeach () {
+		
+		return "user/idSearch";
+	}
+
+	// ✅ 아이디 찾기 요청 처리
+    @PostMapping("/find-id")
+    public String findUserId(@RequestParam("userEmail") String userEmail, Model model) {
+        log.info("아이디 찾기 요청: {}", userEmail);
+
+        // 이메일 유효성 검사
+        if (userEmail == null || userEmail.trim().isEmpty()) {
+            model.addAttribute("findId", null);
+            model.addAttribute("msg", "이메일을 입력해주세요.");
+            return "user/idSearchResult";
+        }
+        
+        String userId = userService.findByUserEmail(userEmail);
+        model.addAttribute("findId", userId);  // 이메일이 없으면 null이 전달됨
+        
+        return "user/resultId"; // ✅ 결과 페이지 반환
+    }
+	@GetMapping("/passwordSearch")
+	public String passwordSearch() {
+		
+		return "user/passwordSearch";
+	}
 }

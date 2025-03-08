@@ -57,4 +57,13 @@ public class UserService {
 			return false;
 		}
     }
+    
+//   아이디 찾기
+    public String findByUserEmail(String userEmail) {
+        return userRepository.findByUserEmail(userEmail)
+            .map(UserEntity::getUserId)  // UserEntity에서 userId를 추출
+//            .orElseThrow(() -> new NoSuchElementException("해당 이메일을 가진 사용자가 없습니다."));
+            .orElse("");
+    }
+
 }
