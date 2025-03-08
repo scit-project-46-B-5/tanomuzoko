@@ -20,6 +20,9 @@ public interface UserRepository extends JpaRepository<UserEntity, Long>{
 	
 //	이메일을 이용해서 아이디를 찾기위한 쿼리메소드
 	Optional<UserEntity> findByUserEmail(String userEmail);
+//	비밀번호를 찾기위한 쿼리메소드
+	Optional<UserEntity> findByUserEmailAndUserId(String userEmail, String userId);
+
 	
 
 }

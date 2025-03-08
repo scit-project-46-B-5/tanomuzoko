@@ -28,6 +28,8 @@ public class SecurityConfig {
                                 "/heart/status",
                                 "/reply/getReplies",
                                 "/board/**",
+                                "/user/find-password",
+                                "/user/passwordSearch",
                                 "/user/find-id",
                                 "/user/idSearch",
                                 "/user/idCheck",
