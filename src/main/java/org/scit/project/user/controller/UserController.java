@@ -57,8 +57,8 @@ public class UserController {
 	@PostMapping("/emailCheck")
 	@ResponseBody
 	public boolean emailCheck(@RequestBody EmailDTO emailDTO) {
-	    String email = emailDTO.getUserEmail();
-	    return userService.isEmailExists(email);
+	    String userEmail = emailDTO.getUserEmail();
+	    return userService.isEmailExists(userEmail);
 	}
 	
 //	회원가입 처리요청

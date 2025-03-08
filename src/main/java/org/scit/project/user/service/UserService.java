@@ -29,8 +29,8 @@ public class UserService {
     }
 
     // ✅ 이메일 중복 체크
-    public boolean isEmailExists(String email) {
-        return userRepository.existsByUserEmail(email);
+    public boolean isEmailExists(String userEmail) {
+        return userRepository.existsByUserEmail(userEmail);
     }
 
     // ✅ 회원가입 처리
