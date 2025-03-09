@@ -37,12 +37,12 @@ public class BoardController {
 
     @GetMapping("/board")
     public String board() {
-        return "/board/board";
+        return "board/board";
     }
 
     @GetMapping("/boardWrite")
     public String boardWrite() {
-        return "/board/boardWrite";
+        return "board/boardWrite";
     }
 
     @PostMapping("/boardWrite")
@@ -59,7 +59,7 @@ public class BoardController {
     	BoardDTO board = boardService.updateSelectOne(boardSeq);  	
     	model.addAttribute("board", board);
     	
-    	return "/board/boardUpdate";
+    	return "board/boardUpdate";
     }
     
     @PostMapping("/boardUpdate")
@@ -91,7 +91,7 @@ public class BoardController {
         model.addAttribute("recentPosts", recentPosts);
         model.addAttribute("popularPosts", popularPosts);
         
-        return "/board/detail";
+        return "board/detail";
     }
     
     @GetMapping("/popularPostsAjax")
