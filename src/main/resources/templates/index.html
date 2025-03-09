@@ -11,6 +11,9 @@
     -->
     <link rel="stylesheet" href="../static/css/globalstyles.css" th:href="@{/css/globalstyles.css}" />
     <link rel="stylesheet" href="../static/css/index.css" th:href="@{/css/index.css}" />
+    <!-- 외부 알림창 API -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.all.min.js"></script>
 
     <!-- jquery -->
     <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
@@ -29,7 +32,7 @@
 <body>
     <!-- fragment/headerr사용하는 코드 -->
     <div class="container">
-        <div class="header" th:replace="/fragment/header :: top-menu"></div>
+        <div class="header" th:replace="~{fragment/header :: top-menu}"></div>
         <div class="cards">
             <a class="card" href="/src/main/resources/templates/recipe/recommend.html">
                 <img src="https://imagescdn.gettyimagesbank.com/500/201703/a10679449.jpg" alt="이벤트 이미지" />
