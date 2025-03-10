@@ -1,11 +1,11 @@
 $(document).ready(function () {
+    // 현재 페이지 URL에서 boardSeq 값을 가져옴 (예: ?boardSeq=1234)
     const boardSeq = new URLSearchParams(window.location.search).get("boardSeq");
     let currentPage = 0;
 
     if (!boardSeq) {
-        return;
+        return; // 게시글 번호가 없으면 함수 종료
     }
-        
 
     // 공감 상태 및 개수 불러오기
     function fetchHeartStatus() {
@@ -16,7 +16,7 @@ $(document).ready(function () {
                 updateHeartUI(resp.isHearted, resp.heartCount);
 
                 if (!resp.isLoggedIn) {
-                    $("#like-btn").prop("disabled", true);
+                    $("#like-btn").prop("disabled", true); // 로그인하지 않은 유저는 버튼 비활성화
                 }
             },
             error: function () {
@@ -25,7 +25,7 @@ $(document).ready(function () {
         });
     }
 
-    // 공감 버튼 클릭 이벤트
+    // 공감 버튼 클릭 이벤트 (사용자가 버튼을 클릭하면 공감 상태 변경)
     $("#like-btn").click(function () {
         if ($(this).prop("disabled")) {
             return;
@@ -43,7 +43,7 @@ $(document).ready(function () {
         });
     });
 
-    // UI 업데이트 함수
+    // UI 업데이트 함수 (공감 버튼 상태 변경)
     function updateHeartUI(isHearted, heartCount) {
         if (isHearted) {
             $("#like-btn").addClass("liked").text("❤️ 취소 " + heartCount).css("font-family", "NPSfontBold, sans-serif");
@@ -60,11 +60,10 @@ $(document).ready(function () {
     initReplies();
 });
 
-// 댓글 초기화
+// 댓글 초기화 (페이지네이션 포함)
 function initReplies(page = 0) {
     let boardSeq = $('#boardSeq').val();
     let loginId = $('#loginId').val();
-    let maxLength = 50;
 
     $.ajax({
         url: '/reply/getReplies',
@@ -74,37 +73,106 @@ function initReplies(page = 0) {
             currentPage = page;
             let tag = ``;
             $.each(resp.content, function (index, item) {
-                let fullText = escapeHTML(item['replyContent']);
-                let shortText = fullText.length > maxLength ? fullText.substring(0, maxLength) + "..." : fullText;
-                let hasMore = fullText.length > maxLength;
-
-                tag += `
-                <div class="comment" data-reply-seq="${item['replySeq']}">
-                    <div class="user-info">${escapeHTML(item['replyWriter'])}</div>
-                    <div class="user-text">
-                        <span class="short-text">${shortText}</span>
-                        <span class="full-text" style="display: none;">${fullText}</span>
-                        ${hasMore ? '<button class="more-btn" onclick="toggleText(this)">자세히 보기</button>' : ''}
-                    </div>
-                `;
-
-                if (loginId === item['userId']) {
-                    tag += `
-                        <div>
-                            <button class ="edit-input-btn" onclick="deleteReply(${item['replySeq']})">삭제</button>
-                            <button class ="edit-cancel-btn" onclick="editReply(${item['replySeq']}, '${escapeHTML(item['replyContent'])}')">수정</button>
-                        </div>
-                    `;
-                }
-
-                tag += `</div>`;              
-            })
+                tag += renderComment(item, loginId, item.parentReplySeq !== null);
+            });
+            
             $('#comment-list').html(tag);
-
             generatePagination(resp);
         }
     })
 }
+
+// 댓글 내용 글자 수 설정 (출력되는 댓글은 처음에 50자까지만 보이게 함)
+let maxTextLength = 50;
+
+// 댓글을 렌더링하는 함수 (부모 / 답글 모두 처리)
+function renderComment(item, loginId, isChild) {
+    let indentStyle = item.parentReplySeq ? 'style="margin-left: 30px;"' : ''; // 답글이면 들여쓰기 적용
+    let fullText = escapeHTML(item.replyContent);
+    let shortText = fullText.length > maxTextLength ? fullText.substring(0, maxTextLength) + "..." : fullText;
+    let hasMore = fullText.length > maxTextLength;
+
+    let tag = `
+        <div class="comment" ${indentStyle} data-reply-seq="${item.replySeq}">
+            <div class="user-info">${escapeHTML(item.replyWriter)}</div>
+            <div class="user-text">
+                <span class="short-text">${shortText}</span>
+                <span class="full-text" style="display: none;">${fullText}</span>
+                ${hasMore ? '<button class="more-btn" onclick="toggleText(this)">자세히 보기</button>' : ''}
+            </div>
+    `;
+
+    if (!isChild) {
+        tag += `<button class="reply-btn" onclick="showReplyForm(${item.replySeq})">답글</button>`;
+    }
+
+    // 로그인한 사용자의 댓글이면 수정, 삭제 버튼 추가
+    if (loginId === item.userId) {
+        tag += `
+            <div>
+                <button class="edit-input-btn" onclick="deleteReply(${item.replySeq})">삭제</button>
+                <button class="edit-cancel-btn" onclick="editReply(${item.replySeq}, '${escapeHTML(item.replyContent)}')">수정</button>
+            </div>
+        `;
+    }
+
+    tag += `</div>`;
+    tag += `<div id="reply-form-${item.replySeq}" class="reply-form" style="display: none; margin-left: 30px;"></div>`;
+
+    return tag;
+}
+
+// 답글 입력 폼 표시
+function showReplyForm(parentReplySeq) {
+    let form = `
+    <div class="comment">
+        <div class="reply-form">
+            <input type="text" class="reply-input" data-parent-reply="${parentReplySeq}" placeholder="답글을 입력하세요">
+            <button class="reply-submit-btn" data-parent-reply="${parentReplySeq}">등록</button>
+            <button class="reply-cancel-btn" onclick="cancelReplyForm(${parentReplySeq})">취소</button>
+        </div>
+    </div>
+    `;
+    $(`#reply-form-${parentReplySeq}`).html(form).toggle();
+    $(`.comment[data-reply-seq="${parentReplySeq}"] .reply-btn`).hide(); // 답글 버튼 숨김
+}
+
+// 답글 폼 취소 함수
+function cancelReplyForm(parentReplySeq) {
+    $(`#reply-form-${parentReplySeq}`).html("").hide();
+    $(`.comment[data-reply-seq="${parentReplySeq}"] .reply-btn`).show();
+}
+
+// 답글 등록 (동적 이벤트 핸들링)
+$(document).on("click", ".reply-submit-btn", function () {
+    let parentReplySeq = $(this).data("parent-reply");
+    let commentInput = $(`.reply-input[data-parent-reply="${parentReplySeq}"]`).val();
+    let boardSeq = $('#boardSeq').val();
+
+    if (commentInput.trim() == '' || commentInput.trim().length > maxContentLength) {
+        Swal.fire({
+            icon: 'warning',
+            title: '등록할 수 없습니다',
+            text: '1~300자 이내로 작성해주세요',
+            confirmButtonColor: '#ff7f50',
+            confirmButtonText: '확인',
+        });
+        return;
+    }
+
+    $.ajax({
+        url: '/reply/addReply',
+        method: 'POST',
+        data: {
+            "boardSeq": boardSeq,
+            "replyContent": commentInput,
+            "parentReplySeq": parentReplySeq || null
+        },
+        success: function () {
+            initReplies(currentPage);
+        }
+    });
+});
 
 // 댓글 내용 토글 (자세히 보기 / 간략히 보기)
 function toggleText(button) {
@@ -147,12 +215,22 @@ function generatePagination(resp) {
     $('#pagination').html(pagination);
 }
 
+// 댓글 최대 글자 수 설정
+const maxContentLength = 300;
+
 // 댓글 추가 함수
 function addReply() {
     let commentInput = $("#comment-input").val();
     let boardSeq = $('#boardSeq').val();
 
-    if (commentInput.trim() == '') {
+    if (commentInput.trim() == '' || commentInput.trim().length > maxContentLength) {
+        Swal.fire({
+            icon: 'warning',
+            title: '등록할 수 없습니다',
+            text: '1~300자 이내로 작성해주세요',
+            confirmButtonColor: '#ff7f50',
+            confirmButtonText: '확인',
+        });
         return;
     }
 
@@ -215,6 +293,7 @@ function editReply(replySeq, replyContent) {
 
     $commentDiv.find('.user-text').hide();
     $commentDiv.find('div:last-child').hide();
+    $commentDiv.find('.reply-btn').hide();
     $commentDiv.append(editForm);
 }
 
@@ -244,8 +323,10 @@ function cancelEdit(replySeq, originalContent) {
     $commentDiv.find('.edit-form').remove();
     $commentDiv.find('.user-text').text(originalContent).show();
     $commentDiv.find('div:last-child').show();
+    $commentDiv.find('.reply-btn').show();
 }
 
+// XSS 방지용 문자열 이스케이프 함수
 function escapeHTML(str) {
     return str.replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
