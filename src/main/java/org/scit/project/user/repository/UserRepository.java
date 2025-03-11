@@ -9,19 +9,31 @@ public interface UserRepository extends JpaRepository<UserEntity, Long>{
 
 
 
-//	아이디 중복확인
-	boolean existsByUserId(String userId);
-//	닉네임 중복확인
-	boolean existsByUserName(String userName);
 //	Id값으로 사용자 찾기
 	Optional<UserEntity> findByUserId(String userId);
-//	이메일 중복체크
-	boolean existsByUserEmail(String userEmail);
-	
+
 //	이메일을 이용해서 아이디를 찾기위한 쿼리메소드
 	Optional<UserEntity> findByUserEmail(String userEmail);
+	
 //	비밀번호를 찾기위한 쿼리메소드
 	Optional<UserEntity> findByUserEmailAndUserId(String userEmail, String userId);
+	
+//	회원 탈퇴 처리된 아이디인지 체크 is_deleted true 검색제외
+//	boolean existsByUserIdAndIsDeleted(String userId, boolean i); 
+	
+//	회원 탈퇴 처리된 닉네임인지 체크
+//	boolean existsByUserNameAndIsDeleted(String userName, boolean i); 
+	
+//	회원 탈퇴 처리된 이메일인지 체크
+//	boolean existsByUserEmailAndIsDeleted(String userEmail, boolean i);
+	
+//	아이디 중복 체크
+	boolean existsByUserId(String userId);
+//	닉네임 중복 체크
+	boolean existsByUserName(String userName);
+//	이메일 중복 체크
+	boolean existsByUserEmail(String userEmail);
+	
 
 	
 
