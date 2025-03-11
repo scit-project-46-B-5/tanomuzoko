@@ -1,6 +1,7 @@
 package org.scit.project.user.controller;
 
 import org.scit.project.user.dto.EmailDTO;
+import org.scit.project.user.dto.FindIdResponseDTO;
 import org.scit.project.user.dto.UserDTO;
 import org.scit.project.user.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -83,24 +84,32 @@ public class UserController {
 		
 		return "user/idSearch";
 	}
-
+	
 	// ✅ 아이디 찾기 요청 처리
-    @PostMapping("/find-id")
-    public String findUserId(@RequestParam("userEmail") String userEmail, Model model) {
-        log.info("아이디 찾기 요청: {}", userEmail);
+	@PostMapping("/find-id")
+	@ResponseBody 
+	public ResponseEntity<FindIdResponseDTO> findUserId(@RequestParam("userEmail") String userEmail) {
+	    log.info("아이디 찾기 요청: {}", userEmail);
 
-        // 이메일 유효성 검사
-        if (userEmail == null || userEmail.trim().isEmpty()) {
-            model.addAttribute("findId", null);
-            model.addAttribute("msg", "이메일을 입력해주세요.");
-            return "user/idSearchResult";
-        }
-        
-        String userId = userService.findByUserEmail(userEmail);
-        model.addAttribute("findId", userId);  // 이메일이 없으면 null이 전달됨
-        
-        return "user/resultId"; // ✅ 결과 페이지 반환
-    }
+	    // 이메일 유효성 검사
+	    if (userEmail == null || userEmail.trim().isEmpty()) {
+	        FindIdResponseDTO response = new FindIdResponseDTO("error", "이메일을 입력해주세요.", null);
+	        return ResponseEntity.badRequest().body(response);  // badRequest 상태 코드로 반환
+	    }
+
+	    String userId = userService.findByUserEmail(userEmail);
+
+	    FindIdResponseDTO response;
+	    
+	    if (userId != null && !userId.isEmpty()) {
+	        response = new FindIdResponseDTO("success", null, userId);
+	    } else {
+	        response = new FindIdResponseDTO("error", "해당 이메일로 가입된 계정이 존재하지 않습니다.", null);
+	    }
+
+	    return ResponseEntity.ok(response);  // 정상 응답 반환
+	}
+    
 	@GetMapping("/passwordSearch")
 	public String passwordSearch() {
 		
