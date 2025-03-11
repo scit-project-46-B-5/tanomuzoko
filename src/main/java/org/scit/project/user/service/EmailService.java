@@ -3,6 +3,7 @@ package org.scit.project.user.service;
 import java.util.Random;
 
 import org.scit.project.user.util.RedisUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,8 @@ public class EmailService {
 
     private final JavaMailSender javaMailSender;
     private final RedisUtil redisUtil;
-    private static final String SENDEREMAIL = "sjpublicgpt@gmail.com";
+    @Value("${mail.sender.email}")
+    private String SENDEREMAIL;
     private final TemplateEngine templateEngine;
 
     private String createCode() {

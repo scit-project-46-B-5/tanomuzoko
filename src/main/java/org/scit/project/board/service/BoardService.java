@@ -11,6 +11,7 @@ import org.scit.project.board.entity.BoardImageEntity;
 import org.scit.project.board.repository.BoardRepository;
 import org.scit.project.board.repository.BoardImageRepository;
 import org.scit.project.board_heart.repository.BoardHeartRepository;
+import org.scit.project.reply.entity.ReplyEntity;
 import org.scit.project.user.dto.LoginUserDetails;
 import org.scit.project.user.entity.UserEntity;
 import org.scit.project.user.repository.UserRepository;
@@ -99,7 +100,6 @@ public class BoardService {
 
     @Transactional
     public List<BoardDTO> getPopularPosts() {
-        // 모든 게시글을 가져와 각 게시글의 공감 수를 기준으로 내림차순 정렬한 후 상위 5개 반환
         List<BoardEntity> allBoards = boardRepository.findAll();
         List<BoardDTO> popularPosts = allBoards.stream()
             .sorted((b1, b2) -> {
@@ -113,21 +113,64 @@ public class BoardService {
         return popularPosts;
     }
 
-	public BoardDTO updateSelectOne(Long boardSeq) {
-		Optional<BoardEntity> temp = boardRepository.findById(boardSeq);
-
-		if(!temp.isPresent()) return null;
-
-		return BoardDTO.toDTO(temp.get());
-	}
+    public BoardDTO updateSelectOne(Long boardSeq) {
+        Optional<BoardEntity> temp = boardRepository.findById(boardSeq);
+        if(!temp.isPresent()) return null;
+        return BoardDTO.toDTO(temp.get());
+    }
 
     @Transactional
     public void updateBoard(BoardDTO boardDTO) {
         BoardEntity entity = boardRepository.findById(boardDTO.getBoardSeq())
                 .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
-
         entity.setBoardTitle(boardDTO.getBoardTitle());
         entity.setBoardContent(boardDTO.getBoardContent());
         boardRepository.save(entity);
+
+        // 새로 지정된 썸네일이 있으면 업데이트 처리 (빈 문자열이 아니면)
+        if(boardDTO.getThumbnail() != null && !boardDTO.getThumbnail().isEmpty()){
+            Optional<BoardImageEntity> optImage = boardImageRepository.findByBoardEntity(entity);
+            String thumbnailUrl = boardDTO.getThumbnailUrl();
+            String savedFileName = "";
+            if(thumbnailUrl.startsWith("/uploads/")){
+                savedFileName = thumbnailUrl.substring(9);
+            } else {
+                String newUUID = UUID.randomUUID().toString();
+                String ext = "";
+                if(thumbnailUrl.startsWith("data:image/")){
+                    int slashIndex = thumbnailUrl.indexOf("/");
+                    int semicolonIndex = thumbnailUrl.indexOf(";");
+                    if(slashIndex != -1 && semicolonIndex != -1){
+                        ext = "." + thumbnailUrl.substring(slashIndex+1, semicolonIndex);
+                    }
+                }
+                savedFileName = "thumbnail_" + newUUID + ext;
+            }
+            if(optImage.isPresent()){
+                BoardImageEntity imageEntity = optImage.get();
+                imageEntity.setOriginalFileName(boardDTO.getThumbnail());
+                imageEntity.setSavedFileName(savedFileName);
+                boardImageRepository.save(imageEntity);
+            } else {
+                BoardImageEntity imageEntity = BoardImageEntity.builder()
+                        .boardEntity(entity)
+                        .originalFileName(boardDTO.getThumbnail())
+                        .savedFileName(savedFileName)
+                        .build();
+                boardImageRepository.save(imageEntity);
+            }
+        }
     }
+
+	public void deleteBoard(Long boardSeq) {
+        Optional<BoardEntity> boardOpt = boardRepository.findById(boardSeq);
+        if (boardOpt.isEmpty()) {
+            throw new IllegalArgumentException("게시물이 존재하지 않습니다.");
+        }
+        
+        BoardEntity boardEntity = boardOpt.get();
+		
+        boardEntity.setIsDeleted(true);
+        boardRepository.save(boardEntity);
+	}
 }
