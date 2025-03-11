@@ -7,7 +7,7 @@ $(document).ready(function () {
     if (!boardSeq) {
         return; // 게시글 번호가 없으면 함수 종료
     }
-        
+
     // 공감 상태 및 개수 불러오기
     function fetchHeartStatus() {
         $.ajax({
@@ -32,6 +32,7 @@ $(document).ready(function () {
         if ($(this).prop("disabled")) {
             return;
         }
+
         $.ajax({
             url: `/heart/toggle?boardSeq=${boardSeq}`,
             type: "POST",
@@ -48,73 +49,23 @@ $(document).ready(function () {
     function updateHeartUI(isHearted, heartCount) {
         if (isHearted) {
             $("#like-btn").addClass("liked").text("❤️ 취소 " + heartCount).css("font-family", "NPSfontBold, sans-serif");
+            
         } else {
             $("#like-btn").removeClass("liked").text("🤍 공감 " + heartCount).css("font-family", "NPSfontBold, sans-serif");
         }
     }
-	
-	// 페이지 로딩 시 공감 상태 가져오기
-	fetchHeartStatus();
 
-	// 댓글 초기화( 댓글 전체 조회 )
-	initReplies();
-	
-    // 수정/삭제 버튼 로드
-    loadBoardButtons();
+    // 페이지 로딩 시 공감 상태 가져오기
+    fetchHeartStatus();
 
+    // 댓글 초기화( 댓글 전체 조회 )
+    initReplies();
+	
+	// 수정/삭제 버튼 로드
+	loadBoardButtons();
 });
 
-// board 수정/삭제 버튼 로드
-// 현재 페이지에 표시된 board의 작성자와 로그인한 사용자를 비교하여 버튼을 생성
-function loadBoardButtons() {
-    let boardSeq = $('#boardSeq').val();
-    let boardWriter = $("#author-name").text().trim();
-    let loginId = $("#loginId").val(); // recipe-detail에 있는 hidden input
-    if (loginId && boardWriter === loginId) {
-        let buttons = `
-            <a href="/board/boardUpdate?boardSeq=${boardSeq}" class="updateAndDelete-btn">수정</a>
-            <button class="updateAndDelete-btn" onclick="deleteBoard(${boardSeq})">삭제</button>
-        `;
-        $("#upadteAndDelete-btn").html(buttons);
-    }
-}
-
-// 게시글 삭제 함수
-function deleteBoard(boardSeq) {
-    Swal.fire({
-        title: '정말로 삭제하시겠습니까?',
-        text: "게시글이 삭제되면 복구할 수 없습니다.",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: '승인',
-        cancelButtonText: '취소',
-        reverseButtons: false,
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: '/board/boardDelete',
-                method: 'POST',
-                data: { boardSeq: boardSeq },
-                success: function () {
-                    Swal.fire(
-                        '삭제되었습니다.',
-                        '게시글이 삭제되었습니다.',
-                        'success'
-                    ).then(() => {
-                        window.location.href = '/board/board';
-                    });
-                },
-                error: function () {
-                    Swal.fire('삭제 실패', '오류가 발생했습니다.', 'error');
-                }
-            });
-        }
-    });
-}
-
-// 댓글 초기화
+// 댓글 초기화 (페이지네이션 포함)
 function initReplies(page = 0) {
     let boardSeq = $('#boardSeq').val();
     let loginId = $('#loginId').val();
@@ -156,19 +107,75 @@ function renderComment(item, loginId, isChild) {
             </div>
     `;
 
-                if (loginId === item['userId']) {
-                    tag += `
-                        <div>
-                            <button class="edit-input-btn" onclick="deleteReply(${item['replySeq']})">삭제</button>
-                            <button class="edit-cancel-btn" onclick="editReply(${item['replySeq']}, '${escapeHTML(item['replyContent'])}')">수정</button>
-                        </div>
-                    `;
-                }
+    // 로그인한 사용자만 답글 버튼 보이게 설정
+    if (!isChild && loginId) {
+        tag += `<button class="reply-btn" onclick="showReplyForm(${item.replySeq})">답글</button>`;
+    }
 
-                tag += `</div>`;              
-            })
-            $('#comment-list').html(tag);
-            generatePagination(resp);
+    // 로그인한 사용자의 댓글이면 수정, 삭제 버튼 추가
+    if (loginId === item.userId) {
+        tag += `
+            <div>
+                <button class="edit-input-btn" onclick="deleteReply(${item.replySeq})">삭제</button>
+                <button class="edit-cancel-btn" onclick="editReply(${item.replySeq}, '${escapeHTML(item.replyContent)}')">수정</button>
+            </div>
+        `;
+    }
+
+    tag += `</div>`;
+    tag += `<div id="reply-form-${item.replySeq}" class="reply-form" style="display: none; margin-left: 30px;"></div>`;
+
+    return tag;
+}
+
+// 답글 입력 폼 표시
+function showReplyForm(parentReplySeq) {
+    let form = `
+    <div class="comment">
+        <div class="reply-form">
+            <input type="text" class="reply-input" data-parent-reply="${parentReplySeq}" placeholder="답글을 입력하세요">
+            <button class="reply-submit-btn" data-parent-reply="${parentReplySeq}">등록</button>
+            <button class="reply-cancel-btn" onclick="cancelReplyForm(${parentReplySeq})">취소</button>
+        </div>
+    </div>
+    `;
+    $(`#reply-form-${parentReplySeq}`).html(form).toggle();
+    $(`.comment[data-reply-seq="${parentReplySeq}"] .reply-btn`).hide(); // 답글 버튼 숨김
+}
+
+// 답글 폼 취소 함수
+function cancelReplyForm(parentReplySeq) {
+    $(`#reply-form-${parentReplySeq}`).html("").hide();
+    $(`.comment[data-reply-seq="${parentReplySeq}"] .reply-btn`).show();
+}
+
+// 답글 등록 (동적 이벤트 핸들링)
+$(document).on("click", ".reply-submit-btn", function () {
+    let parentReplySeq = $(this).data("parent-reply");
+    let commentInput = $(`.reply-input[data-parent-reply="${parentReplySeq}"]`).val();
+    let boardSeq = $('#boardSeq').val();
+
+    if (commentInput.trim() == '' || commentInput.trim().length > maxContentLength) {
+        Swal.fire({
+            icon: 'warning',
+            title: '등록할 수 없습니다',
+            text: '1~300자 이내로 작성해주세요',
+            confirmButtonColor: '#ff7f50',
+            confirmButtonText: '확인',
+        });
+        return;
+    }
+
+    $.ajax({
+        url: '/reply/addReply',
+        method: 'POST',
+        data: {
+            "boardSeq": boardSeq,
+            "replyContent": commentInput,
+            "parentReplySeq": parentReplySeq || null
+        },
+        success: function () {
+            initReplies(currentPage);
         }
     });
 });
@@ -255,7 +262,8 @@ function deleteReply(replySeq) {
         cancelButtonColor: '#d33',
         confirmButtonText: '승인',
         cancelButtonText: '취소',
-        reverseButtons: false,
+        reverseButtons: false, // 버튼 순서 거꾸로
+        
     }).then((result) => {
         if (result.isConfirmed) {
             Swal.fire(
@@ -272,7 +280,9 @@ function deleteReply(replySeq) {
                 }
             });
         }
+
     });
+
 }
 
 // 댓글 수정 함수
@@ -282,8 +292,8 @@ function editReply(replySeq, replyContent) {
     let editForm = `
         <div class="edit-form">
             <input class="edit-input" type="text" id="edit-input-${replySeq}" value="${replyContent}">
-            <button class="edit-input-btn" onclick="updateReply(${replySeq})">저장</button>
-            <button class="edit-cancel-btn" onclick="cancelEdit(${replySeq}, '${replyContent}')">취소</button>
+            <button class = "edit-input-btn "onclick="updateReply(${replySeq})">저장</button>
+            <button class = "edit-cancel-btn" onclick="cancelEdit(${replySeq}, '${replyContent}')">취소</button>
         </div>
     `;
 
@@ -293,7 +303,7 @@ function editReply(replySeq, replyContent) {
     $commentDiv.append(editForm);
 }
 
-// 댓글 수정 요청 함수
+// 댓글 수정 요청
 function updateReply(replySeq) {
     let newContent = $(`#edit-input-${replySeq}`).val();
 
@@ -315,6 +325,7 @@ function updateReply(replySeq) {
 // 댓글 수정 취소 함수
 function cancelEdit(replySeq, originalContent) {
     let $commentDiv = $(`.comment[data-reply-seq="${replySeq}"]`);
+
     $commentDiv.find('.edit-form').remove();
     $commentDiv.find('.user-text').text(originalContent).show();
     $commentDiv.find('div:last-child').show();
@@ -328,4 +339,73 @@ function escapeHTML(str) {
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+}
+
+
+// board 수정/삭제 버튼 로드
+// 현재 페이지에 표시된 board의 작성자와 로그인한 사용자를 비교하여 버튼을 생성
+function loadBoardButtons() {
+    let boardSeq = $('#boardSeq').val();
+    let boardWriter = $("#author-name").text().trim();
+    let loginId = $("#loginId").val(); // recipe-detail에 있는 hidden input
+
+    if (loginId && boardWriter === loginId) {
+        let buttons = `
+			<button class="updateAndDelete-btn" onclick="updateBoard(${boardSeq})">수정</button>			
+            <button class="updateAndDelete-btn" onclick="deleteBoard(${boardSeq})">삭제</button>
+        `;
+        $("#upadteAndDelete-btn").html(buttons);
+    }
+}
+
+// 게시글 수정 함수
+function updateBoard(boardSeq) {
+    $.ajax({
+        url: '/board/boardUpdate',
+        type: 'GET',
+        data: { boardSeq: boardSeq },
+        success: function(response) {
+            // 서버의 응답을 처리하고 업데이트 페이지로 이동
+            window.location.href = '/board/boardUpdate?boardSeq=' + boardSeq;
+        },
+        error: function(xhr, status, error) {
+            console.error('업데이트 요청 실패:', error);
+        }
+    });
+}
+
+
+// 게시글 삭제 함수
+function deleteBoard(boardSeq) {
+    Swal.fire({
+        title: '정말로 삭제하시겠습니까?',
+        text: "게시글이 삭제되면 복구할 수 없습니다.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: '승인',
+        cancelButtonText: '취소',
+        reverseButtons: false,
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/board/boardDelete',
+                method: 'POST',
+                data: { boardSeq: boardSeq },
+                success: function () {
+                    Swal.fire(
+                        '삭제되었습니다.',
+                        '게시글이 삭제되었습니다.',
+                        'success'
+                    ).then(() => {
+                        window.location.href = '/board/board';
+                    });
+                },
+                error: function () {
+                    Swal.fire('삭제 실패', '오류가 발생했습니다.', 'error');
+                }
+            });
+        }
+    });
 }

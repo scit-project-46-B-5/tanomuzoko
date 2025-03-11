@@ -1,7 +1,6 @@
 package org.scit.project.mainpage.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,7 +38,7 @@ public class MainService {
         int pageSize = 10; // 한 페이지에 10개의 게시글을 가져옴
 
         // 공감(좋아요) 개수를 포함한 게시글 목록을 가져옴
-        Page<BoardWithHeartCountDTO> temp = mainRepository.findAllWithHeartCount(PageRequest.of(page, pageSize));
+        Page<BoardWithHeartCountDTO> temp = mainRepository.findAllWithHeartCountAndIsDeletedIsFalse(PageRequest.of(page, pageSize));
 
         // 게시글 데이터를 DTO로 변환하여 반환
         return temp.stream()
@@ -67,7 +66,7 @@ public class MainService {
                 : LocalDateTime.now().minusWeeks(1); // 일주일 전
 
         // 지정된 기간 내에서 공감 수가 많은 게시글 5개 조회
-        List<BoardWithHeartCountDTO> topPosts = mainRepository.findTopPostsByPeriodAndHeartCount(startDate,
+        List<BoardWithHeartCountDTO> topPosts = mainRepository.findTopPostsByPeriodAndHeartCountAndIsDeletedIsFalse(startDate,
                 PageRequest.of(0, 5));
 
         return topPosts.stream()
@@ -98,7 +97,7 @@ public class MainService {
      * @return 공감 수 기준으로 정렬된 상위 3개 게시글 리스트
      */
     public List<MainDTO> getTop3LikedPosts() {
-        List<BoardWithHeartCountDTO> topPosts = boardHeartRepository.findTop3LikedBoards(PageRequest.of(0, 3));
+        List<BoardWithHeartCountDTO> topPosts = boardHeartRepository.findTop3LikedBoardsAndIsDeletedIsFalse(PageRequest.of(0, 3));
 
         return topPosts.stream()
                 .map(dto -> {
