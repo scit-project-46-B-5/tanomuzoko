@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="../../static/css/globalstyles.css" th:href="@{/css/globalstyles.css}">
+    <link rel="stylesheet" href="../../static/css/mypage.css" th:href="@{/css/mypage.css}">
+    <link rel="stylesheet" href="../../static/css/findAccount.css" th:href="@{/css/findAccount.css}">
     <!-- 외부 API를 사용하기 위한 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.all.min.js"></script>
@@ -11,11 +14,30 @@
     <script defer th:src="@{/js/idSearch.js}"></script>
 </head>
 <body>
-    <form id="findForm" th:action="@{/user/find-id}" method="post">
-        <div class="form-group">
-            <input type="email" name="userEmail" id="userEmail" placeholder="이메일">
+    <div class="container">
+        <div class="header" th:replace="~{fragment/header :: top-menu}"></div>
+        
+        <div class="find-account">
+            <div class="find-account-container">
+                <ul class="find-account-Menu">
+                    <li><a th:href="@{/user/idSearch}" class="menu-item checked">아이디 찾기</a></li>
+                    <li><a th:href="@{/user/passwordSearch}" class="menu-item">비밀번호 찾기</a></li>
+                </ul>
+
+                <form id="findForm" th:action="@{/user/find-id}" method="post">
+                    <input type="email" name="userEmail" id="userEmail" class="input-field" placeholder="이메일">
+                    <button type="submit" id="id-find" class="findBtn">이메일 확인</button>
+                </form>
+            </div>
         </div>
-        <button type="submit" id="id-find">아이디 찾기</button>
-    </form>
+
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <p id="modalMessage"></p>
+            </div>
+        </div>
+    </div>
+   
 </body>
 </html>
