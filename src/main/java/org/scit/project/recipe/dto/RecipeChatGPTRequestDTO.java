@@ -3,8 +3,6 @@ package org.scit.project.recipe.dto;
 import java.io.Serializable;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Value;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
