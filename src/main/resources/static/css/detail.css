@@ -448,6 +448,17 @@
     margin-left: 5px;
 }
 
+.reply-btn{
+    color: #ff7f50; /* 텍스트 색상 오렌지로 설정 */
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: underline; /* 텍스트에 밑줄 추가 */
+    transition: color 0.3s ease;
+    margin-top: 0;
+    padding: 0;
+}
+
 /* 유저 정보 + 버튼을 가로로 정렬 */
 .comment-header {
     display: flex;
