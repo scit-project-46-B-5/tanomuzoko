@@ -14,16 +14,16 @@
 </head>
 <body>
     <div class="container">
-        <div class="header" th:replace="/fragment/header :: top-menu"></div>
+        <div class="header" th:replace="~{fragment/header :: top-menu}"></div>
 
         <div class="mypage-container">
-            <div th:replace="/fragment/sidebar :: sidebar-menu"></div>
+            <div th:replace="~{fragment/sidebar :: sidebar-menu}"></div>
 
             <!-- ✅ 메인 컨텐츠 -->
             <div class="mypage-content">
                 <div class="gallery">
                     <div th:each="board : ${myBoard}" class="gallery-item">
-                        <a class="gallery-link" href="#">
+                        <a class="gallery-link" th:href="@{/board/boardDetail(boardSeq=${board.boardSeq})}">
                             <div class="img-wrapper">
                                 <img th:src="@{${board.originalFileName}}" alt="게시물 이미지" />
                             </div>

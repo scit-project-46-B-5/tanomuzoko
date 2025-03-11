@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>로그인 페이지</title>
     <link rel="stylesheet" href="../../static/css/login.css" th:href="@{/css/login.css}">
+    <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+    <script defer th:src="@{/js/login.js}"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.all.min.js"></script>
 </head>
 
 <body>
@@ -22,7 +26,7 @@
             <input type="password" class="input-field" id="userPassword" name="userPassword" placeholder="비밀번호" />
             <button class="login-button" id="loginBtn">로그인</button>
             <div class="links">
-                <a href="#">계정 찾기</a> | <a href="#">비밀번호 찾기</a> | <a th:href="@{/user/join}">회원가입</a>
+                <a th:href="@{/user/idSearch}">계정 찾기</a> | <a th:href="@{/user/passwordSearch}">비밀번호 찾기</a> | <a th:href="@{/user/join}">회원가입</a>
             </div>
         </div>
     </form>

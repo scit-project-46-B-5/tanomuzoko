@@ -1,7 +1,7 @@
 package org.scit.project.user.controller;
 
-import java.util.Map;
-
+import org.scit.project.user.dto.EmailDTO;
+import org.scit.project.user.dto.FindIdResponseDTO;
 import org.scit.project.user.dto.UserDTO;
 import org.scit.project.user.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -57,9 +57,9 @@ public class UserController {
 	// 이메일 중복 체크
 	@PostMapping("/emailCheck")
 	@ResponseBody
-	public boolean emailCheck(@RequestBody Map<String, String> request) {
-	    String email = request.get("userEmail");
-	    return userService.isEmailExists(email);
+	public boolean emailCheck(@RequestBody EmailDTO emailDTO) {
+	    String userEmail = emailDTO.getUserEmail();
+	    return userService.isEmailExists(userEmail);
 	}
 	
 //	회원가입 처리요청
@@ -77,5 +77,42 @@ public class UserController {
 	    } catch (IllegalStateException e) { // ✅ 예외 발생 시 catch
 	        return ResponseEntity.status(400).body(e.getMessage()); // ✅ 중복 이메일 예외 메시지 반환
 	    }
+	}
+//	아이디 찾기 페이지 요청
+	@GetMapping("/idSearch")
+	public String idSeach () {
+		
+		return "user/idSearch";
+	}
+	
+	// ✅ 아이디 찾기 요청 처리
+	@PostMapping("/find-id")
+	@ResponseBody 
+	public ResponseEntity<FindIdResponseDTO> findUserId(@RequestParam("userEmail") String userEmail) {
+	    log.info("아이디 찾기 요청: {}", userEmail);
+
+	    // 이메일 유효성 검사
+	    if (userEmail == null || userEmail.trim().isEmpty()) {
+	        FindIdResponseDTO response = new FindIdResponseDTO("error", "이메일을 입력해주세요.", null);
+	        return ResponseEntity.badRequest().body(response);  // badRequest 상태 코드로 반환
+	    }
+
+	    String userId = userService.findByUserEmail(userEmail);
+
+	    FindIdResponseDTO response;
+	    
+	    if (userId != null && !userId.isEmpty()) {
+	        response = new FindIdResponseDTO("success", null, userId);
+	    } else {
+	        response = new FindIdResponseDTO("error", "해당 이메일로 가입된 계정이 존재하지 않습니다.", null);
+	    }
+
+	    return ResponseEntity.ok(response);  // 정상 응답 반환
+	}
+    
+	@GetMapping("/passwordSearch")
+	public String passwordSearch() {
+		
+		return "user/passwordSearch";
 	}
 }
