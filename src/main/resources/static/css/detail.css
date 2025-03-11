@@ -447,6 +447,63 @@
     font-size: 14px;
     margin-left: 5px;
 }
+
+/* 유저 정보 + 버튼을 가로로 정렬 */
+.comment-header {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: flex-start;
+}
+
+/* 📌 페이지네이션 버튼 컨테이너 */
+#pagination {
+    display: flex;
+    justify-content: center; /* 버튼을 가운데 정렬 */
+    gap: 5px; /* 버튼 간격 조정 */
+    margin-top: 20px;
+}
+
+/* 📌 페이지네이션 버튼 스타일 */
+#pagination button {
+    background: #ff7f50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+/* 📌 호버 효과 */
+#pagination button:hover {
+    background: #e56b42;
+    transform: scale(1.1);
+}
+
+/* 📌 활성화된 페이지 버튼 */
+#pagination .active {
+    background: #d9534f;
+    font-weight: bold;
+    cursor: default;
+}
+
+/* 📌 이전/다음 버튼 스타일 */
+#pagination button:first-child,
+#pagination button:last-child {
+    font-weight: bold;
+    background: #ffa07a;
+}
+
+/* 📌 비활성화된 이전/다음 버튼 */
+#pagination button:disabled {
+    background: #ddd;
+    color: #666;
+    cursor: not-allowed;
+    transform: none;
+}
+
 @media(max-width: 1250px){
     .ad-section {
         display: none; /* 📌 태블릿에서는 숨기기 */
