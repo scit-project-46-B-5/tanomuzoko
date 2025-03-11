@@ -3,6 +3,8 @@ package org.scit.project.user.service;
 import java.util.Random;
 
 import org.scit.project.user.util.RedisUtil;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
@@ -19,7 +21,8 @@ public class EmailService {
 
     private final JavaMailSender javaMailSender;
     private final RedisUtil redisUtil;
-    private static final String SENDEREMAIL = "sjpublicgpt@gmail.com";
+    @Value("${mail.sender.email}")
+    private String SENDEREMAIL;
     private final TemplateEngine templateEngine;
 
     private String createCode() {
@@ -106,6 +109,24 @@ public class EmailService {
         }
 
         return isMatch;
+    }
+    /**
+     * ✅ 비밀번호 찾기 - 임시 비밀번호 전송
+     */
+    public void passwordSend(String userEmail, String subject, String text) {
+        try {
+        	log.info("📧 [메일 전송 시도] userEmail={}", userEmail);
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(userEmail);
+            message.setSubject(subject);
+            message.setText(text);
+            message.setFrom(SENDEREMAIL); // 발신자 설정
+            javaMailSender.send(message); // 이메일 전송
+            log.info("📧 비밀번호 이메일 전송 완료: {}", userEmail);
+        } catch (Exception e) {
+            log.error("🚨 비밀번호 이메일 전송 실패: {}", e.getMessage(), e);
+            throw new RuntimeException("비밀번호 이메일 전송 실패", e);
+        }
     }
 
 }

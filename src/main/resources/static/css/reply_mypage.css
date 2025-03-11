@@ -29,8 +29,11 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-right: 4px;
+    padding: 0 2px;
+    margin-right: 6px;
     font-weight: 700;
+    border-right: 2px solid #ccc;
+    text-align: center;
 }
 
 .reply-content {
@@ -38,6 +41,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    margin-left: 2px;
 }
 
 .date {
