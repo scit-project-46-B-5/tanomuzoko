@@ -1,6 +1,5 @@
 package org.scit.project.recipe.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,16 +29,13 @@ public class RecipeHistoryService {
     private final RecipeRepository recipeRepository;
 
     @Transactional
-    public Long saveRecipeHisotry(RecipeHistroyRequsetDTO recipeHistroyRequsetDTO) {
-        LoginUserDetails loginUser = (LoginUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String userId = loginUser.getUserId();
-        UserEntity user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("no such user"));
+    public Long saveRecipeAndReturnSavedPK(RecipeHistroyRequsetDTO recipeHistroyRequsetDTO) {
+        UserEntity user = findUser();
         
         RecipeEntity recipeEntity = recipeRepository.save(RecipeEntity.TOENTITY(user));
 
         if (recipeEntity == null) {
-            throw new RuntimeException("recipe is not made due to error");
+            throw new RuntimeException("recipe is not saved due to error");
         }
 
         List<RecipeInputKeywordEntity> recipeInputKeywords = recipeHistroyRequsetDTO.getAllConditions()
@@ -50,11 +46,20 @@ public class RecipeHistoryService {
         recipeInpuKeywordRepository.saveAll(recipeInputKeywords);
         
         recipeOutputRepository.save(RecipeOutputEntity.TOENTTIY(
-                recipeEntity, 
-                recipeHistroyRequsetDTO.getTitle(), 
-                recipeHistroyRequsetDTO.getOutputContent()
-            ));
+                                                                recipeEntity, 
+                                                                recipeHistroyRequsetDTO.getTitle(), 
+                                                                recipeHistroyRequsetDTO.getOutputContent()
+                                                            )
+                                    );
             
         return recipeEntity.getRecipeSeq();
+    }
+
+
+    private UserEntity findUser() {
+        LoginUserDetails loginUser = (LoginUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userId = loginUser.getUserId();
+        return userRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("no such user, using in saveRecipeAndReturnSavedPK"));
     }
 }
