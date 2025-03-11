@@ -20,13 +20,6 @@
     min-height: 800px;
 }
 
-
-.btn-wrapper {
-    margin-top: auto; /* 자동으로 아래쪽으로 밀어냄 */
-}
-
-
-
 .recipe-detail img {
     width: 100%;
     max-width: 850px !important;
@@ -100,6 +93,7 @@
     border-radius: 5px;
     cursor: pointer;
     margin-top: 10px;
+    font-family: "NPSfontBold" !important;
 }
 
 .updateAndDelete-btn:hover {
@@ -391,6 +385,9 @@
 
 
 .btn-wrapper {
+	display: flex;
+	margin-top: auto; /* 자동으로 아래쪽으로 밀어냄 */
+	gap: 10px;
     align-self: center; /* 가로 중앙 정렬 */
     margin-top: auto; /* 자동으로 아래쪽으로 밀어내기 */
 }

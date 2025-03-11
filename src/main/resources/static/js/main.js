@@ -1,28 +1,21 @@
+// URL에서 특정 파라미터 값을 가져오는 함수
 $(function () {
-    $('#logoutBtn').on('click', logout);
-});
-function logout() {
-    $.ajax({
-        url: "/user/logout", // Spring Security 설정된 로그아웃 URL
-        type: "POST",
-        success: function () {
-            Swal.fire({
-                icon: 'success',
-                title: '성공!',
-                text: '로그아웃이 완료되었습니다다.',
-                confirmButtonColor: '#ff7f50',
-                confirmButtonText: '확인',
-            });
-            window.location.href = "/"; // ✅ 로그아웃 후 메인 페이지로 이동
-        },
-        error: function () {
-            Swal.fire({
-                icon: 'warning',
-                title: '실패',
-                text: '로그아웃 실패! 다시 시도해주세요.',
-                confirmButtonColor: '#ff7f50',
-                confirmButtonText: '확인',
-            });
-        }
+    // ✅ 1. 로그아웃 버튼 클릭 시 sessionStorage에 "logout" 저장
+    $('#logoutBtn').on('click', function () {
+        sessionStorage.setItem("logout", "true"); // 로그아웃 정보 저장
     });
-};
+
+    // ✅ 2. 페이지 로드 시 "logout" 값 확인
+    if (sessionStorage.getItem("logout") === "true") {
+        Swal.fire({
+            icon: 'success',
+            title: '로그아웃 완료',
+            text: '성공적으로 로그아웃되었습니다.',
+            confirmButtonColor: '#ff7f50',
+            confirmButtonText: '확인'
+        });
+
+        // ✅ 3. SweetAlert이 표시된 후, sessionStorage에서 로그아웃 정보 삭제
+        sessionStorage.removeItem("logout");
+    }
+});

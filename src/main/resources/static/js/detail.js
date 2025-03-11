@@ -60,6 +60,9 @@ $(document).ready(function () {
 
     // 댓글 초기화( 댓글 전체 조회 )
     initReplies();
+	
+	// 수정/삭제 버튼 로드
+	loadBoardButtons();
 });
 
 // 댓글 초기화 (페이지네이션 포함)
@@ -336,4 +339,73 @@ function escapeHTML(str) {
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+}
+
+
+// board 수정/삭제 버튼 로드
+// 현재 페이지에 표시된 board의 작성자와 로그인한 사용자를 비교하여 버튼을 생성
+function loadBoardButtons() {
+    let boardSeq = $('#boardSeq').val();
+    let boardWriter = $("#author-name").text().trim();
+    let loginId = $("#loginId").val(); // recipe-detail에 있는 hidden input
+
+    if (loginId && boardWriter === loginId) {
+        let buttons = `
+			<button class="updateAndDelete-btn" onclick="updateBoard(${boardSeq})">수정</button>			
+            <button class="updateAndDelete-btn" onclick="deleteBoard(${boardSeq})">삭제</button>
+        `;
+        $("#upadteAndDelete-btn").html(buttons);
+    }
+}
+
+// 게시글 수정 함수
+function updateBoard(boardSeq) {
+    $.ajax({
+        url: '/board/boardUpdate',
+        type: 'GET',
+        data: { boardSeq: boardSeq },
+        success: function(response) {
+            // 서버의 응답을 처리하고 업데이트 페이지로 이동
+            window.location.href = '/board/boardUpdate?boardSeq=' + boardSeq;
+        },
+        error: function(xhr, status, error) {
+            console.error('업데이트 요청 실패:', error);
+        }
+    });
+}
+
+
+// 게시글 삭제 함수
+function deleteBoard(boardSeq) {
+    Swal.fire({
+        title: '정말로 삭제하시겠습니까?',
+        text: "게시글이 삭제되면 복구할 수 없습니다.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: '승인',
+        cancelButtonText: '취소',
+        reverseButtons: false,
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/board/boardDelete',
+                method: 'POST',
+                data: { boardSeq: boardSeq },
+                success: function () {
+                    Swal.fire(
+                        '삭제되었습니다.',
+                        '게시글이 삭제되었습니다.',
+                        'success'
+                    ).then(() => {
+                        window.location.href = '/board/board';
+                    });
+                },
+                error: function () {
+                    Swal.fire('삭제 실패', '오류가 발생했습니다.', 'error');
+                }
+            });
+        }
+    });
 }

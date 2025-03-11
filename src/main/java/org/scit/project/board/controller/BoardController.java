@@ -37,6 +37,7 @@ public class BoardController {
 
     @GetMapping("/board")
     public String board() {
+    	
         return "board/board";
     }
 
@@ -70,10 +71,11 @@ public class BoardController {
     }
     
     
-    @GetMapping("/boardDelete")
-    public String boardDelete() {
+    @PostMapping("/boardDelete")
+    public String boardDelete(@RequestParam(name="boardSeq") Long boardSeq) {
+    	boardService.deleteBoard(boardSeq);
     	
-    	return "index";
+    	return "board/board";
     }
 
     @GetMapping("/boardDetail")
