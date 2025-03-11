@@ -34,6 +34,21 @@ public class UserService {
     public boolean isEmailExists(String userEmail) {
         return userRepository.existsByUserEmail(userEmail);
     }
+// //  아이디 중복 체크 (탈퇴하지 않은 회원만 검사)
+//    public boolean existId(String userId) {
+//        return !userRepository.existsByUserIdAndIsDeleted(userId, false);
+//    }
+//
+//    // 닉네임 중복 체크 (탈퇴하지 않은 회원만 검사)
+//    public boolean existName(String userName) {
+//        return !userRepository.existsByUserNameAndIsDeleted(userName, false);
+//    }
+//
+//    //  이메일 중복 체크 (탈퇴하지 않은 회원만 검사)
+//    public boolean isEmailExists(String userEmail) {
+//        return userRepository.existsByUserEmailAndIsDeleted(userEmail, false);
+//    }
+
 
     // ✅ 회원가입 처리
     @Transactional				
