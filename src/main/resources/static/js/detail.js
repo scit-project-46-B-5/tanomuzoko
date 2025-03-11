@@ -115,8 +115,13 @@ function renderComment(item, loginId, isChild) {
             </div>
     `;
 
+    if (!isChild && loginId) {
+        tag += `<button class="reply-btn" onclick="showReplyForm(${item.replySeq})">답글</button>`;
+    }
+
     tag += `</div>`;
     tag += `<div id="reply-form-${item.replySeq}" class="reply-form" style="display: none; margin-left: 30px;"></div>`;
+    // 로그인한 사용자만 답글 버튼 보이게 설정
 
     return tag;
 }
