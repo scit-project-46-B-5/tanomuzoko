@@ -20,21 +20,14 @@
                 <h1>내가 쓴 댓글</h1>
                 <div class="reply-list">
                     <ul>
-                        <li>
-                            <a href="#" class="reply-item">
-                                <span class="recipe-name">레시피 제목</span>
-                                <span class="reply-content">내가 쓴 댓글</span>
-                                <span class="date">2025-02-12</span>
+                        <li th:each="reply : ${replies}">
+                            <a th:href="@{/board/boardDetail(boardSeq=${reply.boardSeq})}" class="reply-item">
+                                <span class="recipe-name" th:text="${reply.boardTitle}">게시글 제목</span>
+                                <span class="reply-content" th:text="${reply.replyContent}">내가 쓴 댓글</span>
+                                <span class="date" th:text="${#temporals.format(reply.createDate, 'yyyy-MM-dd')}">작성일</span>
                             </a>
                         </li>
-
-                        <li>
-                            <a href="#" class="reply-item">
-                                <span class="recipe-name">레시피 제목</span>
-                                <span class="reply-content">내가 쓴 댓글</span>
-                                <span class="date">2025-02-12</span>
-                            </a>
-                        </li>
+                        <li th:if="${#lists.isEmpty(replies)}">작성한 댓글이 없습니다.</li>
                     </ul>
                 </div>
             </div>

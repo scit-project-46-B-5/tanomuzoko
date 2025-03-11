@@ -2,6 +2,7 @@ $(document).ready(function () {
     // 현재 페이지 URL에서 boardSeq 값을 가져옴 (예: ?boardSeq=1234)
     const boardSeq = new URLSearchParams(window.location.search).get("boardSeq");
     let currentPage = 0;
+    let isLoggedIn = false;
 
     if (!boardSeq) {
         return; // 게시글 번호가 없으면 함수 종료
@@ -14,6 +15,7 @@ $(document).ready(function () {
             type: "GET",
             success: function (resp) {
                 updateHeartUI(resp.isHearted, resp.heartCount);
+                isLoggedIn = resp.isLoggedIn; // 로그인 여부 저장
 
                 if (!resp.isLoggedIn) {
                     $("#like-btn").prop("disabled", true); // 로그인하지 않은 유저는 버튼 비활성화
@@ -91,7 +93,7 @@ function renderComment(item, loginId, isChild) {
     let fullText = escapeHTML(item.replyContent);
     let shortText = fullText.length > maxTextLength ? fullText.substring(0, maxTextLength) + "..." : fullText;
     let hasMore = fullText.length > maxTextLength;
-
+    console.log("현재 loginId:", loginId);
     let tag = `
         <div class="comment" ${indentStyle} data-reply-seq="${item.replySeq}">
             <div class="user-info">${escapeHTML(item.replyWriter)}</div>
@@ -102,7 +104,8 @@ function renderComment(item, loginId, isChild) {
             </div>
     `;
 
-    if (!isChild) {
+    // 로그인한 사용자만 답글 버튼 보이게 설정
+    if (!isChild && loginId) {
         tag += `<button class="reply-btn" onclick="showReplyForm(${item.replySeq})">답글</button>`;
     }
 

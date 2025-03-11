@@ -22,7 +22,7 @@
             <div class="mypage-content">
                 <div class="gallery">
                     <div th:each="board : ${likedBoards}" class="gallery-item">
-                        <a class="gallery-link" href="#">
+                        <a class="gallery-link" th:href="@{/board/boardDetail(boardSeq=${board.boardSeq})}">
                             <div class="img-wrapper">
                                 <img th:src="@{${board.originalFileName}}" alt="${board.boardTitle}" />
                             </div>
