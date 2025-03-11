@@ -20,20 +20,35 @@ public class UserService {
     private final BCryptPasswordEncoder passwordEncoder; // ✅ 변수명 오타 수정
     private final EmailService emailService; // ✅ EmailService 주입 추가
    
-    // ✅ 아이디 중복 체크
+//    // ✅ 아이디 중복 체크
+//    public boolean existId(String userId) {
+//        return !userRepository.existsByUserId(userId);
+//    }
+//
+//    // ✅ 닉네임 중복 체크
+//    public boolean existName(String userName) {
+//        return !userRepository.existsByUserName(userName);
+//    }
+//
+//    // ✅ 이메일 중복 체크
+//    public boolean isEmailExists(String userEmail) {
+//        return userRepository.existsByUserEmail(userEmail);
+//    }
+ //  아이디 중복 체크 (탈퇴하지 않은 회원만 검사)
     public boolean existId(String userId) {
-        return !userRepository.existsByUserId(userId);
+        return !userRepository.existsByUserIdAndIsDeleted(userId, false);
     }
 
-    // ✅ 닉네임 중복 체크
+    // 닉네임 중복 체크 (탈퇴하지 않은 회원만 검사)
     public boolean existName(String userName) {
-        return !userRepository.existsByUserName(userName);
+        return !userRepository.existsByUserNameAndIsDeleted(userName, false);
     }
 
-    // ✅ 이메일 중복 체크
+    //  이메일 중복 체크 (탈퇴하지 않은 회원만 검사)
     public boolean isEmailExists(String userEmail) {
-        return userRepository.existsByUserEmail(userEmail);
+        return userRepository.existsByUserEmailAndIsDeleted(userEmail, false);
     }
+
 
     // ✅ 회원가입 처리
     @Transactional				
