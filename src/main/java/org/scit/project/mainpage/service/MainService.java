@@ -34,11 +34,11 @@ public class MainService {
      * @param page 현재 페이지 번호
      * @return 게시글 리스트 (MainDTO)
      */
-    public List<MainDTO> getPosts(int page) {
+    public List<MainDTO> getPosts(int page, String search) {
         int pageSize = 10; // 한 페이지에 10개의 게시글을 가져옴
 
         // 공감(좋아요) 개수를 포함한 게시글 목록을 가져옴
-        Page<BoardWithHeartCountDTO> temp = mainRepository.findAllWithHeartCountAndIsDeletedIsFalse(PageRequest.of(page, pageSize));
+        Page<BoardWithHeartCountDTO> temp = mainRepository.findAllWithHeartCountAndIsDeletedIsFalseContainingBoardTitle(search, PageRequest.of(page, pageSize));
 
         // 게시글 데이터를 DTO로 변환하여 반환
         return temp.stream()
@@ -84,10 +84,10 @@ public class MainService {
      * @param page 현재 페이지 번호
      * @return 마지막 페이지 여부 (true = 마지막 페이지, false = 다음 페이지 존재)
      */
-    public boolean isLastPage(int page) {
+    public boolean isLastPage(int page, String search) {
         int pageSize = 10;
         // 다음 페이지를 조회하여 내용이 없는지 확인
-        Page<BoardEntity> nextPage = mainRepository.findAll(PageRequest.of(page + 1, pageSize));
+        Page<BoardWithHeartCountDTO> nextPage = mainRepository.findAllWithHeartCountAndIsDeletedIsFalseContainingBoardTitle(search, PageRequest.of(page + 1, pageSize));
         return !nextPage.hasContent(); // 다음 페이지가 없으면 true 반환
     }
 
