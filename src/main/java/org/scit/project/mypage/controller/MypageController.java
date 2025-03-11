@@ -22,12 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 public class MypageController {
 
 	private final MypageService mypageService;
-	
-    @GetMapping("/recipeSave")
-    public String recipeSave() {
-
-        return "mypage/recipeSave_mypage"; 
-    }
         
     @GetMapping("/reply")
     public String reply(@AuthenticationPrincipal UserDetails userDetails, Model model) {
