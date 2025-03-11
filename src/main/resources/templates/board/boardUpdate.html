@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>게시글 작성</title>
+  <title>게시글 수정하기</title>
   <link rel="stylesheet" th:href="@{/css/globalstyles.css}" href="../../static/css/globalstyles.css" />
   <link rel="stylesheet" th:href="@{/css/postwriting.css}" href="../../static/css/postwriting.css" />
 
@@ -18,7 +18,7 @@
   <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
 
   <style>
-    /* 드롭존 영역 스타일 */
+    /* Dropzone 영역 스타일 */
     .dropzone {
       border: 2px dashed #ccc;
       padding: 10px;
@@ -34,7 +34,6 @@
       border-radius: 10px;
       position: relative;
     }
-    /* 기본 메시지 영역 (카메라 아이콘 + 안내 문구) */
     .dz-message {
       text-align: center;
       pointer-events: none;
@@ -52,25 +51,23 @@
       color: #999;
       display: block;
     }
-    /* + 아이콘은 별도 span으로 계속 표시 */
     .plus {
       font-size: 30px;
       font-weight: bold;
       color: #999;
       margin-top: 10px;
     }
-    /* 파일이 하나라도 있으면 dz-started 클래스가 붙어 .dz-message 숨김 */
     .dropzone.dz-started .dz-message {
       display: none;
     }
-    /* Quill 에디터 */
+    /* Quill 에디터 스타일 */
     #editor-container {
       width: 100%;
       min-height: 300px;
       border: 1px solid #ccc;
       cursor: text;
     }
-    /* Dropzone 미리보기 스타일 */
+    /* Dropzone 미리보기 및 썸네일 스타일 */
     .dz-preview {
       position: relative;
     }
@@ -97,29 +94,31 @@
   <div class="container">
     <!-- header fragment 삽입 -->
     <div class="container" th:replace="fragment/header :: top-menu"></div>
-  
+
     <div class="board-container">
-      <h2>게시글 작성하기</h2>
+      <h2>게시글 수정하기</h2>
       <form id="board-form" th:action="@{/board/boardUpdate}" method="POST" enctype="multipart/form-data">
+        <!-- boardSeq: 기존 글 식별 -->
         <input type="hidden" name="boardSeq" th:value="${board.boardSeq}" />
-        <input type="hidden" name="boardTitle" th:value="${board.boardTitle}">
-        <input type="hidden" name="boardContent" th:value="${board.boardContent}">
-        
+        <!-- 기존 썸네일 정보를 hidden 필드에 미리 채움 -->
+        <input type="hidden" name="thumbnail" id="thumbnail" th:value="${board.thumbnail}" />
+        <input type="hidden" name="thumbnailUrl" id="thumbnailUrl" th:value="${board.thumbnailUrl}" />
+
         <div class="form-group">
           <label for="boardTitle">게시글 제목 :</label>
           <input type="text" id="boardTitle" name="boardTitle" th:value="${board.boardTitle}" required />
         </div>
 
-        <!-- Quill 에디터 영역 -->
+        <!-- Quill 에디터 영역 (기존 boardContent 값 표시) -->
         <div class="form-group">
           <label for="boardContent">내용 작성 :</label>
-          <div id="editor-container"></div>
+          <div id="editor-container" th:utext="${board.boardContent}"></div>
           <input type="hidden" name="boardContent" id="boardContent" />
         </div>
 
         <!-- Dropzone 파일 업로드 영역 -->
         <div class="form-group">
-          <label for="dropzone">사진 업로드 :</label>
+          <label for="dropzone">사진 업로드 (썸네일 선택) :</label>
           <div class="dropzone" id="dropzone">
             <div class="dz-message">
               <img class="camera-icon" src="https://www.freeiconspng.com/uploads/------------------------------iconpngm--22.png" alt="Camera" />
@@ -128,12 +127,6 @@
             <span class="plus">+</span>
           </div>
         </div>
-        
-        <!-- 선택된 썸네일 이미지 관련 hidden inputs -->
-        <!-- base64 데이터 (board_image.original_file_name에 저장됨) -->
-        <input type="hidden" name="thumbnail" id="thumbnail" />
-        <!-- 업로드된 파일의 URL (board_image.saved_file_name 계산에 사용됨) -->
-        <input type="hidden" name="thumbnailUrl" id="thumbnailUrl" />
 
         <button type="submit" class="submit-btn">등록하기</button>
       </form>
@@ -141,7 +134,7 @@
   </div>
 
   <script>
-    // Quill 에디터 초기화
+    // Quill 에디터 초기화 (boardContent HTML이 표시됨)
     var quill = new Quill('#editor-container', {
       theme: 'snow',
       modules: { imageResize: {} }
@@ -149,29 +142,20 @@
     document.getElementById('editor-container').addEventListener('click', function () {
       quill.focus();
     });
-    
-    // 폼 제출 시, 에디터 내 이미지들의 현재 크기를 style 속성에 적용한 후 boardContent hidden input에 HTML 넣기
+
+    // 폼 제출 시, 에디터의 최신 HTML을 hidden 필드에 저장하고 검증
     document.getElementById('board-form').onsubmit = function (e) {
-      // 첨부된 이미지 파일이 없으면 alert 창 띄움
       if (dropzone.files.length === 0) {
         alert('이미지 파일을 첨부해주세요');
         e.preventDefault();
         return false;
       }
-
-      // 에디터 내 모든 <img> 태그의 현재 표시 크기를 가져와 인라인 style로 설정
       var imgs = quill.root.querySelectorAll('img');
       imgs.forEach(function(img) {
          var rect = img.getBoundingClientRect();
-         var width = rect.width;
-         var height = rect.height;
-         img.setAttribute('style', 'width:' + width + 'px; height:' + height + 'px;');
+         img.setAttribute('style', 'width:' + rect.width + 'px; height:' + rect.height + 'px;');
       });
-      
-      // 업데이트된 HTML을 hidden input에 설정
       document.getElementById('boardContent').value = quill.root.innerHTML;
-      
-      // 파일이 하나 이상 첨부된 경우, 썸네일 지정 여부 확인
       if (dropzone.files.length > 0 && !document.getElementById('thumbnailUrl').value) {
         alert('썸네일로 사용할 사진을 선택해주세요');
         e.preventDefault();
@@ -206,7 +190,7 @@
         this.on('success', function (file, response) {
           console.log('업로드 완료:', response);
           if (response && response.fileUrl) {
-            var fileUrl = response.fileUrl; // 예: "/uploads/강아지1_UUID.jpg"
+            var fileUrl = response.fileUrl;
             const reader = new FileReader();
             reader.onload = function(e) {
               var base64Data = e.target.result;
@@ -236,7 +220,6 @@
             if (imgToRemove) {
               imgToRemove.remove();
             }
-            // 서버의 파일 삭제 호출
             if(fileData.url) {
               fetch('/board/deleteFile', {
                 method: 'POST',
@@ -296,7 +279,7 @@
         });
         file.previewElement.classList.add('thumbnail-selected');
         thumbnailLabel.style.display = 'block';
-        // 썸네일 선택 시, base64 데이터는 thumbnail (원본_file_name), fileUrl는 thumbnailUrl (saved_file_name 계산용)
+        // 새로 지정한 썸네일이면 hidden input 갱신
         document.getElementById('thumbnail').value = base64Data;
         document.getElementById('thumbnailUrl').value = fileUrl;
         console.log('썸네일 지정:', fileUrl);
