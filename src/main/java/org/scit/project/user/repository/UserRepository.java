@@ -19,13 +19,20 @@ public interface UserRepository extends JpaRepository<UserEntity, Long>{
 	Optional<UserEntity> findByUserEmailAndUserId(String userEmail, String userId);
 	
 //	회원 탈퇴 처리된 아이디인지 체크 is_deleted true 검색제외
-	boolean existsByUserIdAndIsDeleted(String userId, boolean i); 
+//	boolean existsByUserIdAndIsDeleted(String userId, boolean i); 
 	
 //	회원 탈퇴 처리된 닉네임인지 체크
-	boolean existsByUserNameAndIsDeleted(String userName, boolean i); 
+//	boolean existsByUserNameAndIsDeleted(String userName, boolean i); 
 	
 //	회원 탈퇴 처리된 이메일인지 체크
-	boolean existsByUserEmailAndIsDeleted(String userEmail, boolean i);
+//	boolean existsByUserEmailAndIsDeleted(String userEmail, boolean i);
+	
+//	아이디 중복 체크
+	boolean existsByUserId(String userId);
+//	닉네임 중복 체크
+	boolean existsByUserName(String userName);
+//	이메일 중복 체크
+	boolean existsByUserEmail(String userEmail);
 	
 
 	
