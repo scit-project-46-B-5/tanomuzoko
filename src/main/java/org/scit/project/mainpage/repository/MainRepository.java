@@ -17,10 +17,12 @@ public interface MainRepository extends JpaRepository<BoardEntity, Long> {
     @Query("""
         SELECT b AS board, 
                (SELECT COUNT(h) FROM BoardHeartEntity h WHERE h.board = b AND h.isHearted = true) AS heartCount
-        FROM BoardEntity b where b.isDeleted = false
+        FROM BoardEntity b
+        WHERE b.isDeleted = false
+        AND (:search IS NULL OR b.boardTitle LIKE %:search%)
         ORDER BY b.createDate DESC
     """)
-    Page<BoardWithHeartCountDTO> findAllWithHeartCountAndIsDeletedIsFalse(Pageable pageable);
+    Page<BoardWithHeartCountDTO> findAllWithHeartCountAndIsDeletedIsFalseContainingBoardTitle(@Param("search") String search, Pageable pageable);
 
     @Query("""
         SELECT b AS board, 

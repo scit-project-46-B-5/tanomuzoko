@@ -28,9 +28,10 @@ public class MainController {
 
     @GetMapping("/posts")
     @ResponseBody
-    public PostResponseDTO getPosts(@RequestParam(value = "page", defaultValue = "0") int page) {
-        List<MainDTO> list = mainService.getPosts(page);
-        boolean isLastPage = mainService.isLastPage(page);
+    public PostResponseDTO getPosts(@RequestParam(value = "page", defaultValue = "0") int page,
+                                    @RequestParam(value = "search", defaultValue = "") String search) {
+        List<MainDTO> list = mainService.getPosts(page, search);
+        boolean isLastPage = mainService.isLastPage(page ,search);
 
         return new PostResponseDTO(list , isLastPage);
     }
