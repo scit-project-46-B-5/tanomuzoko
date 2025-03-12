@@ -52,7 +52,7 @@ public class BoardEntity {
     @Column(name = "hit_count")
     private Integer hitCount;
 
-    @Column(name = "create_date")
+    @Column(name = "create_date", updatable = false)
     @CurrentTimestamp
     private LocalDateTime createDate;
 

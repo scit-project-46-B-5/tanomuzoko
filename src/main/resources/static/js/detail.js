@@ -60,6 +60,9 @@ $(document).ready(function () {
 
     // 댓글 초기화( 댓글 전체 조회 )
     initReplies();
+	
+	// 수정/삭제 버튼 로드
+	loadBoardButtons();
 });
 
 // 댓글 초기화 (페이지네이션 포함)
@@ -84,45 +87,63 @@ function initReplies(page = 0) {
     })
 }
 
-// 댓글 내용 글자 수 설정 (출력되는 댓글은 처음에 50자까지만 보이게 함)
-let maxTextLength = 50;
-
-// 댓글을 렌더링하는 함수 (부모 / 답글 모두 처리)
 function renderComment(item, loginId, isChild) {
-    let indentStyle = item.parentReplySeq ? 'style="margin-left: 30px;"' : ''; // 답글이면 들여쓰기 적용
+    let indentStyle = item.parentReplySeq ? 'style="margin-left: 30px;"' : '';
     let fullText = escapeHTML(item.replyContent);
-    let shortText = fullText.length > maxTextLength ? fullText.substring(0, maxTextLength) + "..." : fullText;
-    let hasMore = fullText.length > maxTextLength;
-    console.log("현재 loginId:", loginId);
+    let hasMore = fullText.length > 50; // 50자 이상일 때만 "더보기" 버튼 생성
+
     let tag = `
         <div class="comment" ${indentStyle} data-reply-seq="${item.replySeq}">
-            <div class="user-info">${escapeHTML(item.replyWriter)}</div>
+            <div class="comment-header">
+                <div class="user-info">${escapeHTML(item.replyWriter)}</div>
+                ${
+                    loginId === item.userId
+                        ? `
+                    <div class="comment-buttons">
+                        <button class="edit-input-btn" onclick="deleteReply(${item.replySeq})">삭제</button>
+                        <button class="edit-cancel-btn" onclick="editReply(${item.replySeq}, '${escapeHTML(
+                            item.replyContent
+                        )}')">수정</button>
+                    </div>
+                `
+                        : ''
+                }
+            </div>
+            <div class="comment-header">
+                <div class="user-info">${escapeHTML(item.replyWriter)}</div>
+                ${
+                    loginId === item.userId
+                        ? `
+                    <div class="comment-buttons">
+                        <button class="edit-input-btn" onclick="deleteReply(${item.replySeq})">삭제</button>
+                        <button class="edit-cancel-btn" onclick="editReply(${item.replySeq}, '${escapeHTML(
+                            item.replyContent
+                        )}')">수정</button>
+                    </div>
+                `
+                        : ''
+                }
+            </div>
             <div class="user-text">
-                <span class="short-text">${shortText}</span>
-                <span class="full-text" style="display: none;">${fullText}</span>
-                ${hasMore ? '<button class="more-btn" onclick="toggleText(this)">자세히 보기</button>' : ''}
+                <span class="full-text">${fullText}</span>
+                ${hasMore ? '<button class="more-btn" onclick="toggleExpand(this)">더보기</button>' : ''}
             </div>
     `;
-
-    // 로그인한 사용자만 답글 버튼 보이게 설정
     if (!isChild && loginId) {
         tag += `<button class="reply-btn" onclick="showReplyForm(${item.replySeq})">답글</button>`;
     }
 
-    // 로그인한 사용자의 댓글이면 수정, 삭제 버튼 추가
-    if (loginId === item.userId) {
-        tag += `
-            <div>
-                <button class="edit-input-btn" onclick="deleteReply(${item.replySeq})">삭제</button>
-                <button class="edit-cancel-btn" onclick="editReply(${item.replySeq}, '${escapeHTML(item.replyContent)}')">수정</button>
-            </div>
-        `;
-    }
-
     tag += `</div>`;
     tag += `<div id="reply-form-${item.replySeq}" class="reply-form" style="display: none; margin-left: 30px;"></div>`;
+    // 로그인한 사용자만 답글 버튼 보이게 설정
 
     return tag;
+}
+
+function toggleExpand(button) {
+    let textElement = button.previousElementSibling;
+    textElement.classList.toggle('expanded');
+    button.innerText = textElement.classList.contains('expanded') ? '접기' : '더보기';
 }
 
 // 답글 입력 폼 표시
@@ -336,4 +357,73 @@ function escapeHTML(str) {
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+}
+
+
+// board 수정/삭제 버튼 로드
+// 현재 페이지에 표시된 board의 작성자와 로그인한 사용자를 비교하여 버튼을 생성
+function loadBoardButtons() {
+    let boardSeq = $('#boardSeq').val();
+    let boardWriter = $("#author-name").text().trim();
+    let loginId = $("#loginId").val(); // recipe-detail에 있는 hidden input
+
+    if (loginId && boardWriter === loginId) {
+        let buttons = `
+			<button class="updateAndDelete-btn" onclick="updateBoard(${boardSeq})">수정</button>			
+            <button class="updateAndDelete-btn" onclick="deleteBoard(${boardSeq})">삭제</button>
+        `;
+        $("#upadteAndDelete-btn").html(buttons);
+    }
+}
+
+// 게시글 수정 함수
+function updateBoard(boardSeq) {
+    $.ajax({
+        url: '/board/boardUpdate',
+        type: 'GET',
+        data: { boardSeq: boardSeq },
+        success: function(response) {
+            // 서버의 응답을 처리하고 업데이트 페이지로 이동
+            window.location.href = '/board/boardUpdate?boardSeq=' + boardSeq;
+        },
+        error: function(xhr, status, error) {
+            console.error('업데이트 요청 실패:', error);
+        }
+    });
+}
+
+
+// 게시글 삭제 함수
+function deleteBoard(boardSeq) {
+    Swal.fire({
+        title: '정말로 삭제하시겠습니까?',
+        text: "게시글이 삭제되면 복구할 수 없습니다.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: '승인',
+        cancelButtonText: '취소',
+        reverseButtons: false,
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/board/boardDelete',
+                method: 'POST',
+                data: { boardSeq: boardSeq },
+                success: function () {
+                    Swal.fire(
+                        '삭제되었습니다.',
+                        '게시글이 삭제되었습니다.',
+                        'success'
+                    ).then(() => {
+                        window.location.href = '/board/board';
+                    });
+                },
+                error: function () {
+                    Swal.fire('삭제 실패', '오류가 발생했습니다.', 'error');
+                }
+            });
+        }
+    });
 }
