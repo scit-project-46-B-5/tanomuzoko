@@ -208,6 +208,10 @@ h2 {
 .slick-dots{
     display: none !important;
 }
+.popular-filter-btn.active {
+    background: black;
+    color: white;
+}
 @media (max-width: 768px) {
     .cards {
         flex-direction: column;
