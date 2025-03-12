@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>아이디 찾기 결과</title>
+</head>
+
+<body>
+    <div class="result-box">
+        <!-- 아이디가 없을 경우 "조회결과가 없습니다." 표시 -->
+        <p class="inquiry" th:if="${findId == null or findId == ''}">조회결과가 없습니다.</p>
+
+        <!-- 아이디가 있을 경우 표시 -->
+        <p class="found-id" th:if="${findId != null and findId != ''}">
+            찾은 아이디: <strong th:text="${findId}"></strong>
+        </p>
+    </div>
+</body>
+
+</html>

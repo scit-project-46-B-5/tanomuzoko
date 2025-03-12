@@ -22,6 +22,6 @@ public class RecipeHistoryController {
     @ResponseBody
     public ResponseEntity<Long> saveRecipeHistory(@RequestBody RecipeHistroyRequsetDTO recipeHistroyRequsetDTO) throws InterruptedException {
 
-        return ResponseEntity.ok(recipeHistoryService.saveRecipeHisotry(recipeHistroyRequsetDTO));
+        return ResponseEntity.ok(recipeHistoryService.saveRecipeAndReturnSavedPK(recipeHistroyRequsetDTO));
     }
 }

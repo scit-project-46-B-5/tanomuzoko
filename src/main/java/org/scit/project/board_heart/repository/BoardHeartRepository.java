@@ -22,7 +22,8 @@ public interface BoardHeartRepository extends JpaRepository<BoardHeartEntity, Lo
                 JOIN h.board b
                 WHERE h.isHearted = true
                 GROUP BY b
+                HAVING b.isDeleted = false
                 ORDER BY heartCount DESC
             """)
-    List<BoardWithHeartCountDTO> findTop3LikedBoards(Pageable pageable);
+    List<BoardWithHeartCountDTO> findTop3LikedBoardsAndIsDeletedIsFalse(Pageable pageable);
 }

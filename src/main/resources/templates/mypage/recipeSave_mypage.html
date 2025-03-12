@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>마이페이지</title>
-    <link rel="stylesheet" href="../../static/css/globalstyles.css" th:href="@{/css/globalstyles.css}">
-    <link rel="stylesheet" href="../../static/css/mypage.css" th:href="@{/css/mypage.css}">
-    <link rel="stylesheet" href="../../static/css/recipeSave_mypage.css" th:href="@{/css/recipeSave_mypage.css}">
+    <link rel="stylesheet"  th:href="@{/css/globalstyles.css}">
+    <link rel="stylesheet"  th:href="@{/css/mypage.css}">
+    <link rel="stylesheet"  th:href="@{/css/recipeSave_mypage.css}">
     <script th:src="@{/js/recipeSave_mypage.js}" defer></script>
 
 </head>
@@ -22,42 +22,15 @@
             <div class="mypage-content">
                 <h1>레시피 저장 리스트</h1>
                 <div class="recipe-list">
-                    <ul>
-                        <li th:each="recipe : ${recipes}">
-                            <a href="#" class="recipe-item" th:data-recipe-id="${recipe.id}">
-                                <span class="recipe-name" th:text="${recipe.name}">레시피 이름</span>
-                                <div>
-                                    <span class="option" th:each="tag : ${recipe.tags}" th:text="${tag}">카테고리</span>
-                                    <span class="date" th:text="${recipe.date}">2025-02-12</span>
-                                </div>
-                            </a>
-                        </li>
+                    <ul id="recipe-fetch-region">
 
-                        <li>
-                            <a href="#" class="recipe-item" data-recipe-id="1">
-                                <span class="recipe-name">닭볶음탕</span>
-                                <div>
-                                    <span class="option">일반식</span>
-                                    <span class="option">한식</span>
-                                    <span class="option">매운맛</span>
-                                    <span class="option">쉬움</span>
-                                    <span class="date">2025-02-12</span>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="recipe-item" data-recipe-id="2">
-                                <span class="recipe-name">된장찌개</span>
-                                <div>
-                                    <span class="option">일반식</span>
-                                    <span class="option">한식</span>
-                                    <span class="option">맵지않음</span>
-                                    <span class="option">쉬움</span>
-                                    <span class="date">2025-02-12</span>
-                                </div>
-                            </a>
-                        </li>
                     </ul>
+                </div>
+
+                <div class="pagination-container">
+                    <div id="pagination">
+                        <!-- AJAX로 페이지네이션 버튼 생성 -->
+                    </div>
                 </div>
 
                 <div id="recipeModal" class="recipe-modal">
@@ -65,33 +38,7 @@
                         <span class="close-btn">&times;</span>
                         <div class="recipe-card">
                             <div class="recipe-info">
-                                <h2 class="recipe-title">닭볶음탕</h2>
-                                <h3>🍽️ 재료</h3>
-                                <ul class="recipe-ingredients">
-                                    <li>닭 1마리</li>
-                                    <li>감자 2개</li>
-                                    <li>당근 1개</li>
-                                    <li>양파 1개</li>
-                                    <li>고추장 3큰술</li>
-                                    <li>간장 4큰술</li>
-                                    <li>설탕 2큰술</li>
-                                    <li>다진 마늘 1큰술</li>
-                                </ul>
-                                
-                                <div class="line"></div>
 
-                                <h3 class="recipe-steps-header">👨‍🍳 만드는 방법</h3>
-                                <ol class="recipe-steps">
-                                    <li>닭을 깨끗이 씻어 물에 5분간 데친 후 헹궈줍니다.</li>
-                                    <li>감자, 당근, 양파를 적당한 크기로 썰어줍니다.</li>
-                                    <li>냄비에 닭과 양념장을 넣고 10분간 볶아줍니다.</li>
-                                    <li>물을 넣고 끓이며 감자와 당근을 넣고 20분간 조립니다.</li>
-                                    <li>양파를 넣고 5분 더 끓인 후 맛있게 즐깁니다!</li>
-                                </ol>
-                            </div>
-
-                            <div class="footer">
-                                <button onclick="window.location.href='main.html'">게시글 작성하기</button>
                             </div>
                         </div>
                     </div>

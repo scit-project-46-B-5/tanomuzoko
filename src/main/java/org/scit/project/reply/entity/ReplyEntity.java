@@ -2,12 +2,15 @@ package org.scit.project.reply.entity;
 
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.scit.project.board.entity.BoardEntity;
 import org.scit.project.reply.dto.ReplyDTO;
 import org.scit.project.user.entity.UserEntity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -16,6 +19,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -46,6 +50,13 @@ public class ReplyEntity {
     @JoinColumn(name = "user_seq")
     private UserEntity user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_reply_seq")
+    private ReplyEntity parentReply;
+
+    @OneToMany(mappedBy = "parentReply", cascade = CascadeType.ALL)
+    private List<ReplyEntity> childReplies = new ArrayList<>();
+
     @Column(name = "reply_content", nullable = false)
     private String replyContent;
 
@@ -65,11 +76,12 @@ public class ReplyEntity {
         this.updateDate = LocalDateTime.now();
     }
 
-    public static ReplyEntity toEntity(ReplyDTO replyDTO, BoardEntity board, UserEntity user) {
+    public static ReplyEntity toEntity(ReplyDTO replyDTO, BoardEntity board, UserEntity user, ReplyEntity parentReply) {
         return ReplyEntity.builder()
             .board(board)
             .user(user)
             .replyContent(replyDTO.getReplyContent())
+            .parentReply(parentReply)
             .build();
     }
 }
