@@ -16,7 +16,7 @@ public class RecipeMyPageService {
 
     private final RecipeMyPageRepository recipeMyPageRepository;
 
-    public Page<RecipeMyPageResponse> findAllByUser(Long userSeq, int currentPage) {
+    public Page<RecipeMyPageResponse> findAllRecipeByUser(Long userSeq, int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 3, Sort.by(Sort.Direction.ASC, "createdAt"));
         
         return recipeMyPageRepository.findRecipesWithPagination(userSeq, pageable)
