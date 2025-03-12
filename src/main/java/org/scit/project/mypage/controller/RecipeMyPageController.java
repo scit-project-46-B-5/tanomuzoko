@@ -1,25 +1,41 @@
 package org.scit.project.mypage.controller;
 
+import org.scit.project.mypage.dto.RecipeMyPageResponse;
 import org.scit.project.mypage.service.RecipeMyPageService;
-import org.scit.project.recipe.service.RecipeService;
 import org.scit.project.user.dto.LoginUserDetails;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class RecipeMyPageController {
 
     private final RecipeMyPageService recipeMyPageService;
 
+
+    @GetMapping("/mypage/getRecipeSave")
+    @ResponseBody
+    public Page<RecipeMyPageResponse> recipeSave(Model model, @AuthenticationPrincipal LoginUserDetails loginUserDetails, 
+                                        @RequestParam(name = "page", required = false) int page) {
+        Page<RecipeMyPageResponse> recipe = recipeMyPageService.findAllByUser(loginUserDetails.getUserSeq(), page);
+
+        return recipe; 
+    }
+
+
     @GetMapping("/mypage/recipeSave")
-    public String recipeSave(Model model, @AuthenticationPrincipal LoginUserDetails loginUserDetails) {
-        model.addAttribute("recipes", recipeMyPageService.findAllByUser(loginUserDetails.getUserSeq()));
-        return "mypage/recipeSave_mypage"; 
+    public String viewRecipeSave() {
+
+        return "mypage/recipeSave_mypage";
     }
 
 
