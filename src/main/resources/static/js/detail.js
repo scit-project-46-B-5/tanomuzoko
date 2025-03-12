@@ -109,6 +109,21 @@ function renderComment(item, loginId, isChild) {
                         : ''
                 }
             </div>
+            <div class="comment-header">
+                <div class="user-info">${escapeHTML(item.replyWriter)}</div>
+                ${
+                    loginId === item.userId
+                        ? `
+                    <div class="comment-buttons">
+                        <button class="edit-input-btn" onclick="deleteReply(${item.replySeq})">삭제</button>
+                        <button class="edit-cancel-btn" onclick="editReply(${item.replySeq}, '${escapeHTML(
+                            item.replyContent
+                        )}')">수정</button>
+                    </div>
+                `
+                        : ''
+                }
+            </div>
             <div class="user-text">
                 <span class="full-text">${fullText}</span>
                 ${hasMore ? '<button class="more-btn" onclick="toggleExpand(this)">더보기</button>' : ''}
@@ -117,6 +132,18 @@ function renderComment(item, loginId, isChild) {
     if (!isChild && loginId) {
         tag += `<button class="reply-btn" onclick="showReplyForm(${item.replySeq})">답글</button>`;
     }
+
+    if (loginId === item.userId) {
+        tag += `
+            <div>
+                <button class="edit-input-btn" onclick="deleteReply(${item.replySeq})">삭제</button>
+                <button class="edit-cancel-btn" onclick="editReply(${item.replySeq}, '${escapeHTML(
+            item.replyContent
+        )}')">수정</button>
+            </div>
+        `;
+    }
+
     tag += `</div>`;
     tag += `<div id="reply-form-${item.replySeq}" class="reply-form" style="display: none; margin-left: 30px;"></div>`;
     // 로그인한 사용자만 답글 버튼 보이게 설정
