@@ -1,7 +1,5 @@
 package org.scit.project.mypage.repository;
 
-import java.util.List;
-
 import org.scit.project.recipe.entity.RecipeEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,8 +10,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface RecipeMyPageRepository extends JpaRepository<RecipeEntity, Long>{
     
-    List<RecipeEntity> findByUserEntity_UserSeqAndRecipeInputKeywordEntityListIsNotNullAndRecipeOutputEntityIsNotNull(Long userSeq);
-
     @Query("""
         SELECT DISTINCT r FROM RecipeEntity r
         JOIN r.recipeInputKeywordEntityList k

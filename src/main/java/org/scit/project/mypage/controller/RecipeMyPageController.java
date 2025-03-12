@@ -26,7 +26,7 @@ public class RecipeMyPageController {
     @ResponseBody
     public Page<RecipeMyPageResponse> recipeSave(Model model, @AuthenticationPrincipal LoginUserDetails loginUserDetails, 
                                         @RequestParam(name = "page", required = false) int page) {
-        Page<RecipeMyPageResponse> recipe = recipeMyPageService.findAllByUser(loginUserDetails.getUserSeq(), page);
+        Page<RecipeMyPageResponse> recipe = recipeMyPageService.findAllRecipeByUser(loginUserDetails.getUserSeq(), page);
 
         return recipe; 
     }
