@@ -22,44 +22,44 @@ import lombok.ToString;
 @Getter
 public class RecipeChatGPTResponseDTO implements Serializable {
 
-  private String id;
-  private String object;
-  private LocalDate created;
-  private String model;
-  private List<Choice> choices;
+    private String id;
+    private String object;
+    private LocalDate created;
+    private String model;
+    private List<Choice> choices;
 
-  @Getter
-  @Setter
-  public static class Choice {
-    private int index;
-    private MessageChatGPTDTO message;
+    @Getter
+    @Setter
+    public static class Choice {
+        private int index;
+        private MessageChatGPTDTO message;
 
-    @JsonProperty("finish_reason")
-    private String finishReason;
-  }
+        @JsonProperty("finish_reason")
+        private String finishReason;
+    }
 
 }
 
 /*
- * {
- * "id": "chatcmpl-abc123",
- * "object": "chat.completion",
- * "created": 1700000000,
- * "model": "gpt-4-turbo",
- * "choices": [
- * {
- * "index": 0,
- * "message": {
- * "role": "assistant",
- * "content": "The capital of France is Paris."
- * },
- * "finish_reason": "stop"
- * }
- * ],
- * "usage": {
- * "prompt_tokens": 20,
- * "completion_tokens": 10,
- * "total_tokens": 30
- * }
- * }
+{
+    "id": "chatcmpl-abc123",
+    "object": "chat.completion",
+    "created": 1700000000,
+    "model": "gpt-4-turbo",
+    "choices": [
+        {
+            "index": 0,
+            "message": {
+                "role": "assistant",
+                "content": "The capital of France is Paris."
+            },
+            "finish_reason": "stop"
+        }
+    ],
+    "usage": {
+        "prompt_tokens": 20,
+        "completion_tokens": 10,
+        "total_tokens": 30
+    }
+}
  */
