@@ -71,18 +71,18 @@ function verifyCode() {
         }
     });
 }
-
-// email인증 , 버튼뒤집기기
+// 이메일 인증 요청
 function mailAuthentication() {
     if (!emailCheck) {
         return;
     }
-    // 이메일 유효성 검사
+
+    // 이메일 입력값 가져오기
     let email = $("#userEmail").val().trim();
     let emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
+    // ✅ 이메일 입력 여부 확인
     if (!email) {
-        alert("이메일을 입력해주세요.");
         Swal.fire({
             icon: 'warning',
             title: '인증 실패',
@@ -92,6 +92,8 @@ function mailAuthentication() {
         });
         return;
     }
+
+    // ✅ 이메일 형식 확인
     if (!emailPattern.test(email)) {
         Swal.fire({
             icon: 'warning',
@@ -102,44 +104,76 @@ function mailAuthentication() {
         });
         return;
     }
+
+    // ✅ 이메일 중복 검사 요청
+    $.ajax({
+        url: "/user/emailCheck",  // 이메일 중복 체크 API
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ "userEmail": email }),
+        success: function (isDuplicate) {
+            if (isDuplicate) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: '이메일 중복',
+                    text: '이미 사용 중인 이메일입니다.',
+                    confirmButtonColor: '#ff7f50',
+                    confirmButtonText: '확인',
+                });
+                emailCheck = false;
+            } else {
+                emailCheck = true; // 중복 없음
+
+                // ✅ 이메일 중복 체크 성공 후, 사용자에게 바로 알림 표시
+                Swal.fire({
+                    icon: 'success',
+                    title: '이메일 인증 요청 완료!',
+                    text: '이메일로 인증번호가 발송됩니다.',
+                    confirmButtonColor: '#ff7f50',
+                    confirmButtonText: '확인',
+                });
+
+                // ✅ 이메일 인증번호 요청 실행 (하지만 알림은 띄우지 않음)
+                sendEmailVerification(email);
+            }
+        },
+        error: function (xhr) {
+            console.error("이메일 중복 확인 실패 응답: ", xhr.responseText);
+            Swal.fire({
+                icon: 'warning',
+                title: '이메일 확인 실패',
+                text: '이메일 중복 확인 중 오류가 발생했습니다.\n오류 코드: ' + xhr.status,
+                confirmButtonColor: '#ff7f50',
+                confirmButtonText: '확인',
+            });
+        }
+    });
+}
+
+// ✅ 이메일 인증번호 요청 함수 (별도 실행, 알림 X)
+function sendEmailVerification(email) {
     // ✅ 버튼 비활성화 (중복 클릭 방지)
     $('#requestButton').prop("disabled", true);
 
-    // ✅ 1초 후 버튼 다시 활성화
+    // ✅ 2초 후 버튼 다시 활성화
     setTimeout(() => {
         $('#requestButton').prop("disabled", false);
     }, 2000);
+
     $('#verificationBox').css('display', 'block');
 
     $.ajax({
-        url: "/api/v1/email/send",
+        url: "/api/v1/email/send",  // 이메일 전송 API
         type: "POST",
         contentType: "application/json",
-        dataType: "json",  // ✅ JSON 응답을 받을 수 있도록 설정
-        xhrFields: {
-            withCredentials: true  // ✅ 인증 정보를 포함하여 요청
-        },
+        dataType: "json",
         data: JSON.stringify({ userEmail: email }),
         success: function (data) {
-            Swal.fire({
-                icon: 'success',
-                title: '메일 송신',
-                text: '메일이 송신되었습니다.',
-                confirmButtonColor: '#ff7f50',
-                confirmButtonText: '확인',
-            });
+            console.log("📩 이메일이 정상적으로 발송되었습니다.");
             $("#Confirm").attr("value", data);
-            // alert(data.message); // ✅ JSON 응답에서 메시지 출력
         },
-        error: function (xhr, status, error) {
+        error: function (xhr) {
             console.error("이메일 전송 실패 응답: ", xhr.responseText);
-            Swal.fire({
-                icon: 'warning',
-                title: '메일 송신 실패',
-                text: '이메일 전송에 실패했습니다. 다시 시도해주세요.\n오류 코드: ' + xhr.status,
-                confirmButtonColor: '#ff7f50',
-                confirmButtonText: '확인',
-            });
         }
     });
 }
