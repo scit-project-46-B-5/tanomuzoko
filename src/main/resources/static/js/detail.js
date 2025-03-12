@@ -129,28 +129,10 @@ function renderComment(item, loginId, isChild) {
                 ${hasMore ? '<button class="more-btn" onclick="toggleExpand(this)">더보기</button>' : ''}
             </div>
     `;
-<<<<<<< HEAD
-=======
-
->>>>>>> c099b929b8e58a27e14f25d619604b42d8c410ef
     if (!isChild && loginId) {
         tag += `<button class="reply-btn" onclick="showReplyForm(${item.replySeq})">답글</button>`;
     }
 
-<<<<<<< HEAD
-    if (loginId === item.userId) {
-        tag += `
-            <div>
-                <button class="edit-input-btn" onclick="deleteReply(${item.replySeq})">삭제</button>
-                <button class="edit-cancel-btn" onclick="editReply(${item.replySeq}, '${escapeHTML(
-            item.replyContent
-        )}')">수정</button>
-            </div>
-        `;
-    }
-
-=======
->>>>>>> c099b929b8e58a27e14f25d619604b42d8c410ef
     tag += `</div>`;
     tag += `<div id="reply-form-${item.replySeq}" class="reply-form" style="display: none; margin-left: 30px;"></div>`;
     // 로그인한 사용자만 답글 버튼 보이게 설정
