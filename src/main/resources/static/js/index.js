@@ -1,6 +1,6 @@
 $(document).ready(function () {
     let currentPage = 0;
-    let currentFilter = "weekly"; // 기본값: 최신 게시글
+    let currentFilter = 'weekly'; // 기본값: 최신 게시글
 
     // 초기 로드 (최신 게시글 + 인기 게시글 + 공감 수 상위 게시글)
     initRecentPosts(currentPage);
@@ -15,14 +15,22 @@ $(document).ready(function () {
 
     // "주간 인기글" 버튼 클릭 시
     $('#weekly-button').click(function () {
-        currentFilter = "weekly";
+        currentFilter = 'weekly';
         initPopularPosts(currentFilter);
+
+        // 모든 버튼의 active 클래스를 제거 후, 현재 버튼만 추가
+        $('.popular-filter-btn').removeClass('active');
+        $(this).addClass('active');
     });
 
     // "월간 인기글" 버튼 클릭 시
     $('#monthly-button').click(function () {
-        currentFilter = "monthly";
+        currentFilter = 'monthly';
         initPopularPosts(currentFilter);
+
+        // 모든 버튼의 active 클래스를 제거 후, 현재 버튼만 추가
+        $('.popular-filter-btn').removeClass('active');
+        $(this).addClass('active');
     });
 
     function initRecentPosts(page) {
@@ -34,7 +42,7 @@ $(document).ready(function () {
                 if (resp.isLastPage) {
                     $('#show-more-button').hide(); // 마지막 페이지면 버튼 숨기기
                 }
-            }
+            },
         });
     }
 
@@ -45,7 +53,7 @@ $(document).ready(function () {
             method: 'GET',
             success: function (resp) {
                 $('.popularPost').html(generatePostHTML(resp));
-            }
+            },
         });
     }
 
@@ -69,8 +77,8 @@ $(document).ready(function () {
 
     function loadTopLikedPosts() {
         $.ajax({
-            url: "/top-liked",
-            method: "GET",
+            url: '/top-liked',
+            method: 'GET',
             success: function (resp) {
                 const slider = $('.slider');
 
@@ -84,7 +92,7 @@ $(document).ready(function () {
 
                 // 슬라이드 다시 초기화
                 initializeSlickSlider();
-            }
+            },
         });
     }
 
@@ -109,7 +117,9 @@ $(document).ready(function () {
                     <div class="footer">
                         <div class="badge">랭킹 ${index + 1}위</div>
                         <span>${escapeHTML(item['boardTitle'])}</span>
-                        <a href="/board/boardDetail?boardSeq=${escapeHTML(item['boardSeq'].toString())}"">게시글 바로가기 →</a>
+                        <a href="/board/boardDetail?boardSeq=${escapeHTML(
+                            item['boardSeq'].toString()
+                        )}"">게시글 바로가기 →</a>
                     </div>
                 </div>
             `;
@@ -118,10 +128,11 @@ $(document).ready(function () {
     }
 
     function escapeHTML(str) {
-        return str.replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
+        return str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
     }
 });

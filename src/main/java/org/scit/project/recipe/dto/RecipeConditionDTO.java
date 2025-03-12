@@ -26,4 +26,12 @@ public class RecipeConditionDTO {
                                             .level(level)
                                             .build();
     }
+
+    public static RecipeConditionDTO empty() {
+        return RecipeConditionDTO.builder().usage("")
+                                            .menu("")
+                                            .taste("")
+                                            .level("")
+                                            .build();
+    }
 }
