@@ -63,7 +63,7 @@ function generatePagination(resp) {
     let pagination = '';
     let currentPage = resp.number;
     let totalPages = resp.totalPages;
-    let groupSize = 2;
+    let groupSize = 10;
     let startPage = Math.floor(currentPage / groupSize) * groupSize;
     let endPage = Math.min(startPage + groupSize, totalPages);
 
