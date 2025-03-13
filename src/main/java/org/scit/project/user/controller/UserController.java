@@ -2,7 +2,7 @@ package org.scit.project.user.controller;
 
 import java.util.Map;
 
-import org.scit.project.user.dto.EmailDTO;
+import org.scit.project.user.dto.EmailCheckDTO;
 import org.scit.project.user.dto.FindIdResponseDTO;
 import org.scit.project.user.dto.UserDTO;
 import org.scit.project.user.service.UserService;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -60,15 +61,15 @@ public class UserController {
 	// 이메일 중복 체크
 	@PostMapping("/emailCheck")
 	@ResponseBody
-	public boolean emailCheck(@RequestBody EmailDTO emailDTO) {
-	    String userEmail = emailDTO.getUserEmail();
+	public boolean emailCheck(@RequestBody @Valid EmailCheckDTO emailCheckDTO) {
+	    String userEmail = emailCheckDTO.getUserEmail();
 	    return userService.isEmailExists(userEmail);
 	}
 	
 //	회원가입 처리요청
 	@PostMapping("/joinProc")
 	@ResponseBody
-	public ResponseEntity<String> joinProc(@RequestBody UserDTO dto) {
+	public ResponseEntity<String> joinProc(@RequestBody  UserDTO dto) {
 	    try {
 	        boolean result = userService.joinProc(dto);
 

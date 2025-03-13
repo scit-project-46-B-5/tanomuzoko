@@ -100,17 +100,19 @@ function renderComment(item, loginId, isChild) {
                     loginId === item.userId
                         ? `
                     <div class="comment-buttons">
-                        <button class="edit-input-btn" onclick="deleteReply(${item.replySeq})">삭제</button>
+
+                    ${item.isDeleted ? '' : `<button class="edit-input-btn" onclick="deleteReply(${item.replySeq})">삭제</button>
                         <button class="edit-cancel-btn" onclick="editReply(${item.replySeq}, '${escapeHTML(
                             item.replyContent
-                        )}')">수정</button>
+                        )}')">수정</button>` }
+                        
                     </div>
                 `
                         : ''
                 }
             </div>
             <div class="user-text">
-                <span class="full-text">${fullText}</span>
+                <span class="full-text">${item.isDeleted ? '삭제된 댓글입니다' : fullText}</span>
                 ${hasMore ? '<button class="more-btn" onclick="toggleExpand(this)">더보기</button>' : ''}
             </div>
     `;
@@ -213,6 +215,8 @@ function generatePagination(resp) {
         pagination += `<button onclick="initReplies(${startPage - 1})">◀ 이전</button>`;
     }
 
+    console.log(endPage);
+
     for (let i = startPage; i < endPage; i++) {
         pagination += `<button onclick="initReplies(${i})" class="${i === currentPage ? 'active' : ''}">${i + 1}</button>`;
     }
@@ -279,7 +283,13 @@ function deleteReply(replySeq) {
                 method: 'POST',
                 data: { "replySeq": replySeq },
                 success: function () {
-                    initReplies();
+                    let page = 0;
+                    for(const item of document.querySelector("#pagination").childNodes) {
+                        if(item.classList.contains('active')) {
+                            page = item.textContent - 1 ;
+                        }
+                    }
+                    initReplies(page);
                 }
             });
         }
