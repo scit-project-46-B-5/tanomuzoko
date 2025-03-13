@@ -1,9 +1,12 @@
 package org.scit.project.user.controller;
 
+import java.util.Map;
+
 import org.scit.project.user.dto.EmailDTO;
 import org.scit.project.user.dto.FindIdResponseDTO;
 import org.scit.project.user.dto.UserDTO;
 import org.scit.project.user.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -115,4 +118,23 @@ public class UserController {
 		
 		return "user/passwordSearch";
 	}
+	
+	// ✅ 회원 복원 처리 (탈퇴된 계정 복구)
+	@PostMapping("/restore")
+	@ResponseBody
+	public ResponseEntity<?> restoreUser(@RequestParam("userId") String userId) {
+	    String message = userService.restoreUser(userId);
+
+	    if (message.equals("계정이 복원되었습니다. 다시 로그인해주세요.")) {
+	        return ResponseEntity.ok(Map.of("status", "success", "message", message));
+	    }
+	    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+	            .body(Map.of("status", "error", "message", message));
+	}
+	@GetMapping("/restore")
+	public String restore(@RequestParam("userId") String userId, Model model) {
+	    model.addAttribute("userId", userId);  // `userId`를 모델에 추가
+	    return "user/restore";
+	}
+	
 }
