@@ -34,7 +34,10 @@ function renderRecipes(recipes) {
 
     recipes.forEach(recipe => {
         const outerHTML = escapeHTML(recipe.outputHTML);
-        const createdDateTime = new Date(recipe.createdDateTime).toISOString().split('T')[0];
+        const createdDateTime = new Date(recipe.createdDateTime)
+                                                        .toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' })
+                                                        .replace(/. /g, '-')
+                                                        .replace('.', ''); 
         html += `<li>
                         <a href="#" class="recipe-item" data-recipe-id="${recipe.id}" data-recipe-output="${outerHTML}">
                             <span class="recipe-name">${recipe.title}</span>
@@ -60,12 +63,12 @@ function generatePagination(resp) {
     let pagination = '';
     let currentPage = resp.number;
     let totalPages = resp.totalPages;
-    let groupSize = 10;
+    let groupSize = 2;
     let startPage = Math.floor(currentPage / groupSize) * groupSize;
     let endPage = Math.min(startPage + groupSize, totalPages);
 
     if (startPage > 0) {
-        pagination += `<button onclick="fetchRecipes(${startPage - 1})">◀ 이전</button>`;
+        pagination += `<button onclick="fetchRecipes(${startPage - 1})" id="previous">◀ 이전</button>`;
     }
 
     for (let i = startPage; i < endPage; i++) {
@@ -73,7 +76,7 @@ function generatePagination(resp) {
     }
 
     if (endPage < totalPages) {
-        pagination += `<button onclick="fetchRecipes(${endPage})">다음 ▶</button>`;
+        pagination += `<button onclick="fetchRecipes(${endPage})" id="after">다음 ▶</button>`;
     }
 
     document.querySelector('#pagination').innerHTML= pagination;
