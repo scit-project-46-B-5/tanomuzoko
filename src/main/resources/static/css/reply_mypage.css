@@ -50,3 +50,36 @@
     margin: 0 10px;
     text-align: right;
 }
+
+.noReply {
+    color: #333;
+    text-align: center;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination a {
+    margin: 0 4px;
+    padding: 5px 10px;
+    background-color: #f0f0f0;
+    color: #333;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.pagination a:hover {
+    /* background-color: #007bff; */
+    background-color: #fdcc9f;
+    color: white;
+}
+
+.pagination a.active {
+    /* background-color: #007bff; */
+    background-color: #fa9535;
+    color: white;
+    font-weight: bold;
+}
