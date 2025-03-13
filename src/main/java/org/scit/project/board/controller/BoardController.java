@@ -7,6 +7,7 @@ import java.util.Map;
 import org.scit.project.board.dto.BoardDTO;
 import org.scit.project.board.service.BoardService;
 import org.scit.project.board.util.FileService;
+import org.scit.project.user.dto.LoginUserDetails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,12 +37,14 @@ public class BoardController {
 
     @GetMapping("/board")
     public String board() {
-    	
         return "board/board";
     }
 
     @GetMapping("/boardWrite")
-    public String boardWrite() {
+    public String boardWrite(Model model, @AuthenticationPrincipal LoginUserDetails loginUserDetails) {
+        if (loginUserDetails != null) {
+            model.addAttribute("recipes", boardService.findAllByUser(loginUserDetails.getUserSeq()));
+        }
         return "board/boardWrite";
     }
 
@@ -53,45 +55,44 @@ public class BoardController {
     }
     
     @GetMapping("/boardUpdate")
-    public String boardUpdate(
-    		@RequestParam(name="boardSeq") Long boardSeq
-    		, Model model) {
-    	
-    	BoardDTO board = boardService.updateSelectOne(boardSeq);  	
-    	model.addAttribute("board", board);
-    	
-    	return "board/boardUpdate";
+    public String boardUpdate(@RequestParam(name="boardSeq") Long boardSeq, Model model) {
+        BoardDTO board = boardService.updateSelectOne(boardSeq);  	
+        model.addAttribute("board", board);
+        return "board/boardUpdate";
     }
     
     @PostMapping("/boardUpdate")
     public String boardUpdate(@ModelAttribute BoardDTO boardDTO) {
         boardService.updateBoard(boardDTO);
-        
         return "redirect:/";
     }
     
-    
     @PostMapping("/boardDelete")
     public String boardDelete(@RequestParam(name="boardSeq") Long boardSeq) {
-    	boardService.deleteBoard(boardSeq);
-    	
-    	return "board/board";
+        boardService.deleteBoard(boardSeq);
+        return "board/board";
     }
 
     @GetMapping("/boardDetail")
     public String boardDetail(@RequestParam(name = "boardSeq") Long boardSeq,
-            @AuthenticationPrincipal UserDetails userDetails,
-            Model model) {
+                              @AuthenticationPrincipal UserDetails userDetails,
+                              Model model) {
 
         BoardDTO boardDTO = boardService.selectOne(boardSeq);
         
         List<BoardDTO> recentPosts = boardService.getRecentPostsByUser(boardDTO.getUserSeq(), boardSeq);
-        
         List<BoardDTO> popularPosts = boardService.getPopularPosts();
         
         model.addAttribute("board", boardDTO);
         model.addAttribute("recentPosts", recentPosts);
         model.addAttribute("popularPosts", popularPosts);
+        
+        // board에 연결된 레시피의 output_content 조회하여 model에 추가
+        String recipeOutputContent = "";
+        if(boardDTO.getRecipeSeq() != null) {
+            recipeOutputContent = boardService.getRecipeOutputContent(boardDTO.getRecipeSeq());
+        }
+        model.addAttribute("recipeOutputContent", recipeOutputContent);
         
         return "board/detail";
     }
