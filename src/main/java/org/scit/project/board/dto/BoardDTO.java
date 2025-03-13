@@ -21,6 +21,7 @@ public class BoardDTO {
     private Long boardSeq;
     private String boardWriter;
     private Long userSeq;
+    private String userId;
     private String boardTitle;
     private String boardContent;
     private Integer hitCount;
@@ -42,6 +43,7 @@ public class BoardDTO {
         return BoardDTO.builder()
                 .boardSeq(boardEntity.getBoardSeq())
                 .userSeq(boardEntity.getUserEntity().getUserSeq())
+                .userId(boardEntity.getUserEntity().getUserId())
                 .boardWriter(boardEntity.getUserEntity().getUserName())
                 .boardTitle(boardEntity.getBoardTitle())
                 .boardContent(boardEntity.getBoardContent())
