@@ -7,15 +7,11 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class EmailDTO {
+public class EmailVerifyDTO {
     // ✅ 이메일 주소 (Entity의 필드명과 통일)
 	@NotBlank(message = "이메일은 필수입니다.")
 	@Email(message = "올바른 이메일 형식이어야 합니다.")
     private String userEmail;
-
-	@NotBlank(message = "아이디는 필수입니다.")
-	@Size(min = 3 , max = 12, message = "아이디는 3자리 이상 12자리 이하로 입력해주세요.")
-    private String userId;
 	
 	@NotBlank(message = "인증번호는 필수입니다.")
 	@Size(min = 8, max = 8, message = "인증 코드는 8자리여야 합니다.")
