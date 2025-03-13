@@ -43,6 +43,8 @@ dependencies {
 	// ✅ Redis 의존성 추가 (누락된 부분)
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.data:spring-data-redis:3.4.2'  // 명확한 버전 추가
+	
+	implementation 'org.jsoup:jsoup:1.16.2'
 }
 
 tasks.named('test') {
