@@ -16,6 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,15 +42,16 @@ public class RecipeEntity {
     @JoinColumn(name = "user_seq", referencedColumnName = "user_seq")
     private UserEntity userEntity;
 
-
     @Column(name = "created_at")
     @CreationTimestamp
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "recipeEntity", cascade = CascadeType.REMOVE)
     @Builder.Default
-    private List<RecipeInputKeywordEntity> recipeInputKeywordEntity = new ArrayList<>();
+    private List<RecipeInputKeywordEntity> recipeInputKeywordEntityList = new ArrayList<>();
 
+    @OneToOne(mappedBy = "recipeEntity", cascade = CascadeType.REMOVE)
+    private RecipeOutputEntity recipeOutputEntity;
 
     public static RecipeEntity TOENTITY(UserEntity userEntity) {
         return RecipeEntity.builder()
