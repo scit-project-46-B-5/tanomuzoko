@@ -8,7 +8,7 @@
 
 /* 📌 레시피 상세 내용 (가장 넓게 설정) */
 .recipe-detail {
-        display: flex;
+    display: flex;
     flex-direction: column; /* 세로 방향 정렬 */
     flex: 2; /* 👉 중앙 콘텐츠가 가장 넓게 배치 */
     background: white;
@@ -30,6 +30,7 @@
 .recipe-title {
     margin-bottom: 0px;
 }
+
 .recipe-detail .meta {
     font-size: 14px;
     color: #666;
@@ -44,26 +45,21 @@
 
 /* 📌 사이드바 (🔥 인기 랭킹 & ✍️ 작성자의 다른 글) */
 .sidebar {
+    display: flex;
+    flex-direction: column;
+    /* 아이템을 세로 방향으로 배치 */
     flex: 0.4; /* 👉 사이드바 너비 조정 */
     min-width: 200px; /* 최소 너비 설정 */
-
     background: white;
-    padding-top :10px;
-    padding-left: 10px;
+    padding: 15px;
     border-radius: 10px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    display: flex;
-    flex-direction: column; /* 아이템을 세로 방향으로 배치 */
     text-align: left;
 }
+
 .sidebar-wrapper  {
     position: sticky;
     top: 50px;
-    white-space: nowrap;        /* 텍스트를 한 줄로 유지 */
-    overflow: hidden;           /* 영역을 벗어나는 텍스트 숨기기 */
-    text-overflow: ellipsis;    /* 오버플로우되는 텍스트를 '...'으로 처리 */
-
 }
 
 /* ❤️ 공감(좋아요) 버튼 */
@@ -101,35 +97,50 @@
 }
 
 /* 🔥 인기 랭킹 */
-.ranking-section {
-    flex: none; /* 높이 자동 조정 */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis; /* 넘치는 텍스트 ... 처리 */
-    max-width: 100%;
+.ranking-section,
+.author-section {
+    margin-bottom: 20px;
 }
 
-.ranking-section h3 {
+.ranking-section h3,
+.author-section h3 {
+    width: 100%;
     font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 5px;
     margin-bottom: 10px;
 }
 
-.ranking-section ul {
-    list-style: none;
-    padding: 0;
+/* 랭킹 및 작성자의 다른 글 스타일 */
+.popular-item,
+.author-posts li {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: auto;
 }
 
-.ranking-section li {
-    margin: 5px 0;
+.popular-item:hover,
+.author-posts li:hover {
+    background-color:  rgba(255, 165, 0, 0.1);
 }
 
-.ranking-section a {
+.popular-item a,
+.author-posts a {
     text-decoration: none;
     color: #333;
-}
-
-.ranking-section a:hover {
-    color: #ff7f50;
+    font-weight: 500;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* 📢 광고 섹션 */
