@@ -153,10 +153,10 @@ ul {
     cursor: default;
 }
 
-#pagination button:first-child,
-#pagination button:last-child {
-    font-weight: bold;
-    background: #ffa07a;
+#previous,
+#after {
+    font-weight: bold !important;
+    background: #ffa07a !important;
 }
 
 #pagination button:disabled {
