@@ -28,6 +28,9 @@ public class ReplyDTO {
     private String replyWriter;
     private String replyContent;
     private Long parentReplySeq;
+    private Boolean isDeleted;
+    
+    @Builder.Default
     private List<ReplyDTO> childReplies = new ArrayList<>();
 
     public static ReplyDTO toDTO(ReplyEntity replyEntity) {
@@ -37,6 +40,7 @@ public class ReplyDTO {
             .replyWriter(replyEntity.getUser().getUserName())
             .replyContent(replyEntity.getReplyContent())
             .parentReplySeq(replyEntity.getParentReply() != null ? replyEntity.getParentReply().getReplySeq() : null)
+            .isDeleted(replyEntity.getIsDeleted())
             .build();
             
         if (!replyEntity.getChildReplies().isEmpty()) {
