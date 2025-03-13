@@ -109,21 +109,6 @@ function renderComment(item, loginId, isChild) {
                         : ''
                 }
             </div>
-            <div class="comment-header">
-                <div class="user-info">${escapeHTML(item.replyWriter)}</div>
-                ${
-                    loginId === item.userId
-                        ? `
-                    <div class="comment-buttons">
-                        <button class="edit-input-btn" onclick="deleteReply(${item.replySeq})">삭제</button>
-                        <button class="edit-cancel-btn" onclick="editReply(${item.replySeq}, '${escapeHTML(
-                            item.replyContent
-                        )}')">수정</button>
-                    </div>
-                `
-                        : ''
-                }
-            </div>
             <div class="user-text">
                 <span class="full-text">${fullText}</span>
                 ${hasMore ? '<button class="more-btn" onclick="toggleExpand(this)">더보기</button>' : ''}

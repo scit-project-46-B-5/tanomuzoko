@@ -1,5 +1,7 @@
 package org.scit.project.user.config;
 
+
+import org.scit.project.user.handler.CustomAuthenticationFailureHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -7,10 +9,17 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
-
+	
+	private final CustomAuthenticationFailureHandler failureHandler;
+	
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -28,6 +37,7 @@ public class SecurityConfig {
                                 "/heart/status",
                                 "/reply/getReplies",
                                 "/board/**",
+                                "/user/restore",
                                 "/user/find-password",
                                 "/user/passwordSearch",
                                 "/user/find-id",
@@ -54,7 +64,8 @@ public class SecurityConfig {
                         .usernameParameter("userId")
                         .passwordParameter("userPassword")
                         .defaultSuccessUrl("/", true) // 로그인 성공 시 메인 페이지 이동
-                        .failureUrl("/user/login?error=true")
+                        .failureHandler(failureHandler) // 로그인 실패 시 CustomAuthenticationFailureHandler 사용
+//                        .failureUrl("/user/login?error=true")
                         .permitAll())
 
                 // ✅ Logout 설정
@@ -62,7 +73,15 @@ public class SecurityConfig {
                         .logoutUrl("/user/logout")
                         .logoutSuccessUrl("/")
                         .invalidateHttpSession(true)
-                        .clearAuthentication(true));
+                        .clearAuthentication(true))
+		             
+		             // ✅ 예외 처리 추가 (접근 거부)
+		                .exceptionHandling(exception -> exception
+		                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+		                            response.sendRedirect("/user/login?errorType=forbidden");
+		                        })
+		                );
+        
 
         return http.build();
     }

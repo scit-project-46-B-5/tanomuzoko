@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원 복원</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+    <script defer th:src="@{/js/restore.js}"></script>
+</head>
+
+<body>
+    <h2>회원 복원</h2>
+    <p>해당 계정은 현재 탈퇴 상태입니다. 복원하려면 아래 버튼을 클릭하세요.</p>
+
+    <form>
+        <input type="text" name="userId" id="userId" th:value="${userId}" readonly>
+        <button type="button" id="restore-btn">복원하기</button>
+    </form>
+    <a th:href="@{/user/login}">로그인 페이지로 돌아가기</a>
+</body>
+
+</html>
