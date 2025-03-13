@@ -12,6 +12,8 @@
     <!-- 외부 alert import -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.all.min.js"></script>
+    <!-- fontawesome -->
+    <script src="https://kit.fontawesome.com/b669fcd44b.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -57,14 +59,7 @@
                     <span> 👍 조회수: <span id="hit-count" th:text="${board.hitCount}"></span></span>
                 </div>
                 
-                <div th:utext="${board.boardContent}"></div>
-
-                <p class="recipe-content">
-                    내가 만들었는데 어쩌구 저쩌구 <br />
-                    값이 싸고 가성비있고 어쩌구 저쩌구 <br />
-                    맛있어요 어쩌구쩌구<br />
-                    레시피 공유합니다 어쩌구 저쩌구
-                </p>
+                <div th:utext="${board.boardContent}" class="recipe-content"></div>
 
                 <!-- 로그인한 사용자의 아이디를 hidden으로 저장 (Ajax에서 사용) -->
                 <th:block sec:authorize="isAuthenticated()">
