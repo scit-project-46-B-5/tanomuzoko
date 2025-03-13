@@ -283,7 +283,13 @@ function deleteReply(replySeq) {
                 method: 'POST',
                 data: { "replySeq": replySeq },
                 success: function () {
-                    initReplies();
+                    let page = 0;
+                    for(const item of document.querySelector("#pagination").childNodes) {
+                        if(item.classList.contains('active')) {
+                            page = item.textContent - 1 ;
+                        }
+                    }
+                    initReplies(page);
                 }
             });
         }
