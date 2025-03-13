@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -60,7 +61,7 @@ public class UserController {
 	// 이메일 중복 체크
 	@PostMapping("/emailCheck")
 	@ResponseBody
-	public boolean emailCheck(@RequestBody EmailDTO emailDTO) {
+	public boolean emailCheck(@RequestBody @Valid EmailDTO emailDTO) {
 	    String userEmail = emailDTO.getUserEmail();
 	    return userService.isEmailExists(userEmail);
 	}
@@ -68,7 +69,7 @@ public class UserController {
 //	회원가입 처리요청
 	@PostMapping("/joinProc")
 	@ResponseBody
-	public ResponseEntity<String> joinProc(@RequestBody UserDTO dto) {
+	public ResponseEntity<String> joinProc(@RequestBody  UserDTO dto) {
 	    try {
 	        boolean result = userService.joinProc(dto);
 

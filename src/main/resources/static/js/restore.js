@@ -1,4 +1,8 @@
 $(document).ready(function () {
+    $("#close-btn").click(function () {
+        window.location.href = "/"; 
+    });
+
     $('#restore-btn').on('click', function () {
         let userId = $('#userId').val().trim();
 
@@ -51,8 +55,11 @@ $(document).ready(function () {
                             confirmButtonColor: '#ff7f50',
                             confirmButtonText: '확인',
                         });
-                    }
+                    } 
                 });
+            } else if (result.isDismissed) {
+                // "아니요" 버튼을 클릭한 경우
+                window.location.href = "/"; // 홈 화면으로 이동
             }
         });
     });
