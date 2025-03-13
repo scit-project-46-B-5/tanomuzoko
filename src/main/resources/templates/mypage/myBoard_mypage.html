@@ -29,15 +29,15 @@
                             </div>
                             <div class="gallery-text">
                                 <h4 th:text="${board.boardTitle}"></h4>
-                                <p th:text="${board.boardContent}"></p>
+                                <p th:text="${board.firstLineContent}"></p>
                                 <span th:text="'❤️ ' + ${board.heartCount}"></span>
                             </div>
                         </a>
                     </div>
                 </div>
 
-                <!-- show-more 버튼을 myBoards의 크기가 4 이상일 때만 표시 -->
-                <div class="show-more" th:if="${#lists.size(myBoard) >= 4}">
+                <!-- show-more 버튼을 myBoards의 크기가 5 이상일 때만 표시 -->
+                <div class="show-more" th:if="${showMoreButton}">
                     <button class="show-more-btn">
                         <i class="fa-solid fa-angles-down"></i>
                     </button>
