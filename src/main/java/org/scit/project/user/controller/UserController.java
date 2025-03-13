@@ -2,7 +2,7 @@ package org.scit.project.user.controller;
 
 import java.util.Map;
 
-import org.scit.project.user.dto.EmailDTO;
+import org.scit.project.user.dto.EmailCheckDTO;
 import org.scit.project.user.dto.FindIdResponseDTO;
 import org.scit.project.user.dto.UserDTO;
 import org.scit.project.user.service.UserService;
@@ -61,8 +61,8 @@ public class UserController {
 	// 이메일 중복 체크
 	@PostMapping("/emailCheck")
 	@ResponseBody
-	public boolean emailCheck(@RequestBody @Valid EmailDTO emailDTO) {
-	    String userEmail = emailDTO.getUserEmail();
+	public boolean emailCheck(@RequestBody @Valid EmailCheckDTO emailCheckDTO) {
+	    String userEmail = emailCheckDTO.getUserEmail();
 	    return userService.isEmailExists(userEmail);
 	}
 	
