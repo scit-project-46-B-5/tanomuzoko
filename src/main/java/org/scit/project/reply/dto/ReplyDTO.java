@@ -28,6 +28,8 @@ public class ReplyDTO {
     private String replyWriter;
     private String replyContent;
     private Long parentReplySeq;
+    
+    @Builder.Default
     private List<ReplyDTO> childReplies = new ArrayList<>();
 
     public static ReplyDTO toDTO(ReplyEntity replyEntity) {

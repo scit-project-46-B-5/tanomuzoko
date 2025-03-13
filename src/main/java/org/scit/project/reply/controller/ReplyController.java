@@ -1,7 +1,5 @@
 package org.scit.project.reply.controller;
 
-import java.util.List;
-
 import org.scit.project.reply.dto.ReplyDTO;
 import org.scit.project.reply.service.ReplyService;
 import org.scit.project.user.dto.LoginUserDetails;
