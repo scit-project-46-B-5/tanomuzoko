@@ -197,11 +197,11 @@ function nickNameCheck() {
         , data: { "userName": userName }
         , success: function (resp) {
             if (resp) {
-                $('#confirmName').css('color', 'blue');
+                $('#confirmName').css('color', '#4CAF50');
                 $('#confirmName').html("사용가능한 닉네임");
                 userNameCheck = true;
             } else {
-                $('#confirmName').css('color', 'red');
+                $('#confirmName').css('color', '#F55735');
                 $('#confirmName').html("사용 불가능한 닉네임");
                 userNameCheck = false;
             }
@@ -240,11 +240,11 @@ function confirmId() {
         , data: { "userId": userId }
         , success: function (resp) {
             if (resp) {
-                $('#confirmId').css('color', 'blue');
+                $('#confirmId').css('color', '#4CAF50');
                 $('#confirmId').html("사용가능한 아이디");
                 idCheck = true;
             } else {
-                $('#confirmId').css('color', 'red');
+                $('#confirmId').css('color', '#F55735');
                 $('#confirmId').html("사용 불가능한 아이디");
                 idCheck = false;
             }
