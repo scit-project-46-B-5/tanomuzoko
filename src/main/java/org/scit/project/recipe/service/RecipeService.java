@@ -39,7 +39,13 @@ public class RecipeService {
     @Value("${openai.api.temperature}")
     private float temperature;
 
+    /**
+     * recipe 정보를 chatGPT에 요청해 받아와 HTML에 맞게 parsing한 값을 return
+     * @param recipeUserRequestDTO
+     * @return
+     */
     public RecipeUserResponseDTO getRecipeResponse(RecipeUserRequestDTO recipeUserRequestDTO) {
+        //CHATGPT에 필요한 system, user message를 생성
         RecipeChatGPTRequestDTO recipeChatGPTRequestDTO = createMessageForChatGPTRequest(recipeUserRequestDTO);
 
         try {
@@ -49,7 +55,6 @@ public class RecipeService {
             return recipeUserResponseDTO;
 
         } catch (Exception exception) {
-            exception.printStackTrace();
             throw new RuntimeException("알 수 없는 에러가 발생하였습니다");
         }
     }
@@ -61,6 +66,9 @@ public class RecipeService {
         return RecipeChatGPTRequestDTO.TODTO(model, messages, temperature);
     }
 
+    /**
+     * 타이틀, 재료, 조리방법을 parsing. 조리방법은 숫자를 기준으로 parsing.
+     */
     private RecipeUserResponseDTO parseResponseFromChatGPT(String jsonString, RecipeConditionDTO recipeUserRequestDTO) throws JsonMappingException, JsonProcessingException {
         JsonNode jsonNode = objectMapper.readTree(jsonString);
         JsonNode choicesNode = jsonNode.get("choices");

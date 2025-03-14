@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +24,17 @@ public class RecipeController {
 
     private final RecipeService recipeService;
 
+
+    /**
+     * CHATGPT에서 받은 recipe 결과를 session에 저장. 
+     * recipe 저장 이후의 새로고침을 통한 recipe save를 방지하기 위해 nonce값 session에 저장
+     * @param recipeUserRequestDTO
+     * @param session
+     * @return
+     */
     @PostMapping("/recipe/chatGPT")
-    public String showExample(@RequestBody RecipeUserRequestDTO recipeUserRequestDTO, HttpSession session) {
+    @ResponseBody
+    public void viewRecipeOutput(@RequestBody RecipeUserRequestDTO recipeUserRequestDTO, HttpSession session) {
 
         //RecipeUserResponseDTO response = recipeService.getRecipeResponse(recipeUserRequestDTO);
 
@@ -45,10 +55,15 @@ public class RecipeController {
 
         String newUUID = UUID.randomUUID().toString(); 
         session.setAttribute("nonce", newUUID);
-
-        return "redirect:/recipe/recommend/output";
     }
 
+    /**
+     * /recipe/recommend에서 chatGPT request가 성공하여 recipe session 저장 시, 이동하는 페이지 
+     * session 값에서 recipe 저장에 필요한 정보를 담아 recipe 정보를 보여주는 페이지 생성
+     * @param model
+     * @param session
+     * @return
+     */
     @GetMapping("/recipe/recommend/output")
     public String viewRecipeRecoomendOutput(Model model, HttpSession session) {
         RecipeUserResponseDTO recipeResponse = session.getAttribute("recipe") != null ? (RecipeUserResponseDTO) session.getAttribute("recipe") : RecipeUserResponseDTO.empty();
@@ -60,9 +75,14 @@ public class RecipeController {
         return "recipe/recommend_result";
     }
 
+    /**
+     * CHATGPT에 recipe recommned를 받기 위한 요청 페이지
+     * @param session
+     * @return
+     */
     @GetMapping("/recipe/recommend")
     public String viewRecipeRecoomend(HttpSession session) {
-        session.removeAttribute("recipe");
+        session.removeAttribute("recipe"); //해당 페이지 진입 시, 이전 recipe 정보가 아닌 새로운 recipe가 필요하다는 의미이므로 이전 recipe 정보 제거
         return "recipe/recommend";
     }
 
