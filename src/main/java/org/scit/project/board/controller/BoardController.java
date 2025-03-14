@@ -42,9 +42,8 @@ public class BoardController {
 
     @GetMapping("/boardWrite")
     public String boardWrite(Model model, @AuthenticationPrincipal LoginUserDetails loginUserDetails) {
-        if (loginUserDetails != null) {
-            model.addAttribute("recipes", boardService.findAllByUser(loginUserDetails.getUserSeq()));
-        }
+        model.addAttribute("recipes", boardService.findAllByUser(loginUserDetails.getUserSeq()));
+        
         return "board/boardWrite";
     }
 
@@ -56,7 +55,7 @@ public class BoardController {
     
     @GetMapping("/boardUpdate")
     public String boardUpdate(@RequestParam(name="boardSeq") Long boardSeq, Model model) {
-        BoardDTO board = boardService.updateSelectOne(boardSeq);  	
+        BoardDTO board = boardService.selectOne(boardSeq);  	
         model.addAttribute("board", board);
         return "board/boardUpdate";
     }
@@ -69,7 +68,7 @@ public class BoardController {
     
     @PostMapping("/boardDelete")
     public String boardDelete(@RequestParam(name="boardSeq") Long boardSeq) {
-        boardService.deleteBoard(boardSeq);
+        boardService.unactivateBoard(boardSeq);
         return "board/board";
     }
 
@@ -78,10 +77,10 @@ public class BoardController {
                               @AuthenticationPrincipal UserDetails userDetails,
                               Model model) {
 
-        BoardDTO boardDTO = boardService.selectOne(boardSeq);
+        BoardDTO boardDTO = boardService.increaseHitCountAndSelectOne(boardSeq);
         
-        List<BoardDTO> recentPosts = boardService.getRecentPostsByUser(boardDTO.getUserSeq(), boardSeq);
-        List<BoardDTO> popularPosts = boardService.getPopularPosts();
+        List<BoardDTO> recentPosts = boardService.selectRecentPostsByUserByTen(boardDTO.getUserSeq(), boardSeq);
+        List<BoardDTO> popularPosts = boardService.selectPopularPosts();
         
         model.addAttribute("board", boardDTO);
         model.addAttribute("recentPosts", recentPosts);
@@ -100,7 +99,7 @@ public class BoardController {
     @GetMapping("/popularPostsAjax")
     @ResponseBody
     public ResponseEntity<List<BoardDTO>> popularPostsAjax() {
-        List<BoardDTO> popularPosts = boardService.getPopularPosts();
+        List<BoardDTO> popularPosts = boardService.selectPopularPosts();
         return ResponseEntity.ok(popularPosts);
     }
 

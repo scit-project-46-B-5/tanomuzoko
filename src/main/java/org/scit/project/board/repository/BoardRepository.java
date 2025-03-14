@@ -12,21 +12,19 @@ import org.springframework.data.repository.query.Param;
 public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
 
     // 해당 작성자의 최신 게시물 10개를 생성일 기준 내림차순 정렬로 조회
-    List<BoardEntity> findTop10ByUserEntityOrderByCreateDateDesc(UserEntity userEntity);
+    List<BoardEntity> findTop11ByUserEntityOrderByCreateDateDesc(UserEntity userEntity);
 
     // 조회수(hitCount)만 증가시키는 update 쿼리 (update_date에는 영향을 주지 않음)
     @Modifying
     @Query("update BoardEntity b set b.hitCount = b.hitCount + 1 where b.boardSeq = :boardSeq")
     void incrementHitCount(@Param("boardSeq") Long boardSeq);
     
-    // 인기 게시글 5개를 조회 (hitCount 기준 내림차순)
-    List<BoardEntity> findTop5ByOrderByHitCountDesc();
-
     // 추가: 현재 로그인한 사용자의 레시피 목록 조회 (레시피 id와 제목)
     //recipe와 recipe_output_content 테이블을 native query로 join하여 데이터를 조회한 후, 
     //결과를 List<Object[]>로 반환하고 이를 서비스 계층에서 DTO 혹은 Map으로 변환해 사용
     @Query(value = "SELECT r.recipe_seq, roc.recipe_title FROM recipe r " +
-                   "JOIN recipe_output_content roc ON r.recipe_seq = roc.recipe_seq " +
-                   "WHERE r.user_seq = :userSeq", nativeQuery = true)
+            		"JOIN recipe_output_content roc ON r.recipe_seq = roc.recipe_seq " +
+            		"WHERE r.user_seq = :userSeq " +
+            		"ORDER BY r.recipe_seq DESC", nativeQuery = true)
     List<Object[]> findRecipesByUser(@Param("userSeq") Long userSeq);
 }
