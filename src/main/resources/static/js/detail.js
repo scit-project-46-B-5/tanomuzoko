@@ -115,7 +115,7 @@ function renderComment(item, loginId, isChild) {
             </div>
     `;
     if (!isChild && loginId) {
-        tag += `<button class="reply-btn" onclick="showReplyForm(${item.replySeq})">답글</button>`;
+        tag += `<button class="reply-btn" onclick="showReplyForm(${item.replySeq})">댓글</button>`;
     }
 
     tag += `</div>`;
