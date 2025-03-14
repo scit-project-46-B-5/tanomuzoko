@@ -2,7 +2,8 @@ package org.scit.project.user.controller;
 
 import java.util.Map;
 
-import org.scit.project.user.dto.EmailDTO;
+import org.scit.project.user.dto.EmailCheckDTO;
+import org.scit.project.user.dto.EmailVerifyDTO;
 import org.scit.project.user.service.EmailService;
 import org.scit.project.user.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.mail.MessagingException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,7 +25,7 @@ public class EmailController {
     private final UserService userService;  // ✅ `UserService`를 주입
 
     @PostMapping("/api/v1/email/send")
-    public ResponseEntity<Map<String, String>> sendEmail(@RequestBody EmailDTO emailDto) throws MessagingException {
+    public ResponseEntity<Map<String, String>> sendEmail(@RequestBody @Valid EmailCheckDTO emailDto) throws MessagingException {
         log.info("EmailController.mailSend() - 이메일 전송 요청: {}", emailDto.getUserEmail());
 
         if (emailDto.getUserEmail() == null || emailDto.getUserEmail().isEmpty()) {
@@ -40,14 +42,14 @@ public class EmailController {
     // ✅ 이메일 인증 코드 검증
     // ✅ 올바르게 Boolean 값을 반환하도록 수정!
     @PostMapping("/api/v1/email/verify")
-    public ResponseEntity<Boolean> verifyEmail(@RequestBody EmailDTO emailDto) {
-        log.info("EmailController.verify() - 이메일 인증 요청: {}", emailDto.getUserEmail());
+    public ResponseEntity<Boolean> verifyEmail(@RequestBody @Valid EmailVerifyDTO emailVerifyDTO) {
+        log.info("EmailController.verify() - 이메일 인증 요청: {}", emailVerifyDTO.getUserEmail());
 
-        if (emailDto.getUserEmail() == null || emailDto.getVerifyCode() == null) {
+        if (emailVerifyDTO.getUserEmail() == null || emailVerifyDTO.getVerifyCode() == null) {
             return ResponseEntity.badRequest().body(false);  // 🔹 Boolean 값 반환
         }
 
-        boolean isVerified = emailService.verifyEmailCode(emailDto.getUserEmail(), emailDto.getVerifyCode());
+        boolean isVerified = emailService.verifyEmailCode(emailVerifyDTO.getUserEmail(), emailVerifyDTO.getVerifyCode());
 
         log.info("✅ 최종 인증 결과: {}", isVerified);
 

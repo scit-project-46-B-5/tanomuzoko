@@ -10,8 +10,6 @@
     <script th:src="@{/js/detail.js}" defer></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.all.min.js"></script>
-    <!-- fontawesome -->
-    <script src="https://kit.fontawesome.com/b669fcd44b.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <div class="container">
@@ -46,9 +44,12 @@
                 
                 <div class="meta">
                     <span>📅 [[${#temporals.format(board.createDate, 'yyyy-MM-dd')}]]</span> | 
-                    <span>✍️ 작성자: <span id="author-name" th:text="${board.boardWriter}"></span></span> |
+                    <span>✍️ 작성자: <span id="authorName" th:text="${board.boardWriter}"></span></span> |
                     <span> 👍 조회수: <span id="hit-count" th:text="${board.hitCount}"></span></span>
                 </div>
+                
+                <!-- 현재 게시물 작성자의 아이디 -->
+                <input type="hidden" th:value="${board.userId}" id="authorId">
                 
                 <!-- 게시물 내용 출력 -->
                 <div th:utext="${board.boardContent}"></div>
