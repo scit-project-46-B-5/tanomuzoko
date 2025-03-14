@@ -20,6 +20,7 @@ public class RecipeHistroyRequsetDTO {
     private String title;
     private String outputContent;
     private RecipeConditionDTO recipeCondition;
+    private String nonce;
 
     public List<String> getAllConditions() {
         return Arrays.asList(recipeCondition.getUsage(), 
