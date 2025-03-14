@@ -526,6 +526,13 @@
     transform: none;
 }
 
+/* 레시피 이스케이프 제거*/
+.recipe-ingredients{
+    list-style: none;  /* 리스트 스타일 제거 */
+}
+.recipe-steps{
+    list-style: none;  /* 리스트 스타일 제거 */
+}
 @media(max-width: 1250px){
     .ad-section {
         display: none; /* 📌 태블릿에서는 숨기기 */
