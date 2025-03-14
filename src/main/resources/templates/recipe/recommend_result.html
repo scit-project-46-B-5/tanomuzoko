@@ -34,11 +34,13 @@
                             <li th:each="item, status : ${recipe.ingredients}" th:text="${item}"></li>
                         </ul>
 
+                        
                         <h3 class="recipe-steps-header">👨‍🍳 만드는 방법</h3>
                         <ol class="recipe-steps">
                             <li th:each="item, status : ${recipe.cookingMethods}" th:text="${item}"></li>
                         </ol>
 
+                        <input type="hidden" th:value="${nonce}" name="nonce" id="nonce">
                         <input type="hidden" th:value="${recipe.recipeConditionDTO.usage}" name="usage" id="usage">
                         <input type="hidden" th:value="${recipe.recipeConditionDTO.menu}" name="menu" id="menu">
                         <input type="hidden" th:value="${recipe.recipeConditionDTO.taste}" name="taste" id="taste">

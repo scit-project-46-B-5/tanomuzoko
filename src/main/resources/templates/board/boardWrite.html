@@ -31,13 +31,13 @@
       <form id="board-form" th:action="@{/board/boardWrite}" method="POST" enctype="multipart/form-data">
         <div class="form-group">
           <label for="boardTitle">게시글 제목 :</label>
-          <input type="text" id="boardTitle" name="boardTitle" required />
+          <input type="text" class="boardTitle" id="boardTitle" name="boardTitle" required />
         </div>
         
        <!-- 저장된 레시피 선택 셀렉트박스 -->
         <div class="form-group">
           <label for="savedRecipe">저장된 레시피 선택 :</label>
-          <select id="savedRecipe" name="recipeSeq">
+          <select class="savedRecipe" id="savedRecipe" name="recipeSeq">
             <option value="">-- 레시피를 선택하세요 --</option>
             <option th:each="recipe : ${recipes}" th:value="${recipe.id}" th:text="${recipe.title}"></option>
           </select>

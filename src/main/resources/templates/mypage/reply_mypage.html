@@ -34,7 +34,7 @@
                 </div>
 
                 <!-- 페이지네이션 (댓글이 있을 때만 표시) -->
-                <div class="pagination" th:if="${replyCount > 0}">
+                <div class="pagination" th:if="${totalPages > 1}">
                     <!-- "이전" 버튼 -->
                     <a th:if="${currentPage > 0}" th:href="@{/mypage/reply(page=${currentPage - 1})}">
                         <i class="fa-solid fa-caret-left"></i>

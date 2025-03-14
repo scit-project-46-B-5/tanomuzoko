@@ -55,6 +55,7 @@ public class ReplyEntity {
     private ReplyEntity parentReply;
 
     @OneToMany(mappedBy = "parentReply", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<ReplyEntity> childReplies = new ArrayList<>();
 
     @Column(name = "reply_content", nullable = false)
