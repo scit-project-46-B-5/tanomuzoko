@@ -20,7 +20,15 @@
 
             <!-- ✅ 메인 컨텐츠 -->
             <div class="mypage-content">
-                <div class="gallery">
+                <h1>공감한 게시물</h1>
+
+                <!-- ✅ 공감한 게시물이 없을 때 메시지 표시 -->
+                <div th:if="${#lists.isEmpty(likedBoards)}" class="noBoard">
+                    <p>공감한 게시물이 없습니다.</p>
+                </div>
+
+                <!-- ✅ 공감한 게시물이 있을 때만 gallery 표시 -->
+                <div th:if="${not #lists.isEmpty(likedBoards)}" class="gallery">
                     <div th:each="board : ${likedBoards}" class="gallery-item">
                         <a class="gallery-link" th:href="@{/board/boardDetail(boardSeq=${board.boardSeq})}">
                             <div class="img-wrapper">

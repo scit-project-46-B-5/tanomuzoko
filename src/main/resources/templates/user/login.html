@@ -15,19 +15,18 @@
 <body>
     <form th:action="@{/user/loginProc}" method="post">
         <div class="login-container">
-            <div class="logo"></div>
             <div class="logo">
                 <a href="../index.html" th:href="@{/}">
                     <img src="../../static/image/logo.png" th:src="@{/image/logo.png}" alt="Logo" />
                 </a>
             </div>
-             <!-- 🔹 로그인 실패 원인에 따라 메시지를 다르게 표시 -->
+             <!-- 🔹 로그인 실패 원인에 따라 메시지를 다르게 표시
             <p th:if="${param.errorType == 'badCredentials'}" style="color: red; text-align: center;">
                 아이디 또는 비밀번호가 올바르지 않습니다.
             </p>
             <p th:if="${param.errorType == 'disabled'}" style="color: red; text-align: center;">
                 해당 계정은 비활성화되었습니다. 복구 페이지로 이동합니다...
-            </p>
+            </p> -->
             <!-- 🔹 숨겨진 errorType과 userId 필드 추가 -->
             <input type="hidden" id="errorType" th:value="${param.errorType ?: ''}">
             <input type="hidden" id="hiddenUserId" th:value="${param.userId ?: ''}">

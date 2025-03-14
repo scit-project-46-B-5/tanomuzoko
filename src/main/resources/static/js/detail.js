@@ -117,7 +117,7 @@ function renderComment(item, loginId, isChild) {
             </div>
     `;
     if (!isChild && loginId) {
-        tag += `<button class="reply-btn" onclick="showReplyForm(${item.replySeq})">답글</button>`;
+        tag += `<button class="reply-btn" onclick="showReplyForm(${item.replySeq})">댓글</button>`;
     }
 
     tag += `</div>`;
@@ -359,10 +359,10 @@ function escapeHTML(str) {
 // 현재 페이지에 표시된 board의 작성자와 로그인한 사용자를 비교하여 버튼을 생성
 function loadBoardButtons() {
     let boardSeq = $('#boardSeq').val();
-    let boardWriter = $("#author-name").text().trim();
+    let authorId = $("#authorId").val();
     let loginId = $("#loginId").val(); // recipe-detail에 있는 hidden input
 
-    if (loginId && boardWriter === loginId) {
+    if (loginId && authorId === loginId) {
         let buttons = `
 			<button class="updateAndDelete-btn" onclick="updateBoard(${boardSeq})">수정</button>			
             <button class="updateAndDelete-btn" onclick="deleteBoard(${boardSeq})">삭제</button>
