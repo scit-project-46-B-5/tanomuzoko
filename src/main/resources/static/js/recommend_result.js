@@ -43,11 +43,13 @@ function createToggleBookmark() {
         const menu = document.querySelector("input[name='menu']").value;
         const taste = document.querySelector("input[name='taste']").value;
         const level = document.querySelector("input[name='level']").value;
+        const nonce = document.querySelector("input[name='nonce']").value;
 
         const data = {
             title,
             recipeCondition: { usage, menu, taste, level },
-            outputContent
+            outputContent,
+            nonce
         };
 
         try {
@@ -59,7 +61,13 @@ function createToggleBookmark() {
 
             if (!response.ok) {
                 removeBoomark();
-                throw new Error('API Error');
+                Swal.fire({
+                    icon: 'failure',
+                    title: '저장 실패',
+                    text: '저장이 완료되지 않았습니다.',
+                    confirmButtonColor: '#ff7f50',
+                    confirmButtonText: '확인',
+                });
             }
 
             recipeSeq = await response.json(); // Store the server response (recipeSeq)
