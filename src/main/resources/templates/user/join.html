@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회원가입 페이지</title>
-    <link rel="stylesheet" th:href="@{/css/join.css}">
+    <link rel="stylesheet" href="../../static/css/join.css" th:href="@{/css/join.css}">
     <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
     <script defer th:src="@{/js/join.js}"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/dist/sweetalert2.min.css" />
@@ -14,23 +14,32 @@
 
 <body>
     <div class="signup-container">
-        <div class="signup-title">
-            회원가입
+        <h2 class="signup-title">회원가입</h2>
+
+        <label>
+           <span>아이디</span> 
+         <input type="text" id="userId" name="userId" class="input-field" placeholder="아이디를 입력해주세요.">
+        </label>
+        <div id="confirmId" class="confirmMessage"></div>
+        
+        <div class="pwLabel">
+            <label>
+                <span>비밀번호</span>
+                <input type="password" id="userPassword" name="userPassword" class="input-field" placeholder="비밀번호를 입력해주세요.">
+            </label>
+            <div id="confirmPw" class="confirmMessage"></div>
+            <input type="password" id="userPwdCheck" name="userPwdCheck" class="input-field" placeholder="비밀번호 확인">
         </div>
-        <span>아이디 확인</span>
-        <input type="text" id="userId" name="userId" class="input-field" placeholder="아이디">
-        <div id="confirmId" style="font-size: 0.8em;"></div>
-        <span>비밀번호 입력</span>
-        <input type="password" id="userPassword" name="userPassword" class="input-field" placeholder="비밀번호를 입력해주세요">
-        <div id="confirmPwd" style="font-size: 0.8em;"></div>
-        <input type="password" id="userPwdCheck" name="userPwdCheck" class="input-field"
-        placeholder="비밀번호를 한 번 더 입력해주세요">
-        <span>닉네임 입력</span>
-        <input type="text" id="userName" class="input-field" placeholder="닉네임">
-        <div id="confirmName" style="font-size: 0.8em;"></div>
-        <span>이메일 인증</span>
+
+        <label>
+            <span>닉네임</span>
+            <input type="text" id="userName" class="input-field" placeholder="닉네임를 입력해주세요.">
+        </label>
+        <div id="confirmName" class="confirmMessage"></div>
+
+        <span>이메일</span>
         <div id="emailAuthentication">
-            <input type="email" id="userEmail" name="userEmail" class="input-field" placeholder="이메일을 입력해주세요">
+            <input type="email" id="userEmail" name="userEmail" class="input-field" placeholder="이메일을 입력해주세요.">
             <button class="verify-button" id="requestButton">메일 인증받기</button>
         </div>
         <div id="verificationBox">

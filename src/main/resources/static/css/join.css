@@ -1,104 +1,136 @@
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 90vh;
-            background-color: #f7f7f7;
-            font-family: Arial, sans-serif;
-            margin-top: 100px;
-        }
+* {
+    margin: 0;
+}
 
-        .signup-container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            width: 400px;
-        }
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f7f7f7;
+    font-family: 'GmarketSansMedium', sans-serif;
+    margin: 30px 0;
+    box-sizing: border-box;
+}
 
-        .signup-title {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #ff7f50;
-        }
+input,
+a {
+    cursor: pointer;
+}
+        
+input:focus {
+    outline: none;
+    box-shadow: none;
+    border-color: #ff4500;
+    box-shadow: 0 0 8px rgba(255, 127, 80, 0.6);
+}
 
-        .logo img {
-            width: 250px;
-            height: 150px;
-            margin-right: 10px;
-        }
+button:focus {
+    outline: none;
+}
 
-        .verify-button {
-            background: none;
-            border: 1px solid #ff7f50;
-            color: #ff7f50;
-            padding: 5px;
-            width: 100%;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-bottom: 10px;
-        }
+.signup-container {
+    width: 400px;
+    background: white;
+    padding: 40px 30px;
+    border-radius: 10px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
 
-        .verify-button:hover {
-            background: #ff7f50;
-            color: white;
-        }
+.signup-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #ff7f50;
+    margin: 20px 0;
+}
 
-        .input-field {
-            width: 95%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-        }
+.signup-container span {
+    display: block;
+    padding: 5px;
+    text-align: left;
+    font-size: 14px;
+    color: #333;
+}
 
-        .signup-button {
-            background: #ff7f50;
-            color: white;
-            border: none;
-            padding: 10px;
-            width: 100%;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 15px;
-        }
+label {
+    display: block;
+    margin-bottom: 10px;
+}
 
-        .signup-button:hover {
-            background: #e56b42;
-        }
+.input-field {
+    width: 95%;
+    font-size: 14px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 6px;
+}
 
-        .checkbox-container {
-            text-align: left;
-            font-size: 14px;
-            margin-top: 10px;
-        }
+.pwLabel {
+    margin-bottom: 10px;
+}
 
-        .checkbox-container label {
-            display: block;
-            margin: 5px 0;
-        }
+.pwLabel label{
+    margin-bottom: 0;
+}
 
-        .signup-container span {
-            text-align: left;
-            font-size: 1em;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            display: block;
-            text-align: left;
-            padding: 5px;
-        }
+.confirmMessage {
+    font-size: 12px;
+}
 
-        #verificationBox {
-            display: none;
-        }
+.verify-button {
+    background: none;
+    border: 1px solid #ff7f50;
+    color: #ff7f50;
+    padding: 5px;
+    width: 100%;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: all 200ms ease-in;
+}
 
-        #emailAuthentication {
-            display: block;
-        }
+.verify-button:hover {
+    background: #ff7f50;
+    color: white;
+}
+
+.signup-button {
+    color: white;
+    background: #ff7f50;
+    border: none;
+    padding: 10px;
+    width: 100%;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 15px;
+    transition: all 200ms ease-in;
+    cursor: pointer;
+}
+
+.signup-button:hover {
+    background: #e56b42;
+}
+
+.checkbox-container {
+    font-size: 14px;
+    color: #333;
+    text-align: left;
+    margin-top: 10px;
+}
+
+.checkbox-container label {
+    display: block;
+    margin: 5px 0;
+}
+
+#verificationBox {
+    display: none;
+}
+
+#emailAuthentication {
+    display: block;
+}
