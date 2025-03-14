@@ -1,7 +1,9 @@
 package org.scit.project.user.service;
 
 import org.scit.project.user.dto.LoginUserDetails;
+import org.scit.project.user.entity.UserEntity;
 import org.scit.project.user.repository.UserRepository;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,17 +16,21 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class LoginUserDetailsService implements UserDetailsService {
-	private final UserRepository repository;
-	
-	@Override
-//	오버라이드는 부모로 부터 상속받은 메소드를 재정의 하는것
-//	매개변수명(파라미터) , 접근지정자 보다 큰 지정자로 바꾸는 것만 가능
+    private final UserRepository repository;
 
-//	아이디와 비밀번호를 같은 값으로 입력해야 로그인이 되는데 여기서는 아이디만 받기때문에 비밀번호는 비교하지 않아도 된다.
-	public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-		return repository.findByUserId(userId)
-        .map(LoginUserDetails::new)
-        .orElseThrow(() -> new UsernameNotFoundException("ID나 비밀번호가 틀렸습니다."));
-	}
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        
+        // 🔹 데이터베이스에서 사용자 조회
+        UserEntity user = repository.findByUserId(username)
+                .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다."));
 
+        // ✅ 계정이 비활성화된 경우 예외 발생
+        if (user.isDeleted()) {
+            log.warn("🚨 로그인 실패2 - 비활성화된 계정: {}", username);
+            throw new DisabledException("비활성화된 계정입니다.");
+        }
+
+        return new LoginUserDetails(user);
+    }
 }
