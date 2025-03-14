@@ -14,7 +14,7 @@ public class EmailVerifyDTO {
     private String userEmail;
 	
 	@NotBlank(message = "인증번호는 필수입니다.")
-	@Size(min = 8, max = 8, message = "인증 코드는 8자리여야 합니다.")
+	@Size(min = 6, max = 8, message = "인증 코드는 8자리여야 합니다.")
     @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "인증 코드는 알파벳과 숫자만 포함해야 합니다.") // 알파벳과 숫자만 허용
 	// ✅ 인증 코드 (Entity에는 없지만 DTO에서는 필요)
     private String verifyCode;
