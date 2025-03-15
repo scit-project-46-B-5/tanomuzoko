@@ -42,6 +42,7 @@ public class BoardService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Transactional
     public void insertBoard(BoardDTO boardDTO) {
         LoginUserDetails loginUser = (LoginUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userId = loginUser.getUserId();
@@ -80,7 +81,7 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardDTO selectOne(Long boardSeq) {
+    public BoardDTO increaseHitCountAndSelectOne(Long boardSeq) {
         boardRepository.incrementHitCount(boardSeq);
         BoardEntity boardEntity = boardRepository.findById(boardSeq).orElse(null);
         if (boardEntity == null) {
@@ -89,24 +90,22 @@ public class BoardService {
         return BoardDTO.toDTO(boardEntity);
     }
 
-    @Transactional
-    public List<BoardDTO> getRecentPostsByUser(Long userSeq, Long currentBoardSeq) {
+    public List<BoardDTO> selectRecentPostsByUserByTen(Long userSeq, Long currentBoardSeq) {
         UserEntity user = userRepository.findById(userSeq)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        List<BoardEntity> boardEntities = boardRepository.findTop10ByUserEntityOrderByCreateDateDesc(user)
-                .stream()
-                .filter(board -> !board.getBoardSeq().equals(currentBoardSeq))
-                .limit(10)
-                .collect(Collectors.toList());
+        List<BoardEntity> boardEntities = boardRepository.findTop11ByUserEntityOrderByCreateDateDesc(user)
+											                .stream()
+											                .filter(board -> !board.getBoardSeq().equals(currentBoardSeq))
+											                .limit(10)
+											                .collect(Collectors.toList());
 
         return boardEntities.stream()
                 .map(BoardDTO::toDTO)
                 .collect(Collectors.toList());
     }
 
-    @Transactional
-    public List<BoardDTO> getPopularPosts() {
+    public List<BoardDTO> selectPopularPosts() {
         List<BoardEntity> allBoards = boardRepository.findAll();
         List<BoardDTO> popularPosts = allBoards.stream()
             .sorted((b1, b2) -> {
@@ -120,9 +119,11 @@ public class BoardService {
         return popularPosts;
     }
 
-    public BoardDTO updateSelectOne(Long boardSeq) {
+    public BoardDTO selectOne(Long boardSeq) {
         Optional<BoardEntity> temp = boardRepository.findById(boardSeq);
-        if (!temp.isPresent()) return null;
+        if (!temp.isPresent()) {
+        	return null;
+        }
         return BoardDTO.toDTO(temp.get());
     }
 
@@ -132,7 +133,6 @@ public class BoardService {
                 .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
         entity.setBoardTitle(boardDTO.getBoardTitle());
         entity.setBoardContent(boardDTO.getBoardContent());
-        boardRepository.save(entity);
 
         if (boardDTO.getThumbnail() != null && !boardDTO.getThumbnail().isEmpty()){
             Optional<BoardImageEntity> optImage = boardImageRepository.findByBoardEntity(entity);
@@ -168,7 +168,7 @@ public class BoardService {
         }
     }
 
-    public void deleteBoard(Long boardSeq) {
+    public void unactivateBoard(Long boardSeq) {
         Optional<BoardEntity> boardOpt = boardRepository.findById(boardSeq);
         if (boardOpt.isEmpty()) {
             throw new IllegalArgumentException("게시물이 존재하지 않습니다.");
@@ -176,7 +176,6 @@ public class BoardService {
         
         BoardEntity boardEntity = boardOpt.get();
         boardEntity.setIsDeleted(true);
-        boardRepository.save(boardEntity);
     }
 
     public List<Map<String, Object>> findAllByUser(Long userSeq) {
