@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.scit.project.board.dto.BoardDTO;
 import org.scit.project.board.entity.BoardEntity;
@@ -20,6 +23,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -29,12 +34,15 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final BoardImageRepository boardImageRepository;
-    // BoardHeartRepository를 주입받아 공감수 기준 정렬에 사용
     private final BoardHeartRepository boardHeartRepository;
 
     @Value("${spring.servlet.multipart.location}")
     private String uploadPath;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Transactional
     public void insertBoard(BoardDTO boardDTO) {
         LoginUserDetails loginUser = (LoginUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userId = loginUser.getUserId();
@@ -73,7 +81,7 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardDTO selectOne(Long boardSeq) {
+    public BoardDTO increaseHitCountAndSelectOne(Long boardSeq) {
         boardRepository.incrementHitCount(boardSeq);
         BoardEntity boardEntity = boardRepository.findById(boardSeq).orElse(null);
         if (boardEntity == null) {
@@ -82,24 +90,22 @@ public class BoardService {
         return BoardDTO.toDTO(boardEntity);
     }
 
-    @Transactional
-    public List<BoardDTO> getRecentPostsByUser(Long userSeq, Long currentBoardSeq) {
+    public List<BoardDTO> selectRecentPostsByUserByTen(Long userSeq, Long currentBoardSeq) {
         UserEntity user = userRepository.findById(userSeq)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        List<BoardEntity> boardEntities = boardRepository.findTop10ByUserEntityOrderByCreateDateDesc(user)
-                .stream()
-                .filter(board -> !board.getBoardSeq().equals(currentBoardSeq)) // 현재 게시글 제외
-                .limit(10)
-                .collect(Collectors.toList());
+        List<BoardEntity> boardEntities = boardRepository.findTop11ByUserEntityOrderByCreateDateDesc(user)
+											                .stream()
+											                .filter(board -> !board.getBoardSeq().equals(currentBoardSeq))
+											                .limit(10)
+											                .collect(Collectors.toList());
 
         return boardEntities.stream()
                 .map(BoardDTO::toDTO)
                 .collect(Collectors.toList());
     }
 
-    @Transactional
-    public List<BoardDTO> getPopularPosts() {
+    public List<BoardDTO> selectPopularPosts() {
         List<BoardEntity> allBoards = boardRepository.findAll();
         List<BoardDTO> popularPosts = allBoards.stream()
             .sorted((b1, b2) -> {
@@ -113,9 +119,11 @@ public class BoardService {
         return popularPosts;
     }
 
-    public BoardDTO updateSelectOne(Long boardSeq) {
+    public BoardDTO selectOne(Long boardSeq) {
         Optional<BoardEntity> temp = boardRepository.findById(boardSeq);
-        if(!temp.isPresent()) return null;
+        if (!temp.isPresent()) {
+        	return null;
+        }
         return BoardDTO.toDTO(temp.get());
     }
 
@@ -125,28 +133,26 @@ public class BoardService {
                 .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
         entity.setBoardTitle(boardDTO.getBoardTitle());
         entity.setBoardContent(boardDTO.getBoardContent());
-        boardRepository.save(entity);
 
-        // 새로 지정된 썸네일이 있으면 업데이트 처리 (빈 문자열이 아니면)
-        if(boardDTO.getThumbnail() != null && !boardDTO.getThumbnail().isEmpty()){
+        if (boardDTO.getThumbnail() != null && !boardDTO.getThumbnail().isEmpty()){
             Optional<BoardImageEntity> optImage = boardImageRepository.findByBoardEntity(entity);
             String thumbnailUrl = boardDTO.getThumbnailUrl();
             String savedFileName = "";
-            if(thumbnailUrl.startsWith("/uploads/")){
+            if (thumbnailUrl.startsWith("/uploads/")){
                 savedFileName = thumbnailUrl.substring(9);
             } else {
                 String newUUID = UUID.randomUUID().toString();
                 String ext = "";
-                if(thumbnailUrl.startsWith("data:image/")){
+                if (thumbnailUrl.startsWith("data:image/")){
                     int slashIndex = thumbnailUrl.indexOf("/");
                     int semicolonIndex = thumbnailUrl.indexOf(";");
-                    if(slashIndex != -1 && semicolonIndex != -1){
+                    if (slashIndex != -1 && semicolonIndex != -1){
                         ext = "." + thumbnailUrl.substring(slashIndex+1, semicolonIndex);
                     }
                 }
                 savedFileName = "thumbnail_" + newUUID + ext;
             }
-            if(optImage.isPresent()){
+            if (optImage.isPresent()){
                 BoardImageEntity imageEntity = optImage.get();
                 imageEntity.setOriginalFileName(boardDTO.getThumbnail());
                 imageEntity.setSavedFileName(savedFileName);
@@ -162,15 +168,37 @@ public class BoardService {
         }
     }
 
-	public void deleteBoard(Long boardSeq) {
+    public void unactivateBoard(Long boardSeq) {
         Optional<BoardEntity> boardOpt = boardRepository.findById(boardSeq);
         if (boardOpt.isEmpty()) {
             throw new IllegalArgumentException("게시물이 존재하지 않습니다.");
         }
         
         BoardEntity boardEntity = boardOpt.get();
-		
         boardEntity.setIsDeleted(true);
-        boardRepository.save(boardEntity);
-	}
+    }
+
+    public List<Map<String, Object>> findAllByUser(Long userSeq) {
+        List<Object[]> results = boardRepository.findRecipesByUser(userSeq);
+        List<Map<String, Object>> recipes = new ArrayList<>();
+        for (Object[] row : results) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", row[0]);
+            map.put("title", row[1]);
+            recipes.add(map);
+        }
+        return recipes;
+    }
+    
+    // recipe_output_content 테이블에서 recipe_seq에 해당하는 output_content 값을 조회
+    public String getRecipeOutputContent(Long recipeSeq) {
+        String sql = "SELECT output_content FROM recipe_output_content WHERE recipe_seq = :recipeSeq";
+        List<?> list = entityManager.createNativeQuery(sql)
+                    .setParameter("recipeSeq", recipeSeq)
+                    .getResultList();
+        if(list != null && !list.isEmpty()) {
+            return list.get(0).toString();
+        }
+        return "";
+    }
 }

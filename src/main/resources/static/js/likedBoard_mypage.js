@@ -1,8 +1,10 @@
 const showMoreBtn = document.querySelector(".show-more-btn");
 
 let page = 1;
-
-showMoreBtn.addEventListener("click", showBoardLists);
+    
+if (showMoreBtn) {
+    showMoreBtn.addEventListener("click", showBoardLists);
+}
 
 async function showBoardLists() {
     try {

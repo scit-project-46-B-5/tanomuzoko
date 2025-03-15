@@ -62,6 +62,9 @@ public class BoardEntity {
 
     @Column(name = "is_deleted")
     private Boolean isDeleted;
+    
+    @Column(name = "recipe_seq")
+    private Long recipeSeq;
 
     public static BoardEntity toEntity(BoardDTO boardDTO, UserEntity userEntity) {
         return BoardEntity.builder()
@@ -73,6 +76,7 @@ public class BoardEntity {
                 .createDate(boardDTO.getCreateDate())
                 .updateDate(boardDTO.getUpdateDate())
                 .isDeleted(boardDTO.getIsDeleted())
+                .recipeSeq(boardDTO.getRecipeSeq())
                 .build();
     }
 

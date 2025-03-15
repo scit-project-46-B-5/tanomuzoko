@@ -21,6 +21,8 @@
     overflow: hidden; /* 넘치는 부분 자르기 */
     font-family: 'GmarketSansMedium', sans-serif;
 }
+
+/* 카드 내부 이미지 */
 .card img {
     position: absolute;
     inset: 0;
@@ -28,8 +30,24 @@
     height: 100%;
     object-fit: cover;
     border-radius: 10px;
-    opacity: 0.8;
+    opacity: 0.9; /* 기존 이미지 투명도 */
     transition: transform 0.3s ease-in-out; /* 부드러운 확대 효과 */
+}
+
+/* 사선 방향(대각선)으로 점점 투명해지는 흰색 그라데이션 */
+.card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    /* 135도 방향 (↗ 오른쪽 위로 향하는 그라데이션) */
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 20%, rgba(255, 255, 255, 0) 50%);
+    
+    z-index: 1; /* 이미지 위에 표시 */
+    pointer-events: none; /* 클릭 방해 방지 */
 }
 .card:hover img {
     transform: scale(1.2); /* 이미지만 확대 */
@@ -44,11 +62,13 @@
 }
 .card-content p {
     font-size: 14px;
+
 }
 .card-content h4 {
     font-size: 20px;
     font-weight: bold;
     margin-bottom: 10px;
+
 }
 .card-content button {
     margin-top: 10px;
@@ -60,6 +80,7 @@
     align-items: center;
     cursor: pointer;
     color: #ff7f50;
+    text-shadow: 1px 1px 0 #d65a31, 2px 2px 0 #a04020, 3px 3px 4px rgba(0, 0, 0, 0.4);
 }
 .card-content button svg {
     margin-left: 5px;

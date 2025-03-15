@@ -1,5 +1,7 @@
 package org.scit.project.recipe.controller;
 
+import java.util.UUID;
+
 import org.scit.project.recipe.dto.RecipeConditionDTO;
 import org.scit.project.recipe.dto.RecipeUserRequestDTO;
 import org.scit.project.recipe.dto.RecipeUserResponseDTO;
@@ -41,13 +43,19 @@ public class RecipeController {
         
         session.setAttribute("recipe", response);
 
+        String newUUID = UUID.randomUUID().toString(); 
+        session.setAttribute("nonce", newUUID);
+
         return "redirect:/recipe/recommend/output";
     }
 
     @GetMapping("/recipe/recommend/output")
     public String viewRecipeRecoomendOutput(Model model, HttpSession session) {
         RecipeUserResponseDTO recipeResponse = session.getAttribute("recipe") != null ? (RecipeUserResponseDTO) session.getAttribute("recipe") : RecipeUserResponseDTO.empty();
+        String nonce = session.getAttribute("nonce") != null ?  (String) session.getAttribute("nonce") : "";
+
         model.addAttribute("recipe", recipeResponse);
+        model.addAttribute("nonce", nonce);
 
         return "recipe/recommend_result";
     }
