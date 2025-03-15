@@ -100,10 +100,12 @@ function renderComment(item, loginId, isChild) {
                     loginId === item.userId
                         ? `
                     <div class="comment-buttons">
-                        <button class="edit-input-btn" onclick="deleteReply(${item.replySeq})">삭제</button>
+
+                    ${item.isDeleted ? '' : `<button class="edit-input-btn" onclick="deleteReply(${item.replySeq})">삭제</button>
                         <button class="edit-cancel-btn" onclick="editReply(${item.replySeq}, '${escapeHTML(
                             item.replyContent
-                        )}')">수정</button>
+                        )}')">수정</button>` }
+                        
                     </div>
                 `
                         : ''
