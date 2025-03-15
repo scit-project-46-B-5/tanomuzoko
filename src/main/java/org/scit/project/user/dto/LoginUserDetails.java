@@ -1,4 +1,4 @@
-package org.scit.project.user.dto;
+	package org.scit.project.user.dto;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -98,9 +98,6 @@ public class LoginUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-    	if(this.isDeleted == true) {
-    		return false;
-    	}
         return true;
     }
 

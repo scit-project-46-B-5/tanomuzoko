@@ -50,7 +50,7 @@ public class UserEntity {
 	@Column(name="updated_at")
 	private LocalDateTime updatedAt;
 	
-	@Column(name="is_deleted")
+	@Column(name="is_deleted", columnDefinition = "TINYINT(1)")
 	private boolean isDeleted;
 	
 	@Column(name="roles")

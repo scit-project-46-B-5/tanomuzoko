@@ -20,7 +20,15 @@
 
             <!-- ✅ 메인 컨텐츠 -->
             <div class="mypage-content">
-                <div class="gallery">
+                <h1>공감한 게시물</h1>
+
+                <!-- ✅ 공감한 게시물이 없을 때 메시지 표시 -->
+                <div th:if="${#lists.isEmpty(likedBoards)}" class="noBoard">
+                    <p>공감한 게시물이 없습니다.</p>
+                </div>
+
+                <!-- ✅ 공감한 게시물이 있을 때만 gallery 표시 -->
+                <div th:if="${not #lists.isEmpty(likedBoards)}" class="gallery">
                     <div th:each="board : ${likedBoards}" class="gallery-item">
                         <a class="gallery-link" th:href="@{/board/boardDetail(boardSeq=${board.boardSeq})}">
                             <div class="img-wrapper">
@@ -28,15 +36,14 @@
                             </div>
                             <div class="gallery-text">
                                 <h4 th:text="${board.boardTitle}"></h4>
-                                <p th:text="${board.boardContent}"></p>
+                                <p th:text="${board.firstLineContent}"></p>
                                 <span th:text="'❤️ ' + ${board.heartCount}"></span>
                             </div>
                         </a>
                     </div>
                 </div>
 
-                <!-- show-more 버튼을 likedBoards의 크기가 4 이상일 때만 표시 -->
-                <div class="show-more" th:if="${#lists.size(likedBoards) >= 4}">
+                <div class="show-more" th:if="${showMoreButton}">
                     <button class="show-more-btn">
                         <i class="fa-solid fa-angles-down"></i>
                     </button>

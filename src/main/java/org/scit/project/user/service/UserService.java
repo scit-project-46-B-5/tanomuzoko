@@ -17,8 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder; // ✅ 변수명 오타 수정
-    private final EmailService emailService; // ✅ EmailService 주입 추가
+    private final BCryptPasswordEncoder passwordEncoder; 
+    private final EmailService emailService; 
    
     // ✅ 아이디 중복 체크
     public boolean existId(String userId) {
@@ -79,7 +79,6 @@ public class UserService {
     public String findByUserEmail(String userEmail) {
         return userRepository.findByUserEmail(userEmail)
             .map(UserEntity::getUserId)  // UserEntity에서 userId를 추출
-//            .orElseThrow(() -> new NoSuchElementException("해당 이메일을 가진 사용자가 없습니다."));
             .orElse("");
     }
 
@@ -135,5 +134,45 @@ public class UserService {
         }
         return tempPassword.toString();
     }
+//    아이디로 사용자 조회
+//	public UserEntity findUserById(String userId) {
+//		return userRepository.findByUserId(userId).orElse(null);
+//	}
+//    public UserEntity findUserById(String userId) {
+//    	log.debug("🔍 findUserById() 호출 - userId: {}", userId);
+//        
+//        UserEntity user = userRepository.findByUserId(userId).orElse(null);
+//        
+//        if (user == null) {
+//            log.warn("🚨 findUserById() - userId '{}'에 해당하는 사용자를 찾을 수 없음!", userId);
+//        } else {
+//            log.info("✅ findUserById() - user 데이터 조회 성공: {}", user);
+//        }
+//        
+//        return user;
+//    }
+
+
+	// ✅ 회원 복원 처리 (isDeleted = false)
+	 public String restoreUser(String userId) {
+	        Optional<UserEntity> optionalUser = userRepository.findByUserId(userId);
+
+	        if (optionalUser.isPresent()) {
+	            UserEntity user = optionalUser.get();
+
+	            if (user.isDeleted()) { // 탈퇴된 계정인지 확인
+	                user.setDeleted(false); // 계정 활성화
+	                userRepository.save(user); // 변경된 정보 저장
+	                return "계정이 복원되었습니다. 다시 로그인해주세요.";
+	            } else {
+	                return "이미 활성화된 계정입니다.";
+	            }
+	        }
+	        return "해당 계정을 찾을 수 없습니다.";
+	    }
+
+	public Optional<UserEntity> findByUserId(String userId) {
+		return userRepository.findByUserId(userId);
+	}
 
 }

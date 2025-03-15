@@ -35,11 +35,11 @@
         <th:block sec:authorize="isAuthenticated()">
 
             <a th:href="@{/mypage/info}">
-                <div>[[${#authentication.principal.userName}]]님</div>
+                <div class="userName">[[${#authentication.principal.userName}]] 님</div>
             </a>
 
             <!-- Spring Security 로그아웃은 반드시 form 태그로 -->
-            <form th:action="@{/user/logout}" method="post" style="display:inline;">
+            <form th:action="@{/user/logout}" method="post">
                 <button class="topBarBtn" id="logoutBtn" type="submit">로그아웃</button>
             </form>
         </th:block>

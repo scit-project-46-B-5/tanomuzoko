@@ -6,7 +6,10 @@
   <title>게시글 작성</title>
   <link rel="stylesheet" th:href="@{/css/globalstyles.css}" href="../../static/css/globalstyles.css" />
   <link rel="stylesheet" th:href="@{/css/postwriting.css}" href="../../static/css/postwriting.css" />
-
+  <link rel="stylesheet" th:href="@{/css/boardWrite.css}" href="../../static/css/boardWrite.css" />
+  
+  <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+  <script th:src="@{/js/boardWrite.js}" defer></script>
   <!-- Quill 에디터 & Dropzone 라이브러리 -->
   <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
   <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet" />
@@ -17,81 +20,6 @@
   <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
 
-  <style>
-    /* 드롭존 영역 스타일 */
-    .dropzone {
-      border: 2px dashed #ccc;
-      padding: 10px;
-      text-align: center;
-      cursor: pointer;
-      margin-top: 10px;
-      min-height: 150px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: #f9f9f9;
-      border-radius: 10px;
-      position: relative;
-    }
-    /* 기본 메시지 영역 (카메라 아이콘 + 안내 문구) */
-    .dz-message {
-      text-align: center;
-      pointer-events: none;
-    }
-    .dz-message img.camera-icon {
-      width: 60px;
-      height: 60px;
-      opacity: 0.7;
-      transition: opacity 0.3s ease;
-      display: block;
-      margin: 0 auto 5px auto;
-    }
-    .dz-message .text-message {
-      font-size: 16px;
-      color: #999;
-      display: block;
-    }
-    /* + 아이콘은 별도 span으로 계속 표시 */
-    .plus {
-      font-size: 30px;
-      font-weight: bold;
-      color: #999;
-      margin-top: 10px;
-    }
-    /* 파일이 하나라도 있으면 dz-started 클래스가 붙어 .dz-message 숨김 */
-    .dropzone.dz-started .dz-message {
-      display: none;
-    }
-    /* Quill 에디터 */
-    #editor-container {
-      width: 100%;
-      min-height: 300px;
-      border: 1px solid #ccc;
-      cursor: text;
-    }
-    /* Dropzone 미리보기 스타일 */
-    .dz-preview {
-      position: relative;
-    }
-    .thumbnail-selected {
-      border: 3px solid #ff6b6b;
-      padding: 2px;
-    }
-    .thumbnail-label {
-      position: absolute;
-      top: 5px;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: rgba(0, 0, 0, 0.6);
-      color: #fff;
-      padding: 2px 5px;
-      border-radius: 3px;
-      font-size: 12px;
-      display: none;
-      z-index: 100;
-    }
-  </style>
 </head>
 <body>
   <div class="container">
@@ -103,10 +31,18 @@
       <form id="board-form" th:action="@{/board/boardWrite}" method="POST" enctype="multipart/form-data">
         <div class="form-group">
           <label for="boardTitle">게시글 제목 :</label>
-          <input type="text" id="boardTitle" name="boardTitle" required />
+          <input type="text" class="boardTitle" id="boardTitle" name="boardTitle" required />
+        </div>
+        
+       <!-- 저장된 레시피 선택 셀렉트박스 -->
+        <div class="form-group">
+          <label for="savedRecipe">저장된 레시피 선택 :</label>
+          <select class="savedRecipe" id="savedRecipe" name="recipeSeq">
+            <option value="">-- 레시피를 선택하세요 --</option>
+            <option th:each="recipe : ${recipes}" th:value="${recipe.id}" th:text="${recipe.title}"></option>
+          </select>
         </div>
 
-        <!-- Quill 에디터 영역 -->
         <div class="form-group">
           <label for="boardContent">내용 작성 :</label>
           <div id="editor-container"></div>
@@ -126,9 +62,7 @@
         </div>
         
         <!-- 선택된 썸네일 이미지 관련 hidden inputs -->
-        <!-- base64 데이터 (board_image.original_file_name에 저장됨) -->
         <input type="hidden" name="thumbnail" id="thumbnail" />
-        <!-- 업로드된 파일의 URL (board_image.saved_file_name 계산에 사용됨) -->
         <input type="hidden" name="thumbnailUrl" id="thumbnailUrl" />
 
         <button type="submit" class="submit-btn">등록하기</button>
@@ -136,183 +70,6 @@
     </div>
   </div>
 
-  <script>
-    // Quill 에디터 초기화
-    var quill = new Quill('#editor-container', {
-      theme: 'snow',
-      modules: { imageResize: {} }
-    });
-    document.getElementById('editor-container').addEventListener('click', function () {
-      quill.focus();
-    });
-    
-    // 폼 제출 시, 에디터 내 이미지들의 현재 크기를 style 속성에 적용한 후 boardContent hidden input에 HTML 넣기
-    document.getElementById('board-form').onsubmit = function (e) {
-      // 첨부된 이미지 파일이 없으면 alert 창 띄움
-      if (dropzone.files.length === 0) {
-        alert('이미지 파일을 첨부해주세요');
-        e.preventDefault();
-        return false;
-      }
-
-      // 에디터 내 모든 <img> 태그의 현재 표시 크기를 가져와 인라인 style로 설정
-      var imgs = quill.root.querySelectorAll('img');
-      imgs.forEach(function(img) {
-         var rect = img.getBoundingClientRect();
-         var width = rect.width;
-         var height = rect.height;
-         img.setAttribute('style', 'width:' + width + 'px; height:' + height + 'px;');
-      });
-      
-      // 업데이트된 HTML을 hidden input에 설정
-      document.getElementById('boardContent').value = quill.root.innerHTML;
-      
-      // 파일이 하나 이상 첨부된 경우, 썸네일 지정 여부 확인
-      if (dropzone.files.length > 0 && !document.getElementById('thumbnailUrl').value) {
-        alert('썸네일로 사용할 사진을 선택해주세요');
-        e.preventDefault();
-        return false;
-      }
-      return true;
-    };
-
-    let uploadedFiles = new Map();
-    Dropzone.autoDiscover = false;
-
-    const dropzone = new Dropzone('#dropzone', {
-      url: '/board/upload',
-      maxFiles: 5,
-      maxFilesize: 5,
-      acceptedFiles: 'image/*',
-      addRemoveLinks: true,
-      dictDefaultMessage: '',
-      dictRemoveFile: '삭제',
-      init: function () {
-        this.on('addedfile', function (file) {
-          let fileKey = file.name + file.size;
-          if (uploadedFiles.has(fileKey)) {
-            console.warn('중복된 파일입니다:', file.name);
-            alert('이미 업로드된 파일입니다.');
-            this.removeFile(file);
-            return;
-          }
-          this.element.classList.add('dz-started');
-        });
-
-        this.on('success', function (file, response) {
-          console.log('업로드 완료:', response);
-          if (response && response.fileUrl) {
-            var fileUrl = response.fileUrl; // 예: "/uploads/강아지1_UUID.jpg"
-            const reader = new FileReader();
-            reader.onload = function(e) {
-              var base64Data = e.target.result;
-              insertImageToQuill(file, base64Data, fileUrl);
-            };
-            reader.readAsDataURL(file);
-          } else {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-              var base64Data = e.target.result;
-              insertImageToQuill(file, base64Data, "");
-            };
-            reader.readAsDataURL(file);
-          }
-        });
-
-        this.on('error', function (file, errorMessage) {
-          console.error('업로드 실패:', errorMessage);
-        });
-
-        this.on('removedfile', function (file) {
-          console.log('Dropzone에서 파일 삭제됨:', file.name);
-          let fileKey = file.name + file.size;
-          let fileData = uploadedFiles.get(fileKey);
-          if (fileData) {
-            let imgToRemove = quill.root.querySelector(`img[src="${fileData.base64}"]`);
-            if (imgToRemove) {
-              imgToRemove.remove();
-            }
-            // 서버의 파일 삭제 호출
-            if(fileData.url) {
-              fetch('/board/deleteFile', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: 'fileUrl=' + encodeURIComponent(fileData.url)
-              })
-              .then(response => response.json())
-              .then(data => {
-                if(data.error) {
-                  console.error('파일 삭제 실패:', data.error);
-                } else {
-                  console.log('파일 삭제 성공');
-                }
-              })
-              .catch(err => console.error('파일 삭제 중 오류:', err));
-            }
-          }
-          uploadedFiles.delete(fileKey);
-          if (this.files.length === 0) {
-            this.element.classList.remove('dz-started');
-          }
-          const currentThumbnailUrl = document.getElementById('thumbnailUrl').value;
-          if (fileData && fileData.url === currentThumbnailUrl) {
-            document.getElementById('thumbnailUrl').value = "";
-          }
-        });
-
-        this.on('complete', function (file) {
-          file.previewElement.classList.add('dz-complete');
-        });
-      }
-    });
-
-    function insertImageToQuill(file, base64Data, fileUrl) {
-      let range = quill.getSelection();
-      let insertIndex = range ? range.index : quill.getLength();
-      quill.insertEmbed(insertIndex, 'image', base64Data);
-      quill.setSelection(insertIndex + 1);
-
-      let fileKey = file.name + file.size;
-      uploadedFiles.set(fileKey, { file: file, base64: base64Data, url: fileUrl });
-
-      file.previewElement.classList.add('dz-complete');
-
-      let thumbnailLabel = document.createElement('div');
-      thumbnailLabel.classList.add('thumbnail-label');
-      thumbnailLabel.textContent = '썸네일로 지정';
-      thumbnailLabel.style.display = 'none';
-      file.previewElement.insertBefore(thumbnailLabel, file.previewElement.firstChild);
-
-      file.previewElement.addEventListener('click', function(e) {
-        if (e.target.classList.contains('dz-remove')) return;
-        document.querySelectorAll('.dz-preview').forEach(function(preview) {
-          preview.classList.remove('thumbnail-selected');
-          let label = preview.querySelector('.thumbnail-label');
-          if (label) { label.style.display = 'none'; }
-        });
-        file.previewElement.classList.add('thumbnail-selected');
-        thumbnailLabel.style.display = 'block';
-        // 썸네일 선택 시, base64 데이터는 thumbnail (원본_file_name), fileUrl는 thumbnailUrl (saved_file_name 계산용)
-        document.getElementById('thumbnail').value = base64Data;
-        document.getElementById('thumbnailUrl').value = fileUrl;
-        console.log('썸네일 지정:', fileUrl);
-      });
-    }
-
-    quill.on('text-change', function () {
-      let quillImages = new Set([...quill.root.querySelectorAll('img')].map(img => img.src));
-      for (let [fileKey, fileData] of uploadedFiles.entries()) {
-        if (!quillImages.has(fileData.base64)) {
-          console.log('Quill에서 이미지 삭제됨:', fileData.base64);
-          dropzone.removeFile(fileData.file);
-          uploadedFiles.delete(fileKey);
-          const currentThumbnailUrl = document.getElementById('thumbnailUrl').value;
-          if (fileData.url === currentThumbnailUrl) {
-            document.getElementById('thumbnailUrl').value = "";
-          }
-        }
-      }
-    });
-  </script>
+  
 </body>
 </html>

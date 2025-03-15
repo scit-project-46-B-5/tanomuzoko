@@ -8,7 +8,7 @@
 
 /* 📌 레시피 상세 내용 (가장 넓게 설정) */
 .recipe-detail {
-        display: flex;
+    display: flex;
     flex-direction: column; /* 세로 방향 정렬 */
     flex: 2; /* 👉 중앙 콘텐츠가 가장 넓게 배치 */
     background: white;
@@ -30,6 +30,7 @@
 .recipe-title {
     margin-bottom: 0px;
 }
+
 .recipe-detail .meta {
     font-size: 14px;
     color: #666;
@@ -44,26 +45,21 @@
 
 /* 📌 사이드바 (🔥 인기 랭킹 & ✍️ 작성자의 다른 글) */
 .sidebar {
+    display: flex;
+    flex-direction: column;
+    /* 아이템을 세로 방향으로 배치 */
     flex: 0.4; /* 👉 사이드바 너비 조정 */
     min-width: 200px; /* 최소 너비 설정 */
-
     background: white;
-    padding-top :10px;
-    padding-left: 10px;
+    padding: 15px;
     border-radius: 10px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    display: flex;
-    flex-direction: column; /* 아이템을 세로 방향으로 배치 */
     text-align: left;
 }
+
 .sidebar-wrapper  {
     position: sticky;
     top: 50px;
-    white-space: nowrap;        /* 텍스트를 한 줄로 유지 */
-    overflow: hidden;           /* 영역을 벗어나는 텍스트 숨기기 */
-    text-overflow: ellipsis;    /* 오버플로우되는 텍스트를 '...'으로 처리 */
-
 }
 
 /* ❤️ 공감(좋아요) 버튼 */
@@ -101,35 +97,50 @@
 }
 
 /* 🔥 인기 랭킹 */
-.ranking-section {
-    flex: none; /* 높이 자동 조정 */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis; /* 넘치는 텍스트 ... 처리 */
-    max-width: 100%;
+.ranking-section,
+.author-section {
+    margin-bottom: 20px;
 }
 
-.ranking-section h3 {
+.ranking-section h3,
+.author-section h3 {
+    width: 100%;
     font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 5px;
     margin-bottom: 10px;
 }
 
-.ranking-section ul {
-    list-style: none;
-    padding: 0;
+/* 랭킹 및 작성자의 다른 글 스타일 */
+.popular-item,
+.author-posts li {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: auto;
 }
 
-.ranking-section li {
-    margin: 5px 0;
+.popular-item:hover,
+.author-posts li:hover {
+    background-color:  rgba(255, 165, 0, 0.1);
 }
 
-.ranking-section a {
+.popular-item a,
+.author-posts a {
     text-decoration: none;
     color: #333;
-}
-
-.ranking-section a:hover {
-    color: #ff7f50;
+    font-weight: 500;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* 📢 광고 섹션 */
@@ -206,10 +217,6 @@
     font-size: 1.1em;
 }
 
-.user-info {
-    margin-bottom: 5px;
-}
-
 .comment-box button:hover {
     background: #e56b42;
 }
@@ -225,27 +232,18 @@
 /* 📌 개별 댓글 스타일 */
 .comment {
     background: #f9f9f9; /* 댓글 배경 */
-    padding: 15px;
+    padding: 8px 16px;
     margin-bottom: 10px;
     border-radius: 5px;
-    display: flex;
-    flex-direction: row;
-    align-items: center; /* 내용과 버튼을 세로로 가운데 정렬 */
     box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 추가 */
 }
 
 /* 📌 댓글 작성자 이름 (수평 중앙 정렬) */
 .comment .user-info {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: bold;
     color: #333;
-    margin-right: 15px;
     flex-shrink: 0; /* 이름이 줄어들지 않도록 설정 */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    height: 100%;
 }
 
 /* 📌 댓글 내용 (상하 중앙 정렬) */
@@ -376,13 +374,16 @@
     border: none;
     font-size: 14px;
     cursor: pointer;
-    text-decoration: underline; /* 텍스트에 밑줄 추가 */
-    transition: color 0.3s ease;
-    margin-top: 0;
     padding: 0;
+    transition: color 0.3s ease;
 }
 
-
+/* 📌 저장/취소 버튼 호버 효과 */
+.edit-input-btn:hover,
+.edit-cancel-btn:hover {
+    color: #e56b42;
+    /* 호버 시 색상 변경 */
+}
 
 .btn-wrapper {
 	display: flex;
@@ -392,10 +393,6 @@
     margin-top: auto; /* 자동으로 아래쪽으로 밀어내기 */
 }
 
-/* 📌 저장/취소 버튼 호버 효과 */
-.edit-input-btn:hover, .edit-cancel-btn:hover {
-    color: #e56b42; /* 호버 시 색상 변경 */
-}
 .recipe-comment-box {
     min-width: 900px;
 }
@@ -406,7 +403,6 @@
     align-items: flex-start; /* 내부 요소가 왼쪽 정렬되도록 설정 */
     word-break: break-word; /* 긴 단어도 줄바꿈 처리 */
 }
-
 
 .comment .user-text {
     max-width: 100%; /* 부모 크기를 넘지 않도록 설정 */
@@ -453,18 +449,21 @@
     border: none;
     font-size: 14px;
     cursor: pointer;
-    text-decoration: underline; /* 텍스트에 밑줄 추가 */
     transition: color 0.3s ease;
-    margin-top: 0;
     padding: 0;
+    background: none;
 }
 
 /* 유저 정보 + 버튼을 가로로 정렬 */
 .comment-header {
-    display: flex;
-    align-items: center;
     width: 100%;
-    justify-content: flex-start;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    border-bottom: 1px solid #e1e1e1;
+    padding: 4px 0;
+    margin-bottom: 8px;
 }
 
 /* 📌 페이지네이션 버튼 컨테이너 */
@@ -515,6 +514,13 @@
     transform: none;
 }
 
+/* 레시피 이스케이프 제거*/
+.recipe-ingredients{
+    list-style: none;  /* 리스트 스타일 제거 */
+}
+.recipe-steps{
+    list-style: none;  /* 리스트 스타일 제거 */
+}
 @media(max-width: 1250px){
     .ad-section {
         display: none; /* 📌 태블릿에서는 숨기기 */
