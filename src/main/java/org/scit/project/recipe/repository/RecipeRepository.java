@@ -11,13 +11,12 @@ import org.springframework.data.repository.query.Param;
 public interface RecipeRepository extends JpaRepository<RecipeEntity, Long> {
 
     @Query("""
-                SELECT r.recipeSeq AS id, roc.recipeTitle AS title FROM RecipeEntity r 
-                JOIN r.recipeOutputEntity roc 
-                WHERE r.userEntity.userSeq = :userSeq 
-                AND NOT EXISTS (SELECT 1 FROM r.boardEntity b) 
-                ORDER BY r.recipeSeq DESC
-               """)
-List<RecipeProjection> findRecipesByUser(@Param("userSeq") Long userSeq);
-
+             SELECT r.recipeSeq AS id, roc.recipeTitle AS title FROM RecipeEntity r
+             JOIN r.recipeOutputEntity roc
+             WHERE r.userEntity.userSeq = :userSeq
+             AND NOT EXISTS (SELECT 1 FROM r.boardEntity b)
+             ORDER BY r.recipeSeq DESC
+            """)
+    List<RecipeProjection> findRecipesByUser(@Param("userSeq") Long userSeq);
 
 }

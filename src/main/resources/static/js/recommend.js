@@ -1,4 +1,4 @@
-$(document).on('submit', '#recommend-form', function (e) {
+$('#recommend-form').on('submit', function (e) {
     e.preventDefault(); // 폼 제출 방지
     if (!$('#ingredients-input').val().trim()) {
         Swal.fire({
@@ -48,7 +48,6 @@ $(document).on('submit', '#recommend-form', function (e) {
         location.href='/recipe/recommend/output';
     })
     .catch((error)=> hideLoader());
-
 });
 
 const ingredients = [

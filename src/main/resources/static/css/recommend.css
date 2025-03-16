@@ -220,7 +220,7 @@
     opacity: 70%;
   }
   
-  .loader-bar {
+.loader-bar {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -229,16 +229,16 @@
     margin-top: -5px;
     margin-left: -50px;
     background-color: white;
-  }
+}
   
-  @keyframes loader-bar {
+@keyframes loader-bar {
     0% {
-      transform: translateX(-50%) scaleX(0);
+        transform: translateX(-50%) scaleX(0);
     }
     50% {
-      transform: translateX(-50%) scaleX(1);
+        transform: translateX(-50%) scaleX(1);
     }
     100% {
-      transform: translateX(-50%) scaleX(0);
+        transform: translateX(-50%) scaleX(0);
     }
-  }
+}
