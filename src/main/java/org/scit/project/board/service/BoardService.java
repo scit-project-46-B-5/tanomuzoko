@@ -4,21 +4,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.scit.project.board.dto.BoardDTO;
 import org.scit.project.board.entity.BoardEntity;
 import org.scit.project.board.entity.BoardImageEntity;
-import org.scit.project.board.repository.BoardRepository;
 import org.scit.project.board.repository.BoardImageRepository;
+import org.scit.project.board.repository.BoardRepository;
 import org.scit.project.board_heart.repository.BoardHeartRepository;
 import org.scit.project.recipe.entity.RecipeEntity;
 import org.scit.project.recipe.entity.RecipeOutputEntity;
 import org.scit.project.recipe.repository.RecipeOutputRepository;
 import org.scit.project.recipe.repository.RecipeRepository;
-import org.scit.project.reply.entity.ReplyEntity;
 import org.scit.project.user.dto.LoginUserDetails;
 import org.scit.project.user.entity.UserEntity;
 import org.scit.project.user.repository.UserRepository;
@@ -27,8 +23,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 
 @Service
