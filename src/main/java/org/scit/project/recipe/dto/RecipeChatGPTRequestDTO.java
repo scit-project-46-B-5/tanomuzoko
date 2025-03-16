@@ -1,6 +1,5 @@
 package org.scit.project.recipe.dto;
 
-import java.io.Serializable;
 import java.util.List;
 
 import lombok.AccessLevel;
@@ -17,7 +16,7 @@ import lombok.ToString;
 @Setter
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class RecipeChatGPTRequestDTO implements Serializable {
+public class RecipeChatGPTRequestDTO {
 
     private String model;
     private List<MessageChatGPTDTO> messages;

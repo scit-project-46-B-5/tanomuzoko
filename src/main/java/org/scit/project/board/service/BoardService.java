@@ -4,17 +4,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.scit.project.board.dto.BoardDTO;
 import org.scit.project.board.entity.BoardEntity;
 import org.scit.project.board.entity.BoardImageEntity;
-import org.scit.project.board.repository.BoardRepository;
 import org.scit.project.board.repository.BoardImageRepository;
+import org.scit.project.board.repository.BoardRepository;
 import org.scit.project.board_heart.repository.BoardHeartRepository;
-import org.scit.project.reply.entity.ReplyEntity;
+import org.scit.project.recipe.entity.RecipeEntity;
+import org.scit.project.recipe.entity.RecipeOutputEntity;
+import org.scit.project.recipe.repository.RecipeOutputRepository;
+import org.scit.project.recipe.repository.RecipeRepository;
 import org.scit.project.user.dto.LoginUserDetails;
 import org.scit.project.user.entity.UserEntity;
 import org.scit.project.user.repository.UserRepository;
@@ -23,8 +23,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -35,12 +33,11 @@ public class BoardService {
     private final UserRepository userRepository;
     private final BoardImageRepository boardImageRepository;
     private final BoardHeartRepository boardHeartRepository;
+    private final RecipeRepository recipeRepository;
+    private final RecipeOutputRepository recipeOutputRepository;
 
     @Value("${spring.servlet.multipart.location}")
     private String uploadPath;
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Transactional
     public void insertBoard(BoardDTO boardDTO) {
@@ -49,7 +46,8 @@ public class BoardService {
         UserEntity user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("no such user"));
 
-        BoardEntity entity = BoardEntity.toEntity(boardDTO, user);
+        RecipeEntity recipeEntity = recipeRepository.findById(boardDTO.getRecipeSeq()).orElseThrow(()-> new RuntimeException("no such recipe"));
+        BoardEntity entity = BoardEntity.toEntity(boardDTO, user, recipeEntity);
         BoardEntity savedBoard = boardRepository.save(entity);
 
         if (boardDTO.getThumbnailUrl() != null && !boardDTO.getThumbnailUrl().isEmpty()) {
@@ -168,7 +166,8 @@ public class BoardService {
         }
     }
 
-    public void unactivateBoard(Long boardSeq) {
+    @Transactional
+    public void unActivateBoard(Long boardSeq) {
         Optional<BoardEntity> boardOpt = boardRepository.findById(boardSeq);
         if (boardOpt.isEmpty()) {
             throw new IllegalArgumentException("게시물이 존재하지 않습니다.");
@@ -177,28 +176,11 @@ public class BoardService {
         BoardEntity boardEntity = boardOpt.get();
         boardEntity.setIsDeleted(true);
     }
-
-    public List<Map<String, Object>> findAllByUser(Long userSeq) {
-        List<Object[]> results = boardRepository.findRecipesByUser(userSeq);
-        List<Map<String, Object>> recipes = new ArrayList<>();
-        for (Object[] row : results) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("id", row[0]);
-            map.put("title", row[1]);
-            recipes.add(map);
-        }
-        return recipes;
-    }
     
-    // recipe_output_content 테이블에서 recipe_seq에 해당하는 output_content 값을 조회
-    public String getRecipeOutputContent(Long recipeSeq) {
-        String sql = "SELECT output_content FROM recipe_output_content WHERE recipe_seq = :recipeSeq";
-        List<?> list = entityManager.createNativeQuery(sql)
-                    .setParameter("recipeSeq", recipeSeq)
-                    .getResultList();
-        if(list != null && !list.isEmpty()) {
-            return list.get(0).toString();
-        }
-        return "";
+    public String selectRecipeOutputContent(Long recipeSeq) {
+        RecipeEntity recipe = recipeRepository.findById(recipeSeq).orElseThrow(() -> new RuntimeException("no such recipe"));
+        RecipeOutputEntity recipeOutput = recipeOutputRepository.findByRecipeEntity(recipe).orElseThrow(() -> new RuntimeException("no such recipeOutput"));
+
+        return recipeOutput.getOutputContent();
     }
 }

@@ -1,7 +1,5 @@
 package org.scit.project.recipe.dto;
 
-import java.io.Serializable;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MessageChatGPTDTO implements Serializable {
+public class MessageChatGPTDTO {
 
     private String role;
     private String content;

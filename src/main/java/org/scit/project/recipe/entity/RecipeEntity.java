@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.scit.project.board.entity.BoardEntity;
 import org.scit.project.user.entity.UserEntity;
 
 import jakarta.persistence.CascadeType;
@@ -52,6 +53,9 @@ public class RecipeEntity {
 
     @OneToOne(mappedBy = "recipeEntity", cascade = CascadeType.REMOVE)
     private RecipeOutputEntity recipeOutputEntity;
+
+    @OneToOne(mappedBy = "recipeEntity")
+    private BoardEntity boardEntity;
 
     public static RecipeEntity TOENTITY(UserEntity userEntity) {
         return RecipeEntity.builder()
