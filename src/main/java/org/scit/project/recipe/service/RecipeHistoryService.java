@@ -28,6 +28,12 @@ public class RecipeHistoryService {
     private final RecipeOutputRepository recipeOutputRepository;
     private final RecipeRepository recipeRepository;
 
+    /**
+     * recipeEntity - recipesInputKeyword - recipeOutput 순으로 save
+     * 저장이 성공하면 저장 성공여부를 판별하는 recipeSeq를 return
+     * @param recipeHistroyRequsetDTO
+     * @return
+     */
     @Transactional
     public Long saveRecipeAndReturnSavedPK(RecipeHistroyRequsetDTO recipeHistroyRequsetDTO) {
         UserEntity user = findUser();
@@ -39,9 +45,9 @@ public class RecipeHistoryService {
         }
 
         List<RecipeInputKeywordEntity> recipeInputKeywords = recipeHistroyRequsetDTO.getAllConditions()
-                                                                                .stream()
-                                                                                .map(condition -> RecipeInputKeywordEntity.TOENTITY(recipeEntity, condition))
-                                                                                .collect(Collectors.toList());
+                                                                                                    .stream()
+                                                                                                    .map(condition -> RecipeInputKeywordEntity.TOENTITY(recipeEntity, condition))
+                                                                                                    .collect(Collectors.toList());
 
         recipeInpuKeywordRepository.saveAll(recipeInputKeywords);
         

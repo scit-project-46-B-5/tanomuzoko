@@ -1,3 +1,8 @@
+.noBoard {  
+    color: #333;
+    text-align: center;
+}
+
 .gallery {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -38,28 +43,24 @@
 }
 
 .gallery-text {
-    padding: 10px 15px;
+    padding: 10px 14px;
 }
 
-/* 텍스트 줄 제한 스타일 */
 .gallery-text h4 {
     font-size: 18px;
-    margin-bottom: 5px;
     color: #333;
     white-space: nowrap;
-    /* 한 줄로 표시 */
     overflow: hidden;
     text-overflow: ellipsis;
-    /* 넘치는 텍스트 ... 처리 */
-    margin-top: 5px;
+    margin-bottom: 8px;
 }
 
 .gallery-text p {
+    width: 100%;
     font-size: 14px;
     color: #666;
-    overflow: hidden;
     white-space: nowrap;
-    /* 한 줄로 표시 */
+    overflow: hidden;
     text-overflow: ellipsis;
 }
 
@@ -81,14 +82,15 @@
     height: 40px;
     border: none;
     border-radius: 50%;
-    color: white;
-    background: #ff7f50;
-    box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.2);
+    color: #ff7f50;
+    background: #fdcc9f;
+    box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.3);
     cursor: pointer;
     font-size: 18px;
     transition: all 100ms ease-in;
 }
 
 .show-more .show-more-btn:hover {
-    background-color: #ff5111;
+    font-size: 19px;
+    color: #ff5617;
 }

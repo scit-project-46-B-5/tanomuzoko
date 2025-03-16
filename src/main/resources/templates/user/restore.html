@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원 복원</title>
+    <link rel="stylesheet" href="../../static/css/restore.css" th:href="@{/css/restore.css}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+    <script defer th:src="@{/js/restore.js}"></script>
+    <!-- fontawesome -->
+    <script src="https://kit.fontawesome.com/b669fcd44b.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h2 class="restoreAccount-header">회원 복원</h2>
+        <p class="restoreAccount-content">
+            해당 계정은 탈퇴된 상태입니다. <br/>
+            계정 복원을 하려면 아래 버튼을 눌러 주세요.
+        </p>
+        <form>
+            <input type="text" name="userId" id="userId" class="restoreAccount-inputField" th:value="${userId}" readonly>
+            <button type="button" id="restore-btn" class="restoreBtn">복원하기</button>
+        </form>
+        <i class="fa-solid fa-xmark closeBtn" id="close-btn"></i>
+    </div>
+</body>
+
+</html>

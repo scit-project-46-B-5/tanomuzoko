@@ -13,6 +13,7 @@ import org.scit.project.reply.repository.ReplyRepository;
 import org.scit.project.user.entity.UserEntity;
 import org.scit.project.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -69,35 +70,17 @@ public class ReplyService {
             throw new IllegalArgumentException("게시글이 존재하지 않습니다.");
         }
 
-        // 부모 댓글 (답글이 아닌 댓글) 목록 조회 (삭제되지 않은 댓글만 가져옴)
-        List<ReplyEntity> parentReplies = replyRepository.findByBoardAndParentReplyIsNullAndIsDeletedFalse(
-                boardOpt.get(), Sort.by(Sort.Direction.ASC, "createDate"));
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.ASC, "createDate"));
 
-        List<ReplyDTO> allReplies = new ArrayList<>();
+        // Fetch paginated parent and child replies in a single query
+        Page<ReplyEntity> replyPage = replyRepository.findRepliesByBoard(boardOpt.get(), pageable);
 
-        // 부모 댓글을 순회하며 답글 포함하여 리스트 생성
-        for (ReplyEntity parent : parentReplies) {
-            ReplyDTO parentDTO = ReplyDTO.toDTO(parent);
-            allReplies.add(parentDTO); // 부모 댓글 추가
+        // Convert to DTOs
+        List<ReplyDTO> replyDTOs = replyPage.getContent().stream()
+                .map(ReplyDTO::toDTO)
+                .collect(Collectors.toList());
 
-            // 부모 댓글의 자식 댓글(답글) 가져오기
-            List<ReplyDTO> childReplies = replyRepository.findByParentReplyAndIsDeletedFalse(parent)
-                    .stream().map(ReplyDTO::toDTO).collect(Collectors.toList());
-
-            allReplies.addAll(childReplies); // 답글 추가
-        }
-
-        // 페이지네이션 적용 (20개씩)
-        int start = page * 20;
-        int end = Math.min(start + 20, allReplies.size());
-
-        if (start > allReplies.size()) {
-            return Page.empty();
-        }
-
-        List<ReplyDTO> pagedReplies = allReplies.subList(start, end);
-
-        return new PageImpl<>(pagedReplies, PageRequest.of(page, 20), allReplies.size());
+        return new PageImpl<>(replyDTOs, pageable, replyPage.getTotalElements());
     }
     
     /**

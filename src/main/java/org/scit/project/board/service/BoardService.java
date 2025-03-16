@@ -8,10 +8,13 @@ import java.util.stream.Collectors;
 import org.scit.project.board.dto.BoardDTO;
 import org.scit.project.board.entity.BoardEntity;
 import org.scit.project.board.entity.BoardImageEntity;
-import org.scit.project.board.repository.BoardRepository;
 import org.scit.project.board.repository.BoardImageRepository;
+import org.scit.project.board.repository.BoardRepository;
 import org.scit.project.board_heart.repository.BoardHeartRepository;
-import org.scit.project.reply.entity.ReplyEntity;
+import org.scit.project.recipe.entity.RecipeEntity;
+import org.scit.project.recipe.entity.RecipeOutputEntity;
+import org.scit.project.recipe.repository.RecipeOutputRepository;
+import org.scit.project.recipe.repository.RecipeRepository;
 import org.scit.project.user.dto.LoginUserDetails;
 import org.scit.project.user.entity.UserEntity;
 import org.scit.project.user.repository.UserRepository;
@@ -29,19 +32,22 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final BoardImageRepository boardImageRepository;
-    // BoardHeartRepository를 주입받아 공감수 기준 정렬에 사용
     private final BoardHeartRepository boardHeartRepository;
+    private final RecipeRepository recipeRepository;
+    private final RecipeOutputRepository recipeOutputRepository;
 
     @Value("${spring.servlet.multipart.location}")
     private String uploadPath;
 
+    @Transactional
     public void insertBoard(BoardDTO boardDTO) {
         LoginUserDetails loginUser = (LoginUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userId = loginUser.getUserId();
         UserEntity user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("no such user"));
 
-        BoardEntity entity = BoardEntity.toEntity(boardDTO, user);
+        RecipeEntity recipeEntity = recipeRepository.findById(boardDTO.getRecipeSeq()).orElseThrow(()-> new RuntimeException("no such recipe"));
+        BoardEntity entity = BoardEntity.toEntity(boardDTO, user, recipeEntity);
         BoardEntity savedBoard = boardRepository.save(entity);
 
         if (boardDTO.getThumbnailUrl() != null && !boardDTO.getThumbnailUrl().isEmpty()) {
@@ -73,7 +79,7 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardDTO selectOne(Long boardSeq) {
+    public BoardDTO increaseHitCountAndSelectOne(Long boardSeq) {
         boardRepository.incrementHitCount(boardSeq);
         BoardEntity boardEntity = boardRepository.findById(boardSeq).orElse(null);
         if (boardEntity == null) {
@@ -82,24 +88,22 @@ public class BoardService {
         return BoardDTO.toDTO(boardEntity);
     }
 
-    @Transactional
-    public List<BoardDTO> getRecentPostsByUser(Long userSeq, Long currentBoardSeq) {
+    public List<BoardDTO> selectRecentPostsByUserByTen(Long userSeq, Long currentBoardSeq) {
         UserEntity user = userRepository.findById(userSeq)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        List<BoardEntity> boardEntities = boardRepository.findTop10ByUserEntityOrderByCreateDateDesc(user)
-                .stream()
-                .filter(board -> !board.getBoardSeq().equals(currentBoardSeq)) // 현재 게시글 제외
-                .limit(10)
-                .collect(Collectors.toList());
+        List<BoardEntity> boardEntities = boardRepository.findTop11ByUserEntityOrderByCreateDateDesc(user)
+											                .stream()
+											                .filter(board -> !board.getBoardSeq().equals(currentBoardSeq))
+											                .limit(10)
+											                .collect(Collectors.toList());
 
         return boardEntities.stream()
                 .map(BoardDTO::toDTO)
                 .collect(Collectors.toList());
     }
 
-    @Transactional
-    public List<BoardDTO> getPopularPosts() {
+    public List<BoardDTO> selectPopularPosts() {
         List<BoardEntity> allBoards = boardRepository.findAll();
         List<BoardDTO> popularPosts = allBoards.stream()
             .sorted((b1, b2) -> {
@@ -113,9 +117,11 @@ public class BoardService {
         return popularPosts;
     }
 
-    public BoardDTO updateSelectOne(Long boardSeq) {
+    public BoardDTO selectOne(Long boardSeq) {
         Optional<BoardEntity> temp = boardRepository.findById(boardSeq);
-        if(!temp.isPresent()) return null;
+        if (!temp.isPresent()) {
+        	return null;
+        }
         return BoardDTO.toDTO(temp.get());
     }
 
@@ -125,28 +131,26 @@ public class BoardService {
                 .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
         entity.setBoardTitle(boardDTO.getBoardTitle());
         entity.setBoardContent(boardDTO.getBoardContent());
-        boardRepository.save(entity);
 
-        // 새로 지정된 썸네일이 있으면 업데이트 처리 (빈 문자열이 아니면)
-        if(boardDTO.getThumbnail() != null && !boardDTO.getThumbnail().isEmpty()){
+        if (boardDTO.getThumbnail() != null && !boardDTO.getThumbnail().isEmpty()){
             Optional<BoardImageEntity> optImage = boardImageRepository.findByBoardEntity(entity);
             String thumbnailUrl = boardDTO.getThumbnailUrl();
             String savedFileName = "";
-            if(thumbnailUrl.startsWith("/uploads/")){
+            if (thumbnailUrl.startsWith("/uploads/")){
                 savedFileName = thumbnailUrl.substring(9);
             } else {
                 String newUUID = UUID.randomUUID().toString();
                 String ext = "";
-                if(thumbnailUrl.startsWith("data:image/")){
+                if (thumbnailUrl.startsWith("data:image/")){
                     int slashIndex = thumbnailUrl.indexOf("/");
                     int semicolonIndex = thumbnailUrl.indexOf(";");
-                    if(slashIndex != -1 && semicolonIndex != -1){
+                    if (slashIndex != -1 && semicolonIndex != -1){
                         ext = "." + thumbnailUrl.substring(slashIndex+1, semicolonIndex);
                     }
                 }
                 savedFileName = "thumbnail_" + newUUID + ext;
             }
-            if(optImage.isPresent()){
+            if (optImage.isPresent()){
                 BoardImageEntity imageEntity = optImage.get();
                 imageEntity.setOriginalFileName(boardDTO.getThumbnail());
                 imageEntity.setSavedFileName(savedFileName);
@@ -162,15 +166,21 @@ public class BoardService {
         }
     }
 
-	public void deleteBoard(Long boardSeq) {
+    @Transactional
+    public void unActivateBoard(Long boardSeq) {
         Optional<BoardEntity> boardOpt = boardRepository.findById(boardSeq);
         if (boardOpt.isEmpty()) {
             throw new IllegalArgumentException("게시물이 존재하지 않습니다.");
         }
         
         BoardEntity boardEntity = boardOpt.get();
-		
         boardEntity.setIsDeleted(true);
-        boardRepository.save(boardEntity);
-	}
+    }
+    
+    public String selectRecipeOutputContent(Long recipeSeq) {
+        RecipeEntity recipe = recipeRepository.findById(recipeSeq).orElseThrow(() -> new RuntimeException("no such recipe"));
+        RecipeOutputEntity recipeOutput = recipeOutputRepository.findByRecipeEntity(recipe).orElseThrow(() -> new RuntimeException("no such recipeOutput"));
+
+        return recipeOutput.getOutputContent();
+    }
 }

@@ -21,6 +21,7 @@ public class BoardDTO {
     private Long boardSeq;
     private String boardWriter;
     private Long userSeq;
+    private String userId;
     private String boardTitle;
     private String boardContent;
     private Integer hitCount;
@@ -36,10 +37,13 @@ public class BoardDTO {
     // 업로드된 파일의 URL (FileService에서 생성한, 원본파일이름과 확장자가 포함된 값)
     private String thumbnailUrl;
     
+    private Long recipeSeq;
+    
     public static BoardDTO toDTO(BoardEntity boardEntity) {
         return BoardDTO.builder()
                 .boardSeq(boardEntity.getBoardSeq())
                 .userSeq(boardEntity.getUserEntity().getUserSeq())
+                .userId(boardEntity.getUserEntity().getUserId())
                 .boardWriter(boardEntity.getUserEntity().getUserName())
                 .boardTitle(boardEntity.getBoardTitle())
                 .boardContent(boardEntity.getBoardContent())
@@ -47,6 +51,7 @@ public class BoardDTO {
                 .createDate(boardEntity.getCreateDate())
                 .updateDate(boardEntity.getUpdateDate())
                 .isDeleted(boardEntity.getIsDeleted())
+                .recipeSeq(boardEntity.getRecipeEntity().getRecipeSeq())
                 .build();
     }
 }
