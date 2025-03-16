@@ -89,7 +89,7 @@ function handlerRecipeItemClick() {
             modal.style.display = "flex";
 
             const buttonTag = `<div class="footer">
-                                    <button onclick="window.location.href='/board/boardWrite'">게시글 작성하기</button>
+                                    <button onclick="window.location.href='/board/boardWrite?recipeSeq=${this.dataset.recipeId}'">게시글 작성하기</button>
                                 </div>`;
             document.querySelector(".recipe-info").innerHTML = this.dataset.recipeOutput + buttonTag;
         })

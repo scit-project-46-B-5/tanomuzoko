@@ -22,12 +22,14 @@ public class PageDTO<T> {
     private int pageNumber;
     private int totalPages;
     private long totalElements;
+    private int number;
 
     public static <T> PageDTO<T> TODTO(Page<T> page) {
         return PageDTO.<T>builder().content(page.getContent())
                                     .pageNumber(page.getNumber())
                                     .totalElements(page.getTotalElements())
                                     .totalPages(page.getTotalPages())
+                                    .number(page.getNumber())
                                     .build();
     }
 }
