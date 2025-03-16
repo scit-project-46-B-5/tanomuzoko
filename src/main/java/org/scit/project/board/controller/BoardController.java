@@ -91,7 +91,7 @@ public class BoardController {
         // board에 연결된 레시피의 output_content 조회하여 model에 추가
         String recipeOutputContent = "";
         if(boardDTO.getRecipeSeq() != null) {
-            recipeOutputContent = boardService.getRecipeOutputContent(boardDTO.getRecipeSeq());
+            recipeOutputContent = boardService.selectRecipeOutputContent(boardDTO.getRecipeSeq());
         }
         model.addAttribute("recipeOutputContent", recipeOutputContent);
         

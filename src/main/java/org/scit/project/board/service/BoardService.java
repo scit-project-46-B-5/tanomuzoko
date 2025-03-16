@@ -15,6 +15,7 @@ import org.scit.project.board.repository.BoardRepository;
 import org.scit.project.board.repository.BoardImageRepository;
 import org.scit.project.board_heart.repository.BoardHeartRepository;
 import org.scit.project.recipe.entity.RecipeEntity;
+import org.scit.project.recipe.entity.RecipeOutputEntity;
 import org.scit.project.recipe.repository.RecipeOutputRepository;
 import org.scit.project.recipe.repository.RecipeRepository;
 import org.scit.project.reply.entity.ReplyEntity;
@@ -39,13 +40,10 @@ public class BoardService {
     private final BoardImageRepository boardImageRepository;
     private final BoardHeartRepository boardHeartRepository;
     private final RecipeRepository recipeRepository;
-
+    private final RecipeOutputRepository recipeOutputRepository;
 
     @Value("${spring.servlet.multipart.location}")
     private String uploadPath;
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Transactional
     public void insertBoard(BoardDTO boardDTO) {
@@ -184,15 +182,10 @@ public class BoardService {
         boardEntity.setIsDeleted(true);
     }
     
-    // recipe_output_content 테이블에서 recipe_seq에 해당하는 output_content 값을 조회
-    public String getRecipeOutputContent(Long recipeSeq) {
-        String sql = "SELECT output_content FROM recipe_output_content WHERE recipe_seq = :recipeSeq";
-        List<?> list = entityManager.createNativeQuery(sql)
-                    .setParameter("recipeSeq", recipeSeq)
-                    .getResultList();
-        if(list != null && !list.isEmpty()) {
-            return list.get(0).toString();
-        }
-        return "";
+    public String selectRecipeOutputContent(Long recipeSeq) {
+        RecipeEntity recipe = recipeRepository.findById(recipeSeq).orElseThrow(() -> new RuntimeException("no such recipe"));
+        RecipeOutputEntity recipeOutput = recipeOutputRepository.findByRecipeEntity(recipe).orElseThrow(() -> new RuntimeException("no such recipeOutput"));
+
+        return recipeOutput.getOutputContent();
     }
 }
