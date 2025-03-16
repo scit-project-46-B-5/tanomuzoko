@@ -8,8 +8,10 @@ import java.util.regex.Pattern;
 import org.scit.project.recipe.dto.MessageChatGPTDTO;
 import org.scit.project.recipe.dto.RecipeChatGPTRequestDTO;
 import org.scit.project.recipe.dto.RecipeConditionDTO;
+import org.scit.project.recipe.dto.RecipeProjection;
 import org.scit.project.recipe.dto.RecipeUserRequestDTO;
 import org.scit.project.recipe.dto.RecipeUserResponseDTO;
+import org.scit.project.recipe.repository.RecipeRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -29,6 +31,7 @@ public class RecipeService {
 
     private final WebClient webClient;
     private final ObjectMapper objectMapper;
+    private final RecipeRepository recipeRepository;
 
     @Value("${openai.api.key}")
     private String apiKey;
@@ -39,7 +42,13 @@ public class RecipeService {
     @Value("${openai.api.temperature}")
     private float temperature;
 
+    /**
+     * recipe 정보를 chatGPT에 요청해 받아와 HTML에 맞게 parsing한 값을 return
+     * @param recipeUserRequestDTO
+     * @return
+     */
     public RecipeUserResponseDTO getRecipeResponse(RecipeUserRequestDTO recipeUserRequestDTO) {
+        //CHATGPT에 필요한 system, user message를 생성
         RecipeChatGPTRequestDTO recipeChatGPTRequestDTO = createMessageForChatGPTRequest(recipeUserRequestDTO);
 
         try {
@@ -49,10 +58,16 @@ public class RecipeService {
             return recipeUserResponseDTO;
 
         } catch (Exception exception) {
-            exception.printStackTrace();
             throw new RuntimeException("알 수 없는 에러가 발생하였습니다");
         }
     }
+
+    public List<RecipeProjection> getAllRecipesByUser(Long userSeq) {
+        List<RecipeProjection> recipes = recipeRepository.findRecipesByUser(userSeq);
+        
+        return recipes;
+    }
+
 
     private RecipeChatGPTRequestDTO createMessageForChatGPTRequest(RecipeUserRequestDTO recipeUserRequestDTO) {
         List<MessageChatGPTDTO> messages = List.of(MessageChatGPTDTO.TOUSERMESSAGE(recipeUserRequestDTO),
@@ -61,6 +76,9 @@ public class RecipeService {
         return RecipeChatGPTRequestDTO.TODTO(model, messages, temperature);
     }
 
+    /**
+     * 타이틀, 재료, 조리방법을 parsing. 조리방법은 숫자를 기준으로 parsing.
+     */
     private RecipeUserResponseDTO parseResponseFromChatGPT(String jsonString, RecipeConditionDTO recipeUserRequestDTO) throws JsonMappingException, JsonProcessingException {
         JsonNode jsonNode = objectMapper.readTree(jsonString);
         JsonNode choicesNode = jsonNode.get("choices");
