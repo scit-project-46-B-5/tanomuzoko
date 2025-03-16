@@ -7,6 +7,7 @@ import java.util.Map;
 import org.scit.project.board.dto.BoardDTO;
 import org.scit.project.board.service.BoardService;
 import org.scit.project.board.util.FileService;
+import org.scit.project.recipe.service.RecipeService;
 import org.scit.project.user.dto.LoginUserDetails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 public class BoardController {
 
     private final BoardService boardService;
+    private final RecipeService recipeService;
 
     @Value("${spring.servlet.multipart.location}")
     private String uploadPath;
@@ -41,10 +43,10 @@ public class BoardController {
     }
 
     @GetMapping("/boardWrite")
-    public String boardWrite(Model model, @AuthenticationPrincipal LoginUserDetails loginUserDetails) {
-        if (loginUserDetails != null) {
-            model.addAttribute("recipes", boardService.findAllByUser(loginUserDetails.getUserSeq()));
-        }
+    public String boardWrite(Model model, @AuthenticationPrincipal LoginUserDetails loginUserDetails, @RequestParam(name = "recipeSeq") Long recipeSeq) {
+        model.addAttribute("recipes", recipeService.getAllRecipesByUser(loginUserDetails.getUserSeq()));
+        model.addAttribute("recipeSeq", recipeSeq);
+        
         return "board/boardWrite";
     }
 
@@ -56,7 +58,7 @@ public class BoardController {
     
     @GetMapping("/boardUpdate")
     public String boardUpdate(@RequestParam(name="boardSeq") Long boardSeq, Model model) {
-        BoardDTO board = boardService.updateSelectOne(boardSeq);  	
+        BoardDTO board = boardService.selectOne(boardSeq);  	
         model.addAttribute("board", board);
         return "board/boardUpdate";
     }
@@ -69,7 +71,7 @@ public class BoardController {
     
     @PostMapping("/boardDelete")
     public String boardDelete(@RequestParam(name="boardSeq") Long boardSeq) {
-        boardService.deleteBoard(boardSeq);
+        boardService.unActivateBoard(boardSeq);
         return "board/board";
     }
 
@@ -78,10 +80,10 @@ public class BoardController {
                               @AuthenticationPrincipal UserDetails userDetails,
                               Model model) {
 
-        BoardDTO boardDTO = boardService.selectOne(boardSeq);
+        BoardDTO boardDTO = boardService.increaseHitCountAndSelectOne(boardSeq);
         
-        List<BoardDTO> recentPosts = boardService.getRecentPostsByUser(boardDTO.getUserSeq(), boardSeq);
-        List<BoardDTO> popularPosts = boardService.getPopularPosts();
+        List<BoardDTO> recentPosts = boardService.selectRecentPostsByUserByTen(boardDTO.getUserSeq(), boardSeq);
+        List<BoardDTO> popularPosts = boardService.selectPopularPosts();
         
         model.addAttribute("board", boardDTO);
         model.addAttribute("recentPosts", recentPosts);
@@ -90,7 +92,7 @@ public class BoardController {
         // board에 연결된 레시피의 output_content 조회하여 model에 추가
         String recipeOutputContent = "";
         if(boardDTO.getRecipeSeq() != null) {
-            recipeOutputContent = boardService.getRecipeOutputContent(boardDTO.getRecipeSeq());
+            recipeOutputContent = boardService.selectRecipeOutputContent(boardDTO.getRecipeSeq());
         }
         model.addAttribute("recipeOutputContent", recipeOutputContent);
         
@@ -100,7 +102,7 @@ public class BoardController {
     @GetMapping("/popularPostsAjax")
     @ResponseBody
     public ResponseEntity<List<BoardDTO>> popularPostsAjax() {
-        List<BoardDTO> popularPosts = boardService.getPopularPosts();
+        List<BoardDTO> popularPosts = boardService.selectPopularPosts();
         return ResponseEntity.ok(popularPosts);
     }
 

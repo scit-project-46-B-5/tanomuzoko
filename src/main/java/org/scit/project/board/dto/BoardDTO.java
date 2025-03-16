@@ -51,7 +51,7 @@ public class BoardDTO {
                 .createDate(boardEntity.getCreateDate())
                 .updateDate(boardEntity.getUpdateDate())
                 .isDeleted(boardEntity.getIsDeleted())
-                .recipeSeq(boardEntity.getRecipeSeq())
+                .recipeSeq(boardEntity.getRecipeEntity().getRecipeSeq())
                 .build();
     }
 }
