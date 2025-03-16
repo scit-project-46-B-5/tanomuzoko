@@ -175,6 +175,7 @@ public class BoardService {
         
         BoardEntity boardEntity = boardOpt.get();
         boardEntity.setIsDeleted(true);
+        boardRepository.save(boardEntity);
     }
     
     public String selectRecipeOutputContent(Long recipeSeq) {
