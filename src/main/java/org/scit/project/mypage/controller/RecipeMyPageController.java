@@ -1,5 +1,6 @@
 package org.scit.project.mypage.controller;
 
+import org.scit.project.mypage.dto.PageDTO;
 import org.scit.project.mypage.dto.RecipeMyPageResponse;
 import org.scit.project.mypage.service.RecipeMyPageService;
 import org.scit.project.user.dto.LoginUserDetails;
@@ -24,11 +25,12 @@ public class RecipeMyPageController {
 
     @GetMapping("/mypage/getRecipeSave")
     @ResponseBody
-    public Page<RecipeMyPageResponse> recipeSave(Model model, @AuthenticationPrincipal LoginUserDetails loginUserDetails, 
+    public PageDTO<RecipeMyPageResponse> recipeSave(Model model, @AuthenticationPrincipal LoginUserDetails loginUserDetails, 
                                         @RequestParam(name = "page", required = false) int page) {
-        Page<RecipeMyPageResponse> recipe = recipeMyPageService.findAllRecipeByUser(loginUserDetails.getUserSeq(), page);
+        Page<RecipeMyPageResponse> recipePage = recipeMyPageService.findAllRecipeByUser(loginUserDetails.getUserSeq(), page);
+        PageDTO<RecipeMyPageResponse> recipes = PageDTO.TODTO(recipePage);
 
-        return recipe; 
+        return recipes; 
     }
 
 
