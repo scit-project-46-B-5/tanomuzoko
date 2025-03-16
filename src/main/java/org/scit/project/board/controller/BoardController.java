@@ -70,7 +70,7 @@ public class BoardController {
     
     @PostMapping("/boardDelete")
     public String boardDelete(@RequestParam(name="boardSeq") Long boardSeq) {
-        boardService.unactivateBoard(boardSeq);
+        boardService.unActivateBoard(boardSeq);
         return "board/board";
     }
 

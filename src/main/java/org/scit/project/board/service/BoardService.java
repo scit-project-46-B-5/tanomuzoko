@@ -172,7 +172,8 @@ public class BoardService {
         }
     }
 
-    public void unactivateBoard(Long boardSeq) {
+    @Transactional
+    public void unActivateBoard(Long boardSeq) {
         Optional<BoardEntity> boardOpt = boardRepository.findById(boardSeq);
         if (boardOpt.isEmpty()) {
             throw new IllegalArgumentException("게시물이 존재하지 않습니다.");
