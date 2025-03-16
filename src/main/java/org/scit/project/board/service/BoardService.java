@@ -46,7 +46,7 @@ public class BoardService {
         UserEntity user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("no such user"));
 
-        RecipeEntity recipeEntity = recipeRepository.findById(boardDTO.getRecipeSeq()).orElseThrow(()-> new RuntimeException("no such recipe"));
+        RecipeEntity recipeEntity = recipeRepository.findById(boardDTO.getRecipeSeq()).orElseThrow(() -> new RuntimeException("no such recipe"));
         BoardEntity entity = BoardEntity.toEntity(boardDTO, user, recipeEntity);
         BoardEntity savedBoard = boardRepository.save(entity);
 
@@ -93,10 +93,11 @@ public class BoardService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         List<BoardEntity> boardEntities = boardRepository.findTop11ByUserEntityOrderByCreateDateDesc(user)
-											                .stream()
-											                .filter(board -> !board.getBoardSeq().equals(currentBoardSeq))
-											                .limit(10)
-											                .collect(Collectors.toList());
+                                                .stream()
+                                                .filter(board -> (board.getIsDeleted() == null || !board.getIsDeleted())
+                                                        && !board.getBoardSeq().equals(currentBoardSeq))
+                                                .limit(10)
+                                                .collect(Collectors.toList());
 
         return boardEntities.stream()
                 .map(BoardDTO::toDTO)
@@ -106,6 +107,7 @@ public class BoardService {
     public List<BoardDTO> selectPopularPosts() {
         List<BoardEntity> allBoards = boardRepository.findAll();
         List<BoardDTO> popularPosts = allBoards.stream()
+            .filter(board -> board.getIsDeleted() == null || !board.getIsDeleted())
             .sorted((b1, b2) -> {
                 int heartCount1 = boardHeartRepository.countByBoardAndIsHeartedTrue(b1);
                 int heartCount2 = boardHeartRepository.countByBoardAndIsHeartedTrue(b2);
@@ -120,7 +122,7 @@ public class BoardService {
     public BoardDTO selectOne(Long boardSeq) {
         Optional<BoardEntity> temp = boardRepository.findById(boardSeq);
         if (!temp.isPresent()) {
-        	return null;
+            return null;
         }
         return BoardDTO.toDTO(temp.get());
     }
