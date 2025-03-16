@@ -7,6 +7,7 @@ import java.util.Map;
 import org.scit.project.board.dto.BoardDTO;
 import org.scit.project.board.service.BoardService;
 import org.scit.project.board.util.FileService;
+import org.scit.project.recipe.service.RecipeService;
 import org.scit.project.user.dto.LoginUserDetails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 public class BoardController {
 
     private final BoardService boardService;
+    private final RecipeService recipeService;
 
     @Value("${spring.servlet.multipart.location}")
     private String uploadPath;
@@ -42,7 +44,7 @@ public class BoardController {
 
     @GetMapping("/boardWrite")
     public String boardWrite(Model model, @AuthenticationPrincipal LoginUserDetails loginUserDetails) {
-        model.addAttribute("recipes", boardService.findAllByUser(loginUserDetails.getUserSeq()));
+        model.addAttribute("recipes", recipeService.getAllRecipesByUser(loginUserDetails.getUserSeq()));
         
         return "board/boardWrite";
     }

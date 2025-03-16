@@ -14,6 +14,9 @@ import org.scit.project.board.entity.BoardImageEntity;
 import org.scit.project.board.repository.BoardRepository;
 import org.scit.project.board.repository.BoardImageRepository;
 import org.scit.project.board_heart.repository.BoardHeartRepository;
+import org.scit.project.recipe.entity.RecipeEntity;
+import org.scit.project.recipe.repository.RecipeOutputRepository;
+import org.scit.project.recipe.repository.RecipeRepository;
 import org.scit.project.reply.entity.ReplyEntity;
 import org.scit.project.user.dto.LoginUserDetails;
 import org.scit.project.user.entity.UserEntity;
@@ -35,6 +38,8 @@ public class BoardService {
     private final UserRepository userRepository;
     private final BoardImageRepository boardImageRepository;
     private final BoardHeartRepository boardHeartRepository;
+    private final RecipeRepository recipeRepository;
+
 
     @Value("${spring.servlet.multipart.location}")
     private String uploadPath;
@@ -49,7 +54,8 @@ public class BoardService {
         UserEntity user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("no such user"));
 
-        BoardEntity entity = BoardEntity.toEntity(boardDTO, user);
+        RecipeEntity recipeEntity = recipeRepository.findById(boardDTO.getRecipeSeq()).orElseThrow(()-> new RuntimeException("no such recipe"));
+        BoardEntity entity = BoardEntity.toEntity(boardDTO, user, recipeEntity);
         BoardEntity savedBoard = boardRepository.save(entity);
 
         if (boardDTO.getThumbnailUrl() != null && !boardDTO.getThumbnailUrl().isEmpty()) {
@@ -176,18 +182,6 @@ public class BoardService {
         
         BoardEntity boardEntity = boardOpt.get();
         boardEntity.setIsDeleted(true);
-    }
-
-    public List<Map<String, Object>> findAllByUser(Long userSeq) {
-        List<Object[]> results = boardRepository.findRecipesByUser(userSeq);
-        List<Map<String, Object>> recipes = new ArrayList<>();
-        for (Object[] row : results) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("id", row[0]);
-            map.put("title", row[1]);
-            recipes.add(map);
-        }
-        return recipes;
     }
     
     // recipe_output_content 테이블에서 recipe_seq에 해당하는 output_content 값을 조회

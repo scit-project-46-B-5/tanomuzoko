@@ -8,8 +8,10 @@ import java.util.regex.Pattern;
 import org.scit.project.recipe.dto.MessageChatGPTDTO;
 import org.scit.project.recipe.dto.RecipeChatGPTRequestDTO;
 import org.scit.project.recipe.dto.RecipeConditionDTO;
+import org.scit.project.recipe.dto.RecipeProjection;
 import org.scit.project.recipe.dto.RecipeUserRequestDTO;
 import org.scit.project.recipe.dto.RecipeUserResponseDTO;
+import org.scit.project.recipe.repository.RecipeRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -29,6 +31,7 @@ public class RecipeService {
 
     private final WebClient webClient;
     private final ObjectMapper objectMapper;
+    private final RecipeRepository recipeRepository;
 
     @Value("${openai.api.key}")
     private String apiKey;
@@ -53,6 +56,13 @@ public class RecipeService {
             throw new RuntimeException("알 수 없는 에러가 발생하였습니다");
         }
     }
+
+    public List<RecipeProjection> getAllRecipesByUser(Long userSeq) {
+        List<RecipeProjection> recipes = recipeRepository.findRecipesByUser(userSeq);
+        
+        return recipes;
+    }
+
 
     private RecipeChatGPTRequestDTO createMessageForChatGPTRequest(RecipeUserRequestDTO recipeUserRequestDTO) {
         List<MessageChatGPTDTO> messages = List.of(MessageChatGPTDTO.TOUSERMESSAGE(recipeUserRequestDTO),
