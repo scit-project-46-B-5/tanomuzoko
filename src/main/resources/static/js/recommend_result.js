@@ -68,6 +68,7 @@ function createToggleBookmark() {
                     confirmButtonColor: '#ff7f50',
                     confirmButtonText: '확인',
                 });
+                return;
             }
 
             recipeSeq = await response.json(); // Store the server response (recipeSeq)
