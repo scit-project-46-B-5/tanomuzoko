@@ -6,6 +6,7 @@ import org.hibernate.annotations.CurrentTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.scit.project.board.dto.BoardDTO;
+import org.scit.project.recipe.entity.RecipeEntity;
 import org.scit.project.user.entity.UserEntity;
 
 import jakarta.persistence.Column;
@@ -15,6 +16,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -63,10 +65,11 @@ public class BoardEntity {
     @Column(name = "is_deleted")
     private Boolean isDeleted;
     
-    @Column(name = "recipe_seq")
-    private Long recipeSeq;
+    @OneToOne
+    @JoinColumn(name = "recipe_seq",referencedColumnName = "recipe_seq")
+    private RecipeEntity recipeEntity;
 
-    public static BoardEntity toEntity(BoardDTO boardDTO, UserEntity userEntity) {
+    public static BoardEntity toEntity(BoardDTO boardDTO, UserEntity userEntity, RecipeEntity recipeEntity) {
         return BoardEntity.builder()
                 .boardSeq(boardDTO.getBoardSeq() != null ? boardDTO.getBoardSeq() : null)
                 .userEntity(userEntity)
@@ -76,7 +79,7 @@ public class BoardEntity {
                 .createDate(boardDTO.getCreateDate())
                 .updateDate(boardDTO.getUpdateDate())
                 .isDeleted(boardDTO.getIsDeleted())
-                .recipeSeq(boardDTO.getRecipeSeq())
+                .recipeEntity(recipeEntity)
                 .build();
     }
 

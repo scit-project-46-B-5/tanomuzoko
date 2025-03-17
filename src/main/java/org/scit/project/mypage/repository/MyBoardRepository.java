@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 public interface MyBoardRepository extends JpaRepository<MyBoardEntity, Long> {
 
     // 사용자가 작성한 게시물 조회
+
 	@Query("SELECT new org.scit.project.mypage.dto.MyBoardDto(b.boardSeq, b.boardTitle, b.boardContent, " +
 		       "COALESCE(i.originalFileName, ''), COALESCE(COUNT(h), 0)) " +
 		       "FROM MyBoardEntity b " +

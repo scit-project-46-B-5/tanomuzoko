@@ -20,6 +20,16 @@ public class RecipeHistoryController {
 
     private final RecipeHistoryService recipeHistoryService;
     
+
+    /**
+     * recipe history를 저장. 
+     * 저장 시 nonce 값 확인을 통해 다시 저장 혹은 replay attack 등을 방지
+     * 
+     * @param recipeHistroyRequsetDTO
+     * @param session
+     * @return
+     * @throws InterruptedException
+     */
     @PostMapping("/recipe/history/save")
     @ResponseBody
     public ResponseEntity<Long> saveRecipeHistory(@RequestBody RecipeHistroyRequsetDTO recipeHistroyRequsetDTO, HttpSession session) throws InterruptedException {
@@ -31,7 +41,7 @@ public class RecipeHistoryController {
 
         Long savedRecipeSeq = recipeHistoryService.saveRecipeAndReturnSavedPK(recipeHistroyRequsetDTO);
         if(savedRecipeSeq != 0) {
-            session.removeAttribute("nonce");   
+            session.removeAttribute("nonce");   //recipe save 성공 시에는 즉시 session에서 nonce 값 제거하여 데이터 정합성 확보
         }
         
         return ResponseEntity.ok(savedRecipeSeq);

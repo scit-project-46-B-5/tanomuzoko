@@ -23,8 +23,9 @@ import lombok.Setter;
 public class RecipeInputKeywordEntity {
 
     @EmbeddedId
-    private RecipeComplicatedPK recipeComplicatedPK;
+    private RecipeComplicatedPK recipeComplicatedPK; //compound PK
 
+     //PK의 구성 일부이며 동시에 FK일 경우 @MapsId 필요
     @MapsId("recipeSeq")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipe_seq", referencedColumnName = "recipe_seq")
