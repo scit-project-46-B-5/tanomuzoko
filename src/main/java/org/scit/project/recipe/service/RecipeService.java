@@ -107,7 +107,7 @@ public class RecipeService {
 
     private String getResponseFromChatGPT(RecipeChatGPTRequestDTO recipeChatGPTRequestDTO) {
         return webClient.post()
-                        .uri("https://api.openai.com/v1/chat/completions")
+                        .uri("/v1/chat/completions")
                         .header("Authorization", "Bearer " + apiKey)
                         .bodyValue(recipeChatGPTRequestDTO)
                         .retrieve()
