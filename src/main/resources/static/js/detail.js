@@ -215,8 +215,6 @@ function generatePagination(resp) {
         pagination += `<button onclick="initReplies(${startPage - 1})">◀ 이전</button>`;
     }
 
-    console.log(endPage);
-
     for (let i = startPage; i < endPage; i++) {
         pagination += `<button onclick="initReplies(${i})" class="${i === currentPage ? 'active' : ''}">${i + 1}</button>`;
     }
@@ -228,7 +226,8 @@ function generatePagination(resp) {
     $('#pagination').html(pagination);
 }
 
-// 댓글 최대 글자 수 설정
+// 댓글 최대/최소 글자 수 설정
+const minContentLength = 1;
 const maxContentLength = 300;
 
 // 댓글 추가 함수
@@ -236,7 +235,7 @@ function addReply() {
     let commentInput = $("#comment-input").val();
     let boardSeq = $('#boardSeq').val();
 
-    if (commentInput.trim() == '' || commentInput.trim().length > maxContentLength) {
+    if (commentInput.trim().length < minContentLength || commentInput.trim().length > maxContentLength) {
         Swal.fire({
             icon: 'warning',
             title: '등록할 수 없습니다',
