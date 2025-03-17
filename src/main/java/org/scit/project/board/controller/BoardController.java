@@ -43,10 +43,9 @@ public class BoardController {
     }
 
     @GetMapping("/boardWrite")
-    public String boardWrite(Model model, @AuthenticationPrincipal LoginUserDetails loginUserDetails, @RequestParam(name = "recipeSeq") Long recipeSeq) {
+    public String boardWrite(Model model, @AuthenticationPrincipal LoginUserDetails loginUserDetails, @RequestParam(name = "recipeSeq", required = false) Long recipeSeq) {
         model.addAttribute("recipes", recipeService.getAllRecipesByUser(loginUserDetails.getUserSeq()));
         model.addAttribute("recipeSeq", recipeSeq);
-        
         return "board/boardWrite";
     }
 
