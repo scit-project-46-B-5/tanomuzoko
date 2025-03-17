@@ -7,6 +7,7 @@ import java.util.Map;
 import org.scit.project.board.dto.BoardDTO;
 import org.scit.project.board.service.BoardService;
 import org.scit.project.board.util.FileService;
+import org.scit.project.recipe.service.RecipeService;
 import org.scit.project.user.dto.LoginUserDetails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 public class BoardController {
 
     private final BoardService boardService;
+    private final RecipeService recipeService;
 
     @Value("${spring.servlet.multipart.location}")
     private String uploadPath;
@@ -41,9 +43,9 @@ public class BoardController {
     }
 
     @GetMapping("/boardWrite")
-    public String boardWrite(Model model, @AuthenticationPrincipal LoginUserDetails loginUserDetails) {
-        model.addAttribute("recipes", boardService.findAllByUser(loginUserDetails.getUserSeq()));
-        
+    public String boardWrite(Model model, @AuthenticationPrincipal LoginUserDetails loginUserDetails, @RequestParam(name = "recipeSeq", required = false) Long recipeSeq) {
+        model.addAttribute("recipes", recipeService.getAllRecipesByUser(loginUserDetails.getUserSeq()));
+        model.addAttribute("recipeSeq", recipeSeq);
         return "board/boardWrite";
     }
 
@@ -68,7 +70,7 @@ public class BoardController {
     
     @PostMapping("/boardDelete")
     public String boardDelete(@RequestParam(name="boardSeq") Long boardSeq) {
-        boardService.unactivateBoard(boardSeq);
+        boardService.unActivateBoard(boardSeq);
         return "board/board";
     }
 
@@ -89,7 +91,7 @@ public class BoardController {
         // board에 연결된 레시피의 output_content 조회하여 model에 추가
         String recipeOutputContent = "";
         if(boardDTO.getRecipeSeq() != null) {
-            recipeOutputContent = boardService.getRecipeOutputContent(boardDTO.getRecipeSeq());
+            recipeOutputContent = boardService.selectRecipeOutputContent(boardDTO.getRecipeSeq());
         }
         model.addAttribute("recipeOutputContent", recipeOutputContent);
         
