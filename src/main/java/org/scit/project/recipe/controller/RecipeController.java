@@ -3,6 +3,7 @@ package org.scit.project.recipe.controller;
 import java.util.UUID;
 
 import org.scit.project.recipe.dto.RecipeConditionDTO;
+import org.scit.project.recipe.dto.RecipeUnActivateDTO;
 import org.scit.project.recipe.dto.RecipeUserRequestDTO;
 import org.scit.project.recipe.dto.RecipeUserResponseDTO;
 import org.scit.project.recipe.service.RecipeService;
@@ -86,6 +87,14 @@ public class RecipeController {
     public String viewRecipeRecoomend(HttpSession session) {
         session.removeAttribute("recipe"); //해당 페이지 진입 시, 이전 recipe 정보가 아닌 새로운 recipe가 필요하다는 의미이므로 이전 recipe 정보 제거
         return "recipe/recommend";
+    }
+
+    @PostMapping("/recipe/unactivate")
+    @ResponseBody
+    public void unActivateRecipe(@RequestBody RecipeUnActivateDTO recipeUnActivateDTO) {
+        log.info("recipeSeq123415: {}", recipeUnActivateDTO.recipeSeq());
+
+        recipeService.unActivateRecipe(recipeUnActivateDTO.recipeSeq());
     }
 
 }

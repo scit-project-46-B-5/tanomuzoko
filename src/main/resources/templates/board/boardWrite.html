@@ -26,7 +26,7 @@
 <body>
 	<div class="container">
 		<!-- header fragment 삽입 -->
-		<div class="container" th:replace="fragment/header :: top-menu"></div>
+		<div class="header" th:replace="~{fragment/header :: top-menu}"></div>
 
 		<div class="board-container">
 			<h2>게시글 작성하기</h2>
