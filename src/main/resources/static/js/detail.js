@@ -144,6 +144,7 @@ function showReplyForm(parentReplySeq) {
     `;
     $(`#reply-form-${parentReplySeq}`).html(form).toggle();
     $(`.comment[data-reply-seq="${parentReplySeq}"] .reply-btn`).hide(); // 답글 버튼 숨김
+    $(`.reply-input[data-parent-reply="${parentReplySeq}"]`).focus(); // 포커스 설정
 }
 
 // 답글 폼 취소 함수
@@ -157,7 +158,7 @@ $(document).on("click", ".reply-submit-btn", function () {
     let parentReplySeq = $(this).data("parent-reply");
     let commentInput = $(`.reply-input[data-parent-reply="${parentReplySeq}"]`).val();
     let boardSeq = $('#boardSeq').val();
-
+    
     if (commentInput.trim() == '' || commentInput.trim().length > maxContentLength) {
         Swal.fire({
             icon: 'warning',
@@ -181,6 +182,16 @@ $(document).on("click", ".reply-submit-btn", function () {
             initReplies(currentPage);
         }
     });
+});
+// Enter 키 입력 시 답글 등록 처리
+$(document).on("keypress", ".reply-input", function (event) {
+    if (event.which === 13) {  // 엔터 키 (키 코드 13)
+        event.preventDefault();  // 기본 동작 방지 (예: 폼 제출)
+
+        let parentReplySeq = $(this).data("parent-reply");
+
+        $(`.reply-submit-btn[data-parent-reply="${parentReplySeq}"]`).click();
+    }
 });
 
 // 댓글 내용 토글 (자세히 보기 / 간략히 보기)
@@ -225,6 +236,16 @@ function generatePagination(resp) {
 
     $('#pagination').html(pagination);
 }
+// 댓글 엔터키로도 작동되게 설정
+$(document).ready(function () {
+    $("#comment-input").on("keypress", function (event) {
+        if (event.which === 13) {  // Enter 키의 키 코드 (13)
+            event.preventDefault();  // 기본 폼 제출 방지
+
+            addReply();
+        }
+    });
+});
 
 // 댓글 최대 글자 수 설정
 const maxContentLength = 300;

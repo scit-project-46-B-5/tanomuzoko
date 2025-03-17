@@ -45,6 +45,8 @@ function verifyCode() {
                 emailCodeCheck = true;  // 인증 성공 시 회원가입 가능
                 $("#verificationCode").prop("disabled", true); // 입력 칸 비활성화
                 $("#verifyButton").prop("disabled", true); // 인증 버튼 비활성화
+                $('#requestButton').prop("disabled", true); // 메일 인증받기 버튼 비활성화
+                $('#userEmail').prop("disabled", true); // 메일 주소를 변경 불가능 하게끔 비활성화 처리
             } else {
                 Swal.fire({
                     icon: 'warning',
@@ -62,7 +64,7 @@ function verifyCode() {
             Swal.fire({
                 icon: 'warning',
                 title: '인증 실패',
-                text: '서버와의 통신 중 오류가 발생했습니다. 다시 시도해주세요.',
+                text: '인증번호가 올바르지 않습니다.',
                 confirmButtonColor: '#ff7f50',
                 confirmButtonText: '확인',
             });
