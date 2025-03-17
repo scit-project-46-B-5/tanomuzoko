@@ -123,7 +123,13 @@ async function unActivateRecipe(recipeSeq) {
         }
 
         closeBtn.click();
-        fetchRecipes(currentPage - 1);
+
+        let size = Array.from(document.querySelector("#recipe-fetch-region li").children).length;
+        if (size === 1) {
+            fetchRecipes(currentPage - 2);
+        } else {
+            fetchRecipes(currentPage - 1);
+        }
     } catch (error) {
         Promise.reject("다음과 같은 문제가 발생하였습니다" , error)
     }
