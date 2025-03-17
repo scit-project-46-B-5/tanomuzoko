@@ -1,11 +1,11 @@
 // 로그인시 필요한 검증 작업
-$(document).ready(function () {
-    // ✅ URL에서 특정 파라미터 값을 가져오는 함수
-    function getParameterByName(name) {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get(name);
-    }
+// ✅ URL에서 특정 파라미터 값을 가져오는 함수
+function getParameterByName(name) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(name);
+}
 
+function init() {
     // ✅ 로그인 페이지가 로드될 때 실행
     let errorType = $("#errorType").val() || getParameterByName("errorType");
     let userId = $("#hiddenUserId").val() || getParameterByName("userId");
@@ -40,45 +40,49 @@ $(document).ready(function () {
             });
         }
     }
+}
 
-    // ✅ 로그인 버튼 클릭 이벤트 (아이디 & 비밀번호 길이 검증)
-    $("#loginBtn").on("click", function (event) {
-        event.preventDefault(); // 기본 제출 동작 방지
 
-        let userId = $("#userId").val().trim();
-        let userPassword = $("#userPassword").val().trim();
 
-        // 🔹 아이디 및 비밀번호 길이 체크
-        if (userId.length < 3 || userId.length > 12) {
-            Swal.fire({
-                icon: 'warning',
-                title: '로그인 실패',
-                text: '아이디는 3~12자여야 합니다.',
-                confirmButtonColor: '#ff7f50',
-                confirmButtonText: '확인'
-            });
-            return;
-        }
-        if (userPassword.length < 8 || userPassword.length > 20) {
-            Swal.fire({
-                icon: 'warning',
-                title: '로그인 실패',
-                text: '비밀번호는 8~20자여야 합니다.',
-                confirmButtonColor: '#ff7f50',
-                confirmButtonText: '확인'
-            });
-            return;
-        }
+// ✅ 로그인 버튼 클릭 이벤트 (아이디 & 비밀번호 길이 검증)
+$("#loginBtn").on("click", function (event) {
+    event.preventDefault(); // 기본 제출 동작 방지
 
-        console.log("✅ 로그인 요청 실행");
-        $("form").submit(); // 폼 제출 실행
-    });
+    let userId = $("#userId").val().trim();
+    let userPassword = $("#userPassword").val().trim();
 
-    // ✅ Enter 키 입력 시 로그인 처리
-    $("#userPassword").on("keypress", function (event) {
-        if (event.which === 13) { // 엔터 키 (키 코드 13)
-            event.preventDefault();
-            $("#loginBtn").click();
-        }
-    });
+    // 🔹 아이디 및 비밀번호 길이 체크
+    if (userId.length < 3 || userId.length > 12) {
+        Swal.fire({
+            icon: 'warning',
+            title: '로그인 실패',
+            text: '아이디는 3~12자여야 합니다.',
+            confirmButtonColor: '#ff7f50',
+            confirmButtonText: '확인'
+        });
+        return;
+    }
+    if (userPassword.length < 8 || userPassword.length > 20) {
+        Swal.fire({
+            icon: 'warning',
+            title: '로그인 실패',
+            text: '비밀번호는 8~20자여야 합니다.',
+            confirmButtonColor: '#ff7f50',
+            confirmButtonText: '확인'
+        });
+        return;
+    }
+
+    console.log("✅ 로그인 요청 실행");
+    $("form").submit(); // 폼 제출 실행
 });
+
+// ✅ Enter 키 입력 시 로그인 처리
+$("#userPassword").on("keypress", function (event) {
+    if (event.which === 13) { // 엔터 키 (키 코드 13)
+        event.preventDefault();
+        $("#loginBtn").click();
+    }
+});
+
+init();
