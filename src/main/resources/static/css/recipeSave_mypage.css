@@ -168,3 +168,8 @@ ul {
     cursor: not-allowed;
     transform: none;
 }
+
+.noRecipe {  
+    color: #333;
+    text-align: center;
+}

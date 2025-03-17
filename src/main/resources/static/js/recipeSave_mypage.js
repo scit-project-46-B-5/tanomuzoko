@@ -31,7 +31,14 @@ function renderRecipes(recipes) {
     const recipeHTML = document.querySelector("#recipe-fetch-region");
     recipeHTML.innerHTML = ""; // Clear previous content
     let html = '';
-
+    if(recipes.length === 0) {
+        recipeHTML.innerHTML = 
+                                `<div class="noRecipe">
+                                    <p>작성한 레시피가 없습니다.</p>
+                                </div>`
+        return;
+    }
+    
     recipes.forEach(recipe => {
         const outerHTML = escapeHTML(recipe.outputHTML);
         const createdDateTime = new Date(recipe.createdDateTime)
