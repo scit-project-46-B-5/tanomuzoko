@@ -14,7 +14,7 @@ public interface RecipeRepository extends JpaRepository<RecipeEntity, Long> {
              SELECT r.recipeSeq AS id, roc.recipeTitle AS title FROM RecipeEntity r
              JOIN r.recipeOutputEntity roc
              WHERE r.userEntity.userSeq = :userSeq
-             AND NOT EXISTS (SELECT 1 FROM r.boardEntity b)
+             AND NOT EXISTS (SELECT 1 FROM r.boardEntity b where b.isDeleted = false)
              ORDER BY r.recipeSeq DESC
             """)
     List<RecipeProjection> findRecipesByUser(@Param("userSeq") Long userSeq);
