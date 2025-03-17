@@ -31,10 +31,11 @@ public class RecipeController {
      * @param recipeUserRequestDTO
      * @param session
      * @return
-     */
+    * @throws InterruptedException 
+    */
     @PostMapping("/recipe/chatGPT")
     @ResponseBody
-    public void viewRecipeOutput(@RequestBody RecipeUserRequestDTO recipeUserRequestDTO, HttpSession session) {
+    public void viewRecipeOutput(@RequestBody RecipeUserRequestDTO recipeUserRequestDTO, HttpSession session) throws InterruptedException {
 
         //RecipeUserResponseDTO response = recipeService.getRecipeResponse(recipeUserRequestDTO);
 
@@ -55,6 +56,7 @@ public class RecipeController {
 
         String newUUID = UUID.randomUUID().toString(); 
         session.setAttribute("nonce", newUUID);
+        Thread.sleep(2 * 1000);
     }
 
     /**
