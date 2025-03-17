@@ -139,9 +139,13 @@ async function unActivateRecipe(recipeSeq) {
 
         closeBtn.click();
 
-        let size = Array.from(document.querySelector("#recipe-fetch-region li").children).length;
+        let size = Array.from(document.querySelector("#recipe-fetch-region").children).length;
         if (size === 1) {
-            fetchRecipes(currentPage - 2);
+            if(currentPage - 1 === 0) {
+                fetchRecipes(currentPage - 1);
+            } else {
+                fetchRecipes(currentPage - 2);
+            }
         } else {
             fetchRecipes(currentPage - 1);
         }
