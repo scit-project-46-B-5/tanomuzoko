@@ -1,4 +1,4 @@
-$(document).on('submit', '#recommend-form', function (e) {
+$('#recommend-form').on('submit', function (e) {
     e.preventDefault(); // 폼 제출 방지
     if (!$('#ingredients-input').val().trim()) {
         Swal.fire({
@@ -25,7 +25,7 @@ $(document).on('submit', '#recommend-form', function (e) {
             level
         }
     }
-
+    showLoader();
     fetch('/recipe/chatGPT', {
         body:JSON.stringify(sendData),
         headers:{
@@ -33,6 +33,7 @@ $(document).on('submit', '#recommend-form', function (e) {
         },
         method:'post'
     }).then((response) => {
+        hideLoader();
         if(!response.ok) {
             Swal.fire({
                 icon: 'error',
@@ -46,8 +47,7 @@ $(document).on('submit', '#recommend-form', function (e) {
 
         location.href='/recipe/recommend/output';
     })
-    .catch((error)=> console.log(error));
-
+    .catch((error)=> hideLoader());
 });
 
 const ingredients = [
@@ -548,6 +548,16 @@ $(document).on('click', '.option-btn', function () {
     optionDom.prop('checked', true);
 
 });
+
+const loader = document.querySelector('.loader');
+
+function showLoader() {
+  loader.style.display = 'block';
+}
+
+function hideLoader() {
+  loader.style.display = 'none';
+}
 
 
 // 초기 재료 리스트 표시
