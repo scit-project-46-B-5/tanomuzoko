@@ -54,8 +54,9 @@ public class RecipeEntity {
     @OneToOne(mappedBy = "recipeEntity", cascade = CascadeType.REMOVE)
     private RecipeOutputEntity recipeOutputEntity;
 
-    @OneToOne(mappedBy = "recipeEntity")
-    private BoardEntity boardEntity;
+    @OneToMany(mappedBy = "recipeEntity")
+    @Builder.Default
+    private List<BoardEntity> boardEntity = new ArrayList<>();
 
     public static RecipeEntity TOENTITY(UserEntity userEntity) {
         return RecipeEntity.builder()
