@@ -29,14 +29,15 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/",
-                                "/recipe/**",
                                 "/api/v1/email/**",
                                 "/posts",
                                 "/top-posts",
                                 "/top-liked",
                                 "/heart/status",
                                 "/reply/getReplies",
-                                "/board/**",
+                                "/board/board",
+                                "/board/boardDetail",
+                                "/board/popularPostsAjax",
                                 "/user/restore",
                                 "/user/find-password",
                                 "/user/passwordSearch",
@@ -54,7 +55,7 @@ public class SecurityConfig {
                                 "/js/**"
                         ).permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
-                        .requestMatchers("/user/mypage/**").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/mypage/**").hasAnyRole( "USER")
                         .anyRequest().authenticated())
 
                 // ✅ Custom Login 설정
