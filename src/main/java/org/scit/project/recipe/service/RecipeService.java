@@ -11,6 +11,7 @@ import org.scit.project.recipe.dto.RecipeConditionDTO;
 import org.scit.project.recipe.dto.RecipeProjection;
 import org.scit.project.recipe.dto.RecipeUserRequestDTO;
 import org.scit.project.recipe.dto.RecipeUserResponseDTO;
+import org.scit.project.recipe.entity.RecipeEntity;
 import org.scit.project.recipe.repository.RecipeRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -66,6 +68,12 @@ public class RecipeService {
         List<RecipeProjection> recipes = recipeRepository.findRecipesByUser(userSeq);
         
         return recipes;
+    }
+
+    @Transactional
+    public void unActivateRecipe(Long recipeSeq) {
+        RecipeEntity recipeEntity = recipeRepository.findById(recipeSeq).orElseThrow(()->new RuntimeException("no such recipe"));
+        recipeEntity.unActivate();
     }
 
 

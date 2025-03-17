@@ -47,6 +47,10 @@ public class RecipeEntity {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
+    @Column(name = "is_deleted")
+    @Builder.Default 
+    private Boolean isDeleted = false;
+
     @OneToMany(mappedBy = "recipeEntity", cascade = CascadeType.REMOVE)
     @Builder.Default
     private List<RecipeInputKeywordEntity> recipeInputKeywordEntityList = new ArrayList<>();
@@ -62,5 +66,9 @@ public class RecipeEntity {
         return RecipeEntity.builder()
                             .userEntity(userEntity)
                             .build();
+    }
+
+    public void unActivate() {
+        this.isDeleted = true;
     }
 }

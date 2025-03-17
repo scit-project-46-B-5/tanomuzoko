@@ -90,6 +90,7 @@ function handlerRecipeItemClick() {
 
             const buttonTag = `<div class="footer">
                                     <button onclick="window.location.href='/board/boardWrite?recipeSeq=${this.dataset.recipeId}'">게시글 작성하기</button>
+                                    <button onclick="unActivateRecipe(${this.dataset.recipeId})">레시피 삭제하기</button>
                                 </div>`;
             document.querySelector(".recipe-info").innerHTML = this.dataset.recipeOutput + buttonTag;
         })
@@ -98,6 +99,36 @@ function handlerRecipeItemClick() {
 
 // Load first page
 fetchRecipes(0);
+
+async function unActivateRecipe(recipeSeq) {
+
+    try {
+        const response = await fetch(`/recipe/unactivate`, {
+            'body':JSON.stringify({recipeSeq}),
+            'headers': {
+                'content-type' : 'application/json'
+            },
+            'method' : 'post'
+        });
+    
+        if(!response.ok) {
+          return;
+        }
+
+        let currentPage = 0;
+        for(const item of Array.from(document.querySelector("#pagination").childNodes)) {
+            if (item.classList.contains('active')) {
+                currentPage = item.textContent;
+            }
+        }
+
+        closeBtn.click();
+        fetchRecipes(currentPage - 1);
+    } catch (error) {
+        Promise.reject("다음과 같은 문제가 발생하였습니다" , error)
+    }
+    
+}
 
 function escapeHTML(str) {
     return str.replace(/&/g, "&amp;")

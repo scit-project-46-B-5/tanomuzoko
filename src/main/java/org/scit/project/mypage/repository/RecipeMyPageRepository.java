@@ -38,9 +38,11 @@ public interface RecipeMyPageRepository extends JpaRepository<RecipeEntity, Long
         INNER JOIN r.recipeInputKeywordEntityList k
         INNER JOIN r.recipeOutputEntity j
         WHERE r.recipeSeq IN :recipeIds
+        and r.isDeleted = false
     """, countQuery = """
             select count(r) FROM RecipeEntity r
             WHERE r.recipeSeq IN :recipeIds
+            and r.isDeleted = false
     """)
     Page<RecipeEntity> findRecipesByIds(@Param("recipeIds") List<Long> recipeIds, Pageable pageable);
 } 
