@@ -1,5 +1,7 @@
 package org.scit.project.mypage.service;
 
+import java.util.List;
+
 import org.scit.project.mypage.dto.RecipeMyPageResponse;
 import org.scit.project.mypage.repository.RecipeMyPageRepository;
 import org.springframework.data.domain.Page;
@@ -19,8 +21,10 @@ public class RecipeMyPageService {
     public Page<RecipeMyPageResponse> findAllRecipeByUser(Long userSeq, int currentPage) {
         Pageable pageable = PageRequest.of(currentPage, 3, Sort.by(Sort.Direction.ASC, "createdAt"));
         
-        return recipeMyPageRepository.findRecipesWithPagination(userSeq, pageable)
-                                        .map(RecipeMyPageResponse::toDTO);
+        List<Long> recipeIds = recipeMyPageRepository.findRecipeIdsByUser(userSeq);
+        Page<RecipeMyPageResponse> recipes = recipeMyPageRepository.findRecipesByIds(recipeIds, pageable).map(RecipeMyPageResponse::toDTO);
+
+        return recipes;
     };
     
     
