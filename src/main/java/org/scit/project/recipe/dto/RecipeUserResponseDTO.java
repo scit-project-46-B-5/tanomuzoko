@@ -30,9 +30,9 @@ public class RecipeUserResponseDTO  {
 
     public static RecipeUserResponseDTO empty() {
         return RecipeUserResponseDTO.builder()
-                                    .title("session이 만료되었습니다.")
-                                    .ingredients(new String[]{"session이 만료되었습니다."})
-                                    .cookingMethods(new String[]{"session이 만료되었습니다."})
+                                    .title(ErrorEnum.SESSION_INVALIDATE.getMessage())
+                                    .ingredients(new String[]{ErrorEnum.SESSION_INVALIDATE.getMessage()})
+                                    .cookingMethods(new String[]{ErrorEnum.SESSION_INVALIDATE.getMessage()})
                                     .recipeConditionDTO(RecipeConditionDTO.empty())
                                     .build();
     }
