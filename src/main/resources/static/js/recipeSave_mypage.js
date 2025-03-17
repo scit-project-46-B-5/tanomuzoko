@@ -82,16 +82,31 @@ function generatePagination(resp) {
     document.querySelector('#pagination').innerHTML= pagination;
 }
 
-function handlerRecipeItemClick() {
+async function handlerRecipeItemClick() {
+    const data = await getRecipeWritten();
+
     for (const eventListener of document.querySelectorAll(".recipe-item")) {
         eventListener.addEventListener("click", function (event) {
             event.preventDefault(); // 페이지 이동 방지
             modal.style.display = "flex";
+            const recipeId = this.dataset.recipeId;
+            const recipeData = data.find(item => item.recipeSeq === parseInt(recipeId));
 
-            const buttonTag = `<div class="footer">
-                                    <button onclick="window.location.href='/board/boardWrite?recipeSeq=${this.dataset.recipeId}'">게시글 작성하기</button>
-                                    <button onclick="unActivateRecipe(${this.dataset.recipeId})">레시피 삭제하기</button>
-                                </div>`;
+            let buttonTag = '';
+            if (recipeData) {
+                // If recipeData is found, it means there's a corresponding board, so show "See Board"
+                buttonTag = `<div class="footer">
+                                <button onclick="window.location.href='/board/boardDetail?boardSeq=${recipeData.boardSeq}'">게시글 보러가기</button>
+                                <button onclick="unActivateRecipe(${recipeId})">레시피 삭제하기</button>
+                            </div>`;
+            } else {
+                // If no corresponding board, show "Write Board"
+                buttonTag = `<div class="footer">
+                                <button onclick="window.location.href='/board/boardWrite?recipeSeq=${recipeId}'">게시글 작성하기</button>
+                                <button onclick="unActivateRecipe(${recipeId})">레시피 삭제하기</button>
+                            </div>`;
+            }
+
             document.querySelector(".recipe-info").innerHTML = this.dataset.recipeOutput + buttonTag;
         })
     }
@@ -134,6 +149,24 @@ async function unActivateRecipe(recipeSeq) {
         Promise.reject("다음과 같은 문제가 발생하였습니다" , error)
     }
     
+}
+
+async function getRecipeWritten() {
+    try {
+        const response = await fetch(`/mypage/getRecipeWritten`, {
+            'method' : 'get'
+        });
+    
+        if(!response.ok) {
+          return;
+        }
+
+        const data = await response.json();
+
+        return data;
+    } catch (error) {
+        console.error(first);
+    }
 }
 
 function escapeHTML(str) {

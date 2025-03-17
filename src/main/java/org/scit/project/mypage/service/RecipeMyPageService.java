@@ -3,6 +3,7 @@ package org.scit.project.mypage.service;
 import java.util.List;
 
 import org.scit.project.mypage.dto.RecipeMyPageResponse;
+import org.scit.project.mypage.dto.RecipeWrittenResponse;
 import org.scit.project.mypage.repository.RecipeMyPageRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +27,11 @@ public class RecipeMyPageService {
 
         return recipes;
     };
+
+    public List<RecipeWrittenResponse> findAllRecipeUsedAndBoardWrittenByLoginUser(Long userSeq) {
+        
+        return recipeMyPageRepository.findRecipeAndBoardWritten(userSeq).stream().map(RecipeWrittenResponse::TODTO).toList();
+    }
     
     
 }

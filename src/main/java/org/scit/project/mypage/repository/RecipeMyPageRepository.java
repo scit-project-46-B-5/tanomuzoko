@@ -2,6 +2,7 @@ package org.scit.project.mypage.repository;
 
 import java.util.List;
 
+import org.scit.project.mypage.dto.RecipeWrittenDTO;
 import org.scit.project.recipe.entity.RecipeEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,4 +46,15 @@ public interface RecipeMyPageRepository extends JpaRepository<RecipeEntity, Long
             and r.isDeleted = false
     """)
     Page<RecipeEntity> findRecipesByIds(@Param("recipeIds") List<Long> recipeIds, Pageable pageable);
+
+
+    @Query("""
+        SELECT b.boardSeq as boardSeq, r.recipeSeq as recipeSeq
+        from BoardEntity b
+        INNER JOIN b.recipeEntity r
+        WHERE b.isDeleted = false
+        AND b.userEntity.userSeq = :userSeq
+    """)
+    List<RecipeWrittenDTO> findRecipeAndBoardWritten(@Param("userSeq") Long userSeq);
+
 } 
