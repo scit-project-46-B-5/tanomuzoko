@@ -3,6 +3,8 @@ package org.scit.project.board.dto;
 import java.time.LocalDateTime;
 import org.scit.project.board.entity.BoardEntity;
 import org.springframework.web.multipart.MultipartFile;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,8 +24,14 @@ public class BoardDTO {
     private String boardWriter;
     private Long userSeq;
     private String userId;
+    
+    @NotBlank(message = "제목은 필수입니다.")
+    @Size(max = 30, message = "제목은 최대 30자까지 입력 가능합니다.")
     private String boardTitle;
-    private String boardContent;
+
+    @NotBlank(message = "내용을 입력해주세요.")
+    private String boardContent;    
+    
     private Integer hitCount;
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
@@ -31,7 +39,7 @@ public class BoardDTO {
 
     private MultipartFile uploadFile;
     
-    // 드랍존에서 지정한 썸네일 파일의 base64 데이터 (원본_file_name으로 저장됨)
+    @NotBlank(message = "썸네일은 필수입니다.")
     private String thumbnail;
     
     // 업로드된 파일의 URL (FileService에서 생성한, 원본파일이름과 확장자가 포함된 값)
