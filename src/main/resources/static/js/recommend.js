@@ -552,11 +552,11 @@ $(document).on('click', '.option-btn', function () {
 const loader = document.querySelector('.loader');
 
 function showLoader() {
-  loader.style.display = 'block';
+    loader.style.display = 'flex';  // flex로 변경해야 정렬 유지됨
 }
 
 function hideLoader() {
-  loader.style.display = 'none';
+    loader.style.display = 'none';
 }
 
 
