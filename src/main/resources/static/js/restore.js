@@ -59,7 +59,6 @@ $('#restore-btn').on('click', function () {
         } else if (result.isDismissed) {
             // "아니요" 버튼을 클릭한 경우
             return;
-            // window.location.href = "/"; // 홈 화면으로 이동
         }
     });
 });
