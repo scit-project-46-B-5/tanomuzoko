@@ -35,7 +35,6 @@ public class UserDTO {
 		return UserDTO.builder()
 				.userSeq(entity.getUserSeq())
 				.userId(entity.getUserId())
-//				.userPassword(entity.get())
 				.userName(entity.getUserName())
 				.userEmail(entity.getUserEmail())
 				.createdAt(entity.getCreatedAt()!= null ? entity.getCreatedAt() : LocalDateTime.now())

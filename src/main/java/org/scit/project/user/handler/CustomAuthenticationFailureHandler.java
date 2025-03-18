@@ -40,7 +40,6 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
         } catch (InternalAuthenticationServiceException e) {
             // DisabledException 처리
             log.debug("🚨 비활성화된 계정으로 로그인 시도: {}", request.getParameter("userId"));
-//            redirectUrl = "/user/restore?errorType=disabled";  // 비활성화된 계정 처리
             redirectUrl = "/user/restore?errorType=disabled&userId=" + userId;  // userId를 포함하여 리다이렉트
         } catch (BadCredentialsException e) {
             // BadCredentialsException 처리

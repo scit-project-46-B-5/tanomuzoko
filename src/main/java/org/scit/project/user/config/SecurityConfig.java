@@ -66,7 +66,6 @@ public class SecurityConfig {
                         .passwordParameter("userPassword")
                         .defaultSuccessUrl("/", true) // 로그인 성공 시 메인 페이지 이동
                         .failureHandler(failureHandler) // 로그인 실패 시 CustomAuthenticationFailureHandler 사용
-//                        .failureUrl("/user/login?error=true")
                         .permitAll())
 
                 // ✅ Logout 설정
