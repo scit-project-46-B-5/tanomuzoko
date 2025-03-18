@@ -215,30 +215,63 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0, 0, 0, 0.5);
     z-index: 9999;
-    opacity: 70%;
-  }
-  
+    display: flex; 
+    justify-content: center;  
+    align-items: center;  
+}
+
 .loader-bar {
-    position: absolute;
-    top: 50%;
-    left: 50%;
     width: 300px;
     height: 300px;
-    margin-top: -5px;
-    margin-left: -50px;
     background-color: white;
+    border-radius: 60%; /* 둥근 모양 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 15px rgba(255, 165, 0, 0.8);
+    animation: loader-animation 1.5s infinite ease-in-out;
 }
-  
-@keyframes loader-bar {
+
+/* 텍스트 스타일 */
+.loader-text {
+    font-weight: bold;
+    color: #ff7f50;
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    white-space: nowrap;
+    animation: dots-animation 1.5s infinite;
+    margin-top: 90px;
+    font-size: 2em;
+}
+
+/* 로딩 애니메이션 */
+@keyframes loader-animation {
     0% {
-        transform: translateX(-50%) scaleX(0);
+        transform: scale(0.8);
+        box-shadow: 0 0 10px rgba(255, 165, 0, 0.5);
     }
     50% {
-        transform: translateX(-50%) scaleX(1);
+        transform: scale(1.1);
+        box-shadow: 0 0 25px rgb(248, 131, 53);
     }
     100% {
-        transform: translateX(-50%) scaleX(0);
+        transform: scale(0.8);
+        box-shadow: 0 0 10px rgba(255, 165, 0, 0.5);
     }
+}
+.loader-text::after {
+    content: "레시피를 굽는 중"; /* 초기 텍스트 */
+    animation: dots-animation 1.5s infinite steps(4); /* 1.5초 동안 4단계 애니메이션 반복 */
+}
+
+@keyframes dots-animation {
+    0% { content: "레시피를 굽는 중"; }
+    25% { content: "레시피를 굽는 중."; }
+    50% { content: "레시피를 굽는 중.."; }
+    75% { content: "레시피를 굽는 중..."; }
 }

@@ -119,9 +119,11 @@
                     </form>
                 </div>
             </div>
-
-            <div  class="loader" style="display: none;">
-                <img class="loader-bar" th:src="@{/image/cook-load.gif}"></img>
+            <div class="loader"style="display: none;">
+                <div class="loader-content">
+                    <img class="loader-bar" th:src="@{/image/cook-load.gif}" ></img>
+                    <div class="loader-text"></div>
+                </div>
             </div>
         </div>
     </body>

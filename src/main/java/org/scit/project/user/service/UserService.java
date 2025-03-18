@@ -34,21 +34,6 @@ public class UserService {
     public boolean isEmailExists(String userEmail) {
         return userRepository.existsByUserEmail(userEmail);
     }
-// //  아이디 중복 체크 (탈퇴하지 않은 회원만 검사)
-//    public boolean existId(String userId) {
-//        return !userRepository.existsByUserIdAndIsDeleted(userId, false);
-//    }
-//
-//    // 닉네임 중복 체크 (탈퇴하지 않은 회원만 검사)
-//    public boolean existName(String userName) {
-//        return !userRepository.existsByUserNameAndIsDeleted(userName, false);
-//    }
-//
-//    //  이메일 중복 체크 (탈퇴하지 않은 회원만 검사)
-//    public boolean isEmailExists(String userEmail) {
-//        return userRepository.existsByUserEmailAndIsDeleted(userEmail, false);
-//    }
-
 
     // ✅ 회원가입 처리
     @Transactional				
@@ -135,24 +120,6 @@ public class UserService {
         return tempPassword.toString();
     }
 //    아이디로 사용자 조회
-//	public UserEntity findUserById(String userId) {
-//		return userRepository.findByUserId(userId).orElse(null);
-//	}
-//    public UserEntity findUserById(String userId) {
-//    	log.debug("🔍 findUserById() 호출 - userId: {}", userId);
-//        
-//        UserEntity user = userRepository.findByUserId(userId).orElse(null);
-//        
-//        if (user == null) {
-//            log.warn("🚨 findUserById() - userId '{}'에 해당하는 사용자를 찾을 수 없음!", userId);
-//        } else {
-//            log.info("✅ findUserById() - user 데이터 조회 성공: {}", user);
-//        }
-//        
-//        return user;
-//    }
-
-
 	// ✅ 회원 복원 처리 (isDeleted = false)
 	 public String restoreUser(String userId) {
 	        Optional<UserEntity> optionalUser = userRepository.findByUserId(userId);
