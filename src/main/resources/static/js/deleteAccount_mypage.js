@@ -72,7 +72,7 @@ modalButton.addEventListener('click', async function () {
             method: "POST",
         });      
          if (response.ok) { 
-            window.location.href = "http://localhost:9005/"; 
+            window.location.href = "/"; 
         } else { 
             throw new Error(`회원 탈퇴 실패: ${response.status}`); 
          }    
