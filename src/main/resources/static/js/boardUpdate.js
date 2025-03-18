@@ -9,22 +9,34 @@ document.getElementById('editor-container').addEventListener('click', function (
 
 // 폼 제출 시, 에디터의 최신 HTML을 hidden 필드에 저장하고 검증
 document.getElementById('board-form').onsubmit = function (e) {
-    if (dropzone.files.length === 0) {
-        alert('이미지 파일을 첨부해주세요');
-        e.preventDefault();
-        return false;
-    }
+	if (dropzone.files.length === 0) {
+	    Swal.fire({
+	        icon: 'error',
+	        title: '파일 첨부 오류',
+	        text: '이미지 파일을 첨부해주세요',
+	        confirmButtonColor: '#ff7f50',
+	        confirmButtonText: '확인'
+	    });
+	    e.preventDefault();
+	    return false;
+	}
     var imgs = quill.root.querySelectorAll('img');
     imgs.forEach(function (img) {
         var rect = img.getBoundingClientRect();
         img.setAttribute('style', 'width:' + rect.width + 'px; height:' + rect.height + 'px;');
     });
     document.getElementById('boardContent').value = quill.root.innerHTML;
-    if (dropzone.files.length > 0 && !document.getElementById('thumbnailUrl').value) {
-        alert('썸네일로 사용할 사진을 선택해주세요');
-        e.preventDefault();
-        return false;
-    }
+	if (dropzone.files.length > 0 && !document.getElementById('thumbnailUrl').value) {
+	    Swal.fire({
+	        icon: 'error',
+	        title: '썸네일 선택 오류',
+	        text: '썸네일로 사용할 사진을 선택해주세요',
+	        confirmButtonColor: '#ff7f50',
+	        confirmButtonText: '확인'
+	    });
+	    e.preventDefault();
+	    return false;
+	}
     return true;
 };
 
@@ -42,12 +54,19 @@ const dropzone = new Dropzone('#dropzone', {
     init: function () {
         this.on('addedfile', function (file) {
             let fileKey = file.name + file.size;
-            if (uploadedFiles.has(fileKey)) {
-                console.warn('중복된 파일입니다:', file.name);
-                alert('이미 업로드된 파일입니다.');
-                this.removeFile(file);
-                return;
-            }
+			if (uploadedFiles.has(fileKey)) {
+			    console.warn('중복된 파일입니다:', file.name);
+			    Swal.fire({
+			        icon: 'error',
+			        title: '파일 중복',
+			        text: '이미 업로드된 파일입니다.',
+			        confirmButtonColor: '#ff7f50',
+			        confirmButtonText: '확인'
+			    });
+			    this.removeFile(file);
+			    return;
+			}
+
             this.element.classList.add('dz-started');
         });
 

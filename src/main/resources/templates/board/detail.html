@@ -57,7 +57,9 @@
                 <div th:utext="${board.boardContent}"></div>
 				
 				<!-- 레시피 내용 출력 -->
-                <p class="recipe-content" th:utext="${recipeOutputContent}"></p>
+               <div class="recipe-content">
+                    <p th:utext="${recipeOutputContent}"></p>
+               </div>
                 
                 <!-- 로그인한 사용자의 아이디를 hidden으로 저장 (Ajax에서 사용) -->
                 <th:block sec:authorize="isAuthenticated()">
