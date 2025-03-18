@@ -28,24 +28,24 @@
 .bookmark-btn {
     border: none;
     position: absolute;
-    top: 20px;
-    right: 20px;
-    
-    /* background: var(--primary-color, #ff7f50);
-    border: none;
-    padding: 12px 18px;
-    border-radius: var(--button-radius, 10px);
-    font-size: var(--font-size-medium, 18px);
-    font-weight: bold;
+    top: 40px;
+    right: 30px;
+    background: inherit;
+    box-shadow: none;
+    padding: 0;
     cursor: pointer;
-    color: white;
-    transition: all 0.3s ease-in-out; */
 }
 
+.fa-star {
+    font-size: 32px;
+}
 
-.bookmarked {
-    background: var(--primary-color);
-    color: white;
+.fa-regular {
+    color: #FFD43B;;
+}
+
+.fa-solid {
+    color: #FFD43B;
 }
 
 /* ✅ 레시피 이미지 */
