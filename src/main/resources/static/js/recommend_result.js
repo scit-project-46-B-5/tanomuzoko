@@ -3,16 +3,14 @@ function createToggleBookmark() {
     let recipeSeq = 0; // Initially, there's no recipe sequence
 
     return async function toggleBookmark() {
-        let bookmarkBtn = document.querySelector('.bookmark-btn');
+        // let bookmarkBtn = document.querySelector('.bookmark-btn');
         let bookmarkIcon = document.getElementById('bookmarkIcon');
 
+         if (bookmarkIcon.classList.contains('fa-regular')) {
+            bookmarkIcon.classList.remove('fa-regular');
+            bookmarkIcon.classList.add('fa-solid');
+         }
 
-        if (!bookmarkBtn.classList.contains('bookmarked')) {
-            bookmarkBtn.classList.add('bookmarked');
-            bookmarkIcon.src = '/image/star2.png'; 
-        }
-
-        console.log(isClicked);
         if (isClicked) {
             Swal.fire({
                 icon: 'error',

@@ -24,7 +24,7 @@
                 <!-- 왼쪽: 재료 검색 + 리스트 -->
                 <div class="ingredients-section">
                     <div class="search-box">
-                        <input type="text" id="search-input" placeholder="재료 검색..." onkeyup="filterIngredients()" />
+                        <input type="text" id="search-input" placeholder="재료 검색..."/>
                         <button class="search-btn">검색</button>
                     </div>
                     <div class="ingredients-list" id="ingredients-list">
@@ -119,9 +119,11 @@
                     </form>
                 </div>
             </div>
-
-            <div  class="loader" style="display: none;">
-                <img class="loader-bar" th:src="@{/image/cook-load.gif}"></img>
+            <div class="loader"style="display: none;">
+                <div class="loader-content">
+                    <img class="loader-bar" th:src="@{/image/cook-load.gif}" ></img>
+                    <div class="loader-text"></div>
+                </div>
             </div>
         </div>
     </body>
