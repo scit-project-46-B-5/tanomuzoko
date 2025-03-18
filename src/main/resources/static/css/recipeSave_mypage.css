@@ -66,6 +66,10 @@ ul {
     margin-bottom: 12px;
 }
 
+.recipe-steps {
+    list-style: none;
+}
+
 /* 닫기 버튼 */
 .close-btn {
     position: absolute;
@@ -97,12 +101,11 @@ ul {
 }
 
 .recipe-steps-header {
-    text-align: left;
+    text-align: center;
 }
 
 .recipe-steps li {
-    text-align: left;
-    padding-left: 20px;
+    text-align: center;
 }
 
 /* 게시글 작성하기 버튼 */
@@ -164,4 +167,9 @@ ul {
     color: #666;
     cursor: not-allowed;
     transform: none;
+}
+
+.noRecipe {  
+    color: #333;
+    text-align: center;
 }

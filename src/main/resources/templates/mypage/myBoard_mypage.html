@@ -21,7 +21,10 @@
 
             <!-- ✅ 메인 컨텐츠 -->
             <div class="mypage-content">
-                <h1>내가 쓴 게시물</h1>
+                <div class="mypage-content-header">
+                    <h1>내가 쓴 게시물</h1>
+                    <a th:href="@{/board/boardWrite}" class="write-btn">글쓰기</a>
+                </div>
 
                 <!-- 게시물이 없을 때 메시지 표시 -->
                 <div th:if="${#lists.isEmpty(myBoard)}" class="noBoard">
@@ -47,7 +50,7 @@
                 <!-- show-more 버튼을 myBoards의 크기가 5 이상일 때만 표시 -->
                 <div class="show-more" th:if="${showMoreButton}">
                     <button class="show-more-btn">
-                        <i class="fa-solid fa-angles-down"></i>
+                        <img src="../../static/image/down-arrow.png" th:src="@{/image/down-arrow.png}" alt="더보기">
                     </button>
                 </div>
             </div>

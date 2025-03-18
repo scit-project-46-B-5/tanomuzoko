@@ -12,9 +12,9 @@ public interface MyReplyRepository extends JpaRepository<ReplyEntity, Long> {
 
 	@Query("SELECT new org.scit.project.mypage.dto.MyReplyDTO(b.boardSeq, b.boardTitle, r.replyContent, r.createDate) " +
 		       "FROM ReplyEntity r JOIN r.board b " +
-		       "WHERE r.user.userSeq = :userSeq AND r.isDeleted = false " +
+		       "WHERE r.user.userSeq = :userSeq " +
+		       "AND r.isDeleted = false " +
+		       "AND b.isDeleted = false " + 
 		       "ORDER BY r.createDate DESC")
-	Page<MyReplyDTO> findByUserSeqOrderByCreateDateDesc(@Param("userSeq") Long userSeq, Pageable pageable);
-
-
+		Page<MyReplyDTO> findByUserSeqOrderByCreateDateDesc(@Param("userSeq") Long userSeq, Pageable pageable);
 }
