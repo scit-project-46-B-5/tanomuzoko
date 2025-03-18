@@ -479,7 +479,21 @@ function displayIngredients() {
         ingredientsList.appendChild(btn);
     });
 }
-    
+
+function debounce(func, delay) {
+    let timer;
+    return function (...args) {
+        clearTimeout(timer); // 기존 타이머 제거
+        timer = setTimeout(() => func.apply(this, args), delay); 
+    };
+}
+
+const debouncedFilterIngredients = debounce(filterIngredients, 150);
+
+document.querySelector("#search-input").addEventListener('input', function() {
+    debouncedFilterIngredients();
+})
+
 // 검색 필터링
 function filterIngredients() {
     const ingredientsBtns = Array.from(ingredientsList.children);
