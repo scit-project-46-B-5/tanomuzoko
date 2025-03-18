@@ -47,6 +47,10 @@ public class RecipeEntity {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
+    @Column(name = "is_deleted")
+    @Builder.Default 
+    private Boolean isDeleted = false;
+
     @OneToMany(mappedBy = "recipeEntity", cascade = CascadeType.REMOVE)
     @Builder.Default
     private List<RecipeInputKeywordEntity> recipeInputKeywordEntityList = new ArrayList<>();
@@ -54,12 +58,17 @@ public class RecipeEntity {
     @OneToOne(mappedBy = "recipeEntity", cascade = CascadeType.REMOVE)
     private RecipeOutputEntity recipeOutputEntity;
 
-    @OneToOne(mappedBy = "recipeEntity")
-    private BoardEntity boardEntity;
+    @OneToMany(mappedBy = "recipeEntity")
+    @Builder.Default
+    private List<BoardEntity> boardEntity = new ArrayList<>();
 
     public static RecipeEntity TOENTITY(UserEntity userEntity) {
         return RecipeEntity.builder()
                             .userEntity(userEntity)
                             .build();
+    }
+
+    public void unActivate() {
+        this.isDeleted = true;
     }
 }
