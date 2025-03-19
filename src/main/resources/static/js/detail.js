@@ -113,7 +113,7 @@ function renderComment(item, loginId, isChild) {
             </div>
             <div class="user-text">
                 <span class="full-text">${item.isDeleted ? '삭제된 댓글입니다' : fullText}</span>
-                ${hasMore ? '<button class="more-btn" onclick="toggleExpand(this)">더보기</button>' : ''}
+                ${hasMore && !item.isDeleted ? '<button class="more-btn" onclick="toggleExpand(this)">더보기</button>' : ''}
             </div>
     `;
     if (!isChild && loginId) {
