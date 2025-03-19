@@ -20,7 +20,7 @@ public class RecipeMyPageService {
     private final RecipeMyPageRepository recipeMyPageRepository;
 
     public Page<RecipeMyPageResponse> findAllRecipeByUser(Long userSeq, int currentPage) {
-        Pageable pageable = PageRequest.of(currentPage, 3, Sort.by(Sort.Direction.ASC, "createdAt"));
+        Pageable pageable = PageRequest.of(currentPage,  10, Sort.by(Sort.Direction.DESC, "createdAt"));
         
         List<Long> recipeIds = recipeMyPageRepository.findRecipeIdsByUser(userSeq);
         Page<RecipeMyPageResponse> recipes = recipeMyPageRepository.findRecipesByIds(recipeIds, pageable).map(RecipeMyPageResponse::toDTO);
