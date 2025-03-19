@@ -4,6 +4,7 @@ import org.scit.project.reply.dto.ReplyDTO;
 import org.scit.project.reply.service.ReplyService;
 import org.scit.project.user.dto.LoginUserDetails;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -23,10 +25,12 @@ public class ReplyController {
 
     // 댓글 등록
     @PostMapping("/addReply")
-    public void addReply(@ModelAttribute ReplyDTO replyDTO, @AuthenticationPrincipal LoginUserDetails loginUserDetails) {
+    public ResponseEntity<String> addReply(@ModelAttribute @Valid ReplyDTO replyDTO, @AuthenticationPrincipal LoginUserDetails loginUserDetails) {
         Long userSeq = loginUserDetails.getUserSeq();
         replyDTO.setUserSeq(userSeq);
         replyService.addReply(replyDTO);
+
+        return ResponseEntity.ok("댓글이 등록되었습니다.");
     }
 
     // 댓글 출력

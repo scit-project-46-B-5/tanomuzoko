@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import org.scit.project.reply.entity.ReplyEntity;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,6 +28,9 @@ public class ReplyDTO {
     private Long userSeq;
     private String userId;
     private String replyWriter;
+
+    @NotBlank(message = "댓글 내용은 필수입니다.")
+    @Size(min = 1, max = 300, message = "댓글은 1~300자 이내로 입력 가능합니다.")
     private String replyContent;
     private Long parentReplySeq;
     private Boolean isDeleted;
