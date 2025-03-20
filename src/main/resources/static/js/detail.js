@@ -100,10 +100,12 @@ function renderComment(item, loginId, isChild) {
                     loginId === item.userId
                         ? `
                     <div class="comment-buttons">
-                        <button class="edit-input-btn" onclick="deleteReply(${item.replySeq})">삭제</button>
+
+                    ${item.isDeleted ? '' : `<button class="edit-input-btn" onclick="deleteReply(${item.replySeq})">삭제</button>
                         <button class="edit-cancel-btn" onclick="editReply(${item.replySeq}, '${escapeHTML(
                             item.replyContent
-                        )}')">수정</button>
+                        )}')">수정</button>` }
+                        
                     </div>
                 `
                         : ''
@@ -111,7 +113,7 @@ function renderComment(item, loginId, isChild) {
             </div>
             <div class="user-text">
                 <span class="full-text">${item.isDeleted ? '삭제된 댓글입니다' : fullText}</span>
-                ${hasMore ? '<button class="more-btn" onclick="toggleExpand(this)">더보기</button>' : ''}
+                ${hasMore && !item.isDeleted ? '<button class="more-btn" onclick="toggleExpand(this)">더보기</button>' : ''}
             </div>
     `;
     if (!isChild && loginId) {
@@ -224,8 +226,6 @@ function generatePagination(resp) {
         pagination += `<button onclick="initReplies(${startPage - 1})">◀ 이전</button>`;
     }
 
-    console.log(endPage);
-
     for (let i = startPage; i < endPage; i++) {
         pagination += `<button onclick="initReplies(${i})" class="${i === currentPage ? 'active' : ''}">${i + 1}</button>`;
     }
@@ -247,7 +247,8 @@ $(document).ready(function () {
     });
 });
 
-// 댓글 최대 글자 수 설정
+// 댓글 최대/최소 글자 수 설정
+const minContentLength = 1;
 const maxContentLength = 300;
 
 // 댓글 추가 함수
@@ -255,7 +256,7 @@ function addReply() {
     let commentInput = $("#comment-input").val();
     let boardSeq = $('#boardSeq').val();
 
-    if (commentInput.trim() == '' || commentInput.trim().length > maxContentLength) {
+    if (commentInput.trim().length < minContentLength || commentInput.trim().length > maxContentLength) {
         Swal.fire({
             icon: 'warning',
             title: '등록할 수 없습니다',

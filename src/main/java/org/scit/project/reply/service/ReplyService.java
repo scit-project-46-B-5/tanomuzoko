@@ -42,6 +42,11 @@ public class ReplyService {
             throw new IllegalArgumentException("게시글이 존재하지 않습니다.");
         }
 
+        String replyContent = replyDTO.getReplyContent().trim();
+        if (replyContent.length() < 1 || replyContent.length() > 300) {
+            throw new IllegalArgumentException("댓글은 1~300자 이내로 입력해야 합니다.");
+        }
+
         BoardEntity board = boardOpt.get();
         UserEntity user = replyDTO.getUserSeq() != null
                 ? userRepository.findById(replyDTO.getUserSeq()).orElse(null)
