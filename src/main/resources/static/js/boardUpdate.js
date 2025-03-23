@@ -52,8 +52,62 @@ const dropzone = new Dropzone('#dropzone', {
     dictDefaultMessage: '',
     dictRemoveFile: '삭제',
     init: function () {
+        let dropzoneInstance = this;
+
+        const editor = document.querySelector('.ql-editor');
+        const imgElements = editor.querySelectorAll('img');
+        const imgSrcs = Array.from(imgElements).map(img => img.getAttribute('src') || '');
+        imgSrcs.forEach((base64Image, index) => {
+            let mockFile = {
+                name: "uploaded-image-" + index, // Generate a mock name
+                size: 0, // Size unknown
+                type: 'image/*'
+            };
+            
+            dropzoneInstance.emit("addedfile", mockFile);
+            dropzoneInstance.emit("thumbnail", mockFile, base64Image); // Use Base64 image
+            dropzoneInstance.files.push(mockFile);
+            mockFile.previewElement.classList.add('dz-complete'); // Ensure UI updates
+            mockFile.previewElement.addEventListener('click', () => {
+                console.log(`Clicked image: ${mockFile.name}`);
+            });
+
+            // Add remove button manually
+            let removeButton = mockFile.previewElement.querySelector(".dz-remove");
+            if (removeButton) {
+                removeButton.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropzoneInstance.removeFile(mockFile);
+                    let imgToRemove = quill.root.querySelector(`img[src="${base64Image}"]`);
+                    if (imgToRemove) {
+                        imgToRemove.remove();
+                    }
+                });
+            }
+
+            // Base64 문자열을 디코딩하여 바이너리 데이터로 변환하는 함수
+            const base64String = base64Image.replace(/^data:image\/(png|jpeg);base64,/, '');
+            function base64ToBinary(base64) {
+                const binaryString = atob(base64);
+                const len = binaryString.length;
+                const bytes = new Uint8Array(len);
+                for (let i = 0; i < len; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                return bytes;
+            }
+
+            const binaryData = base64ToBinary(base64String);
+            const blob = new Blob([binaryData], { type: 'image/*' });
+            const file = new File([blob], mockFile.name , { type: 'image/*' });
+
+            const fileKey = mockFile.name;
+            uploadedFiles.set(fileKey, { file: file, base64: base64Image });
+        });
+    
         this.on('addedfile', function (file) {
-            let fileKey = file.name + file.size;
+            let fileKey = file.name;
 			if (uploadedFiles.has(fileKey)) {
 			    console.warn('중복된 파일입니다:', file.name);
 			    Swal.fire({
@@ -96,7 +150,7 @@ const dropzone = new Dropzone('#dropzone', {
 
         this.on('removedfile', function (file) {
             console.log('Dropzone에서 파일 삭제됨:', file.name);
-            let fileKey = file.name + file.size;
+            let fileKey = file.name;
             let fileData = uploadedFiles.get(fileKey);
             if (fileData) {
                 let imgToRemove = quill.root.querySelector(`img[src="${fileData.base64}"]`);
@@ -142,7 +196,7 @@ function insertImageToQuill(file, base64Data, fileUrl) {
     quill.insertEmbed(insertIndex, 'image', base64Data);
     quill.setSelection(insertIndex + 1);
 
-    let fileKey = file.name + file.size;
+    let fileKey = file.name;
     uploadedFiles.set(fileKey, { file: file, base64: base64Data, url: fileUrl });
 
     file.previewElement.classList.add('dz-complete');
@@ -173,8 +227,12 @@ quill.on('text-change', function () {
     let quillImages = new Set([...quill.root.querySelectorAll('img')].map(img => img.src));
     for (let [fileKey, fileData] of uploadedFiles.entries()) {
         if (!quillImages.has(fileData.base64)) {
-            console.log('Quill에서 이미지 삭제됨:', fileData.base64);
-            dropzone.removeFile(fileData.file);
+            const fileToRemove = dropzone.files.find(f => f.name === fileData.file.name);
+            if (fileToRemove) {
+                dropzone.removeFile(fileToRemove);
+            } else {
+                console.warn('Dropzone에서 파일을 찾을 수 없음:', fileData.file.name);
+            }
             uploadedFiles.delete(fileKey);
             const currentThumbnailUrl = document.getElementById('thumbnailUrl').value;
             if (fileData.url === currentThumbnailUrl) {
