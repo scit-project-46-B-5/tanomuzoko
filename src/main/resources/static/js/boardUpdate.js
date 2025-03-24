@@ -72,6 +72,32 @@ const dropzone = new Dropzone('#dropzone', {
                 console.log(`Clicked image: ${mockFile.name}`);
             });
 
+            let thumbnailLabel = document.createElement('div');
+            thumbnailLabel.classList.add('thumbnail-label');
+            thumbnailLabel.textContent = '썸네일로 지정';
+            thumbnailLabel.style.display = 'none';
+            mockFile.previewElement.insertBefore(thumbnailLabel, mockFile.previewElement.firstChild );
+        
+            mockFile.previewElement.addEventListener('click', function (e) {
+                if (e.target.classList.contains('dz-remove')) {
+                    return;
+                }
+                document.querySelectorAll('.dz-preview').forEach(function (preview) {
+                    preview.classList.remove('thumbnail-selected');
+                    let label = preview.querySelector('.thumbnail-label');
+                    if (label) { 
+                        label.style.display = 'none'; 
+                    }
+                });
+                mockFile.previewElement.classList.add('thumbnail-selected');
+                thumbnailLabel.style.display = 'block';
+                // 새로 지정한 썸네일이면 hidden input 갱신
+                document.getElementById('thumbnail').value = base64Image;
+                document.getElementById('thumbnailUrl').value = fileUrl;
+                console.log('썸네일 지정:', fileUrl);
+            });
+
+
             // Add remove button manually
             let removeButton = mockFile.previewElement.querySelector(".dz-remove");
             if (removeButton) {
@@ -102,6 +128,7 @@ const dropzone = new Dropzone('#dropzone', {
             const blob = new Blob([binaryData], { type: 'image/*' });
             const file = new File([blob], mockFile.name , { type: 'image/*' });
 
+            //나중에 fileUrl도 전부 추가해야함.
             const fileKey = mockFile.name;
             uploadedFiles.set(fileKey, { file: file, base64: base64Image });
         });
@@ -208,11 +235,15 @@ function insertImageToQuill(file, base64Data, fileUrl) {
     file.previewElement.insertBefore(thumbnailLabel, file.previewElement.firstChild);
 
     file.previewElement.addEventListener('click', function (e) {
-        if (e.target.classList.contains('dz-remove')) return;
+        if (e.target.classList.contains('dz-remove')) {
+            return;
+        }
         document.querySelectorAll('.dz-preview').forEach(function (preview) {
             preview.classList.remove('thumbnail-selected');
             let label = preview.querySelector('.thumbnail-label');
-            if (label) { label.style.display = 'none'; }
+            if (label) { 
+                label.style.display = 'none'; 
+            }
         });
         file.previewElement.classList.add('thumbnail-selected');
         thumbnailLabel.style.display = 'block';
@@ -227,6 +258,8 @@ quill.on('text-change', function () {
     let quillImages = new Set([...quill.root.querySelectorAll('img')].map(img => img.src));
     for (let [fileKey, fileData] of uploadedFiles.entries()) {
         if (!quillImages.has(fileData.base64)) {
+
+            //base64 -> file 객체화한 file과 dropzone자체에서 만든 file이 서로 다른 객체라서 name을 동일하게 만들고 dropzone 객체의 file을 찾아오게 함.
             const fileToRemove = dropzone.files.find(f => f.name === fileData.file.name);
             if (fileToRemove) {
                 dropzone.removeFile(fileToRemove);
