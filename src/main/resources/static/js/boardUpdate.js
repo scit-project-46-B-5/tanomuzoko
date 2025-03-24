@@ -76,12 +76,13 @@ const dropzone = new Dropzone('#dropzone', {
             mockFile.previewElement.insertBefore(thumbnailLabel, mockFile.previewElement.firstChild );
             const dropZoneImgElements = mockFile.previewElement.querySelectorAll('img');
             const dropzoneImgSrcs = Array.from(dropZoneImgElements).map(img => img.getAttribute('src') || '');
-            console.log(dropzoneImgSrcs);
             for (let i = 0; i < dropzoneImgSrcs.length; i++) {
                 if (dropzoneImgSrcs[i] === document.getElementById('thumbnail').value ) {
                     //dropZoneImgElements[i].classList.add('thumbnail-selected'); --> previewElement에 css 조정하지 않으면 다른 image에 css가 들어가서 UI 상 문제
                     mockFile.previewElement.classList.add('thumbnail-selected');
                     thumbnailLabel.style.display = 'block';
+                    document.getElementById('thumbnail').value = base64Image;
+                    document.getElementById('thumbnailUrl').value = base64Image;
                 }
             }
 
@@ -137,7 +138,7 @@ const dropzone = new Dropzone('#dropzone', {
 
             //나중에 fileUrl도 전부 추가해야함.
             const fileKey = mockFile.name;
-            uploadedFiles.set(fileKey, { file: file, base64: base64Image });
+            uploadedFiles.set(fileKey, { file: file, base64: base64Image, url: base64Image  });
         });
     
         this.on('addedfile', function (file) {
