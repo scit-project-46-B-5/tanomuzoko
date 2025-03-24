@@ -2,6 +2,7 @@ package org.scit.project.board.dto;
 
 import java.time.LocalDateTime;
 import org.scit.project.board.entity.BoardEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -59,7 +60,16 @@ public class BoardDTO {
                 .createDate(boardEntity.getCreateDate())
                 .updateDate(boardEntity.getUpdateDate())
                 .isDeleted(boardEntity.getIsDeleted())
+                .thumbnail(boardEntity.getBoardImageEntity().getOriginalFileName())
                 .recipeSeq(boardEntity.getRecipeEntity().getRecipeSeq())
                 .build();
+    }
+
+    public boolean isThumbnailUrlEmpty() {
+        return StringUtils.hasText(this.thumbnailUrl);
+    }
+
+    public boolean isUploadedInCurrentBoard() {
+        return this.thumbnailUrl.startsWith("/uploads/");
     }
 }
