@@ -142,20 +142,27 @@ const dropzone = new Dropzone('#dropzone', {
         });
     
         this.on('addedfile', function (file) {
-            let fileKey = file.name;
-			if (uploadedFiles.has(fileKey)) {
-			    console.warn('중복된 파일입니다:', file.name);
-			    Swal.fire({
-			        icon: 'error',
-			        title: '파일 중복',
-			        text: '이미 업로드된 파일입니다.',
-			        confirmButtonColor: '#ff7f50',
-			        confirmButtonText: '확인'
-			    });
-			    this.removeFile(file);
-			    return;
-			}
-
+            
+            let reader = new FileReader();
+            reader.onload = (event) => {
+                let base64Data = event.target.result; // Get Base64 URL
+                
+                // Check for duplicates in the Map
+                for (const [key, value] of uploadedFiles) {
+                    if (value.base64 === base64Data) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '파일 중복',
+                            text: '이미 업로드된 파일입니다.',
+                            confirmButtonColor: '#ff7f50',
+                            confirmButtonText: '확인'
+                        });
+                        this.removeFile(file);
+                        return;
+                    }
+                }
+            }
+            reader.readAsDataURL(file);
             this.element.classList.add('dz-started');
         });
 
