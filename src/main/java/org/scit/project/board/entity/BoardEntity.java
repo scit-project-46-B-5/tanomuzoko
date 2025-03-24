@@ -17,6 +17,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -69,6 +70,9 @@ public class BoardEntity {
     @JoinColumn(name = "recipe_seq",referencedColumnName = "recipe_seq")
     private RecipeEntity recipeEntity;
 
+    @OneToOne(mappedBy = "boardEntity")
+    private BoardImageEntity boardImageEntity;
+
     public static BoardEntity toEntity(BoardDTO boardDTO, UserEntity userEntity, RecipeEntity recipeEntity) {
         return BoardEntity.builder()
                 .boardSeq(boardDTO.getBoardSeq() != null ? boardDTO.getBoardSeq() : null)
@@ -82,6 +86,7 @@ public class BoardEntity {
                 .recipeEntity(recipeEntity)
                 .build();
     }
+
 
 }
 

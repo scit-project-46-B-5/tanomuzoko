@@ -68,16 +68,23 @@ const dropzone = new Dropzone('#dropzone', {
             dropzoneInstance.emit("thumbnail", mockFile, base64Image); // Use Base64 image
             dropzoneInstance.files.push(mockFile);
             mockFile.previewElement.classList.add('dz-complete'); // Ensure UI updates
-            mockFile.previewElement.addEventListener('click', () => {
-                console.log(`Clicked image: ${mockFile.name}`);
-            });
 
             let thumbnailLabel = document.createElement('div');
             thumbnailLabel.classList.add('thumbnail-label');
             thumbnailLabel.textContent = '썸네일로 지정';
             thumbnailLabel.style.display = 'none';
             mockFile.previewElement.insertBefore(thumbnailLabel, mockFile.previewElement.firstChild );
-        
+            const dropZoneImgElements = mockFile.previewElement.querySelectorAll('img');
+            const dropzoneImgSrcs = Array.from(dropZoneImgElements).map(img => img.getAttribute('src') || '');
+            console.log(dropzoneImgSrcs);
+            for (let i = 0; i < dropzoneImgSrcs.length; i++) {
+                if (dropzoneImgSrcs[i] === document.getElementById('thumbnail').value ) {
+                    //dropZoneImgElements[i].classList.add('thumbnail-selected'); --> previewElement에 css 조정하지 않으면 다른 image에 css가 들어가서 UI 상 문제
+                    mockFile.previewElement.classList.add('thumbnail-selected');
+                    thumbnailLabel.style.display = 'block';
+                }
+            }
+
             mockFile.previewElement.addEventListener('click', function (e) {
                 if (e.target.classList.contains('dz-remove')) {
                     return;
@@ -93,7 +100,7 @@ const dropzone = new Dropzone('#dropzone', {
                 thumbnailLabel.style.display = 'block';
                 // 새로 지정한 썸네일이면 hidden input 갱신
                 document.getElementById('thumbnail').value = base64Image;
-                document.getElementById('thumbnailUrl').value = fileUrl;
+                document.getElementById('thumbnailUrl').value = base64Image;
                 console.log('썸네일 지정:', fileUrl);
             });
 
