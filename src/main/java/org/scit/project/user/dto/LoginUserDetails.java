@@ -25,9 +25,6 @@ import lombok.ToString;
 
 public class LoginUserDetails implements UserDetails {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private Long userSeq;
 	private String userId;

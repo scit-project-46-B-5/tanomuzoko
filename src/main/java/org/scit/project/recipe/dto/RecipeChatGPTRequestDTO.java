@@ -32,24 +32,3 @@ public class RecipeChatGPTRequestDTO {
     }
     
 }
-/*
- * {
-  "model": "gpt-4-turbo",
-  "messages": [
-    {
-      "role": "system",
-      "content": "You are a helpful assistant."
-    },
-    {
-      "role": "user",
-      "content": "What is the capital of France?"
-    }
-  ],
-  "temperature": 0.7,
-  "max_tokens": 100,
-  "top_p": 1,
-  "frequency_penalty": 0,
-  "presence_penalty": 0
-}
-
- */
