@@ -6,7 +6,6 @@ import java.util.List;
 import org.scit.project.board.entity.BoardEntity;
 import org.scit.project.mainpage.dto.BoardWithHeartCountDTO;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

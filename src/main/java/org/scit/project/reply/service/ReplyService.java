@@ -1,6 +1,5 @@
 package org.scit.project.reply.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -13,9 +12,9 @@ import org.scit.project.reply.repository.ReplyRepository;
 import org.scit.project.user.entity.UserEntity;
 import org.scit.project.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 

@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
-import org.scit.project.mypage.dto.UserUpdateDTO;
 import org.scit.project.user.entity.UserEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

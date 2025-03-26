@@ -2,7 +2,6 @@ package org.scit.project.recipe.controller;
 
 import java.util.UUID;
 
-import org.scit.project.recipe.dto.RecipeConditionDTO;
 import org.scit.project.recipe.dto.RecipeUnActivateDTO;
 import org.scit.project.recipe.dto.RecipeUserRequestDTO;
 import org.scit.project.recipe.dto.RecipeUserResponseDTO;
