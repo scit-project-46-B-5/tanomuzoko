@@ -35,6 +35,7 @@ document.getElementById('board-form').onsubmit = function (e) {
 	    return false;
 	}
 
+    // 업데이트된 HTML을 hidden input에 설정
     document.getElementById('boardContent').value = quill.root.innerHTML;
 
     return true;
@@ -42,8 +43,6 @@ document.getElementById('board-form').onsubmit = function (e) {
 
 let uploadedFiles = new Map();
 Dropzone.autoDiscover = false;
-
-
 
 const dropzone = new Dropzone('#dropzone', {
     url: '#', // Prevents "No URL provided" error
@@ -65,7 +64,7 @@ const dropzone = new Dropzone('#dropzone', {
             // 저장한 image를 dropzone에 preload를 적용 
             let mockFile = {
                 name: "uploaded-image-" + index, 
-                size: 0, 
+                size: calculateImageSize(base64), 
                 type: 'image/*'
             };
             dropzoneInstance.emit("addedfile", mockFile);
@@ -164,7 +163,7 @@ quill.on('text-change', function () {
                 dropzone.removeFile(fileToRemove);
             } 
             uploadedFiles.delete(fileKey);
-            preventRequestIfRemovedImageIsThumbnail(fileData?.url);
+            preventRequestIfRemovedImageIsThumbnail(fileData?.base64);
         }
     }
 });
@@ -246,7 +245,7 @@ function insertImageToQuill(file, base64) {
     quill.setSelection(insertIndex + 1);
 
     let fileKey = file.name;
-    uploadedFiles.set(fileKey, { file: file, base64: base64 });
+    uploadedFiles.set(fileKey, { file, base64 });
 
     file.previewElement.classList.add('dz-complete');
 
@@ -291,4 +290,15 @@ function base64ToBinary(base64) {
         bytes[i] = binaryString.charCodeAt(i);
     }
     return bytes;
+}
+
+function calculateImageSize(base64String) {
+    // Remove data URL prefix if present
+    let cleanedBase64 = base64String.split(',')[1] || base64String;
+
+    // Calculate size in bytes
+    let padding = (cleanedBase64.match(/=+$/) || [""])[0].length;
+    let sizeInBytes = (cleanedBase64.length * 3) / 4 - padding;
+
+    return sizeInBytes;
 }
