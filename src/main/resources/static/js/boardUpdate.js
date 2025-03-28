@@ -35,14 +35,19 @@ document.getElementById('board-form').onsubmit = function (e) {
 	    return false;
 	}
 
+    document.getElementById('boardContent').value = quill.root.innerHTML;
+
     return true;
 };
 
 let uploadedFiles = new Map();
 Dropzone.autoDiscover = false;
 
+
+
 const dropzone = new Dropzone('#dropzone', {
-    url: '/board/upload',
+    url: '#', // Prevents "No URL provided" error
+    autoProcessQueue: false, // Prevent automatic uploads
     maxFiles: 5,
     maxFilesize: 5,
     acceptedFiles: 'image/*',
@@ -56,7 +61,7 @@ const dropzone = new Dropzone('#dropzone', {
         const editor = document.querySelector('.ql-editor');
         const imgElements = editor.querySelectorAll('img');
         const imgSrcs = Array.from(imgElements).map(img => img.getAttribute('src') || '');
-        imgSrcs.forEach((base64Image, index) => {
+        imgSrcs.forEach((base64, index) => {
             // 저장한 image를 dropzone에 preload를 적용 
             let mockFile = {
                 name: "uploaded-image-" + index, 
@@ -64,39 +69,44 @@ const dropzone = new Dropzone('#dropzone', {
                 type: 'image/*'
             };
             dropzoneInstance.emit("addedfile", mockFile);
-            dropzoneInstance.emit("thumbnail", mockFile, base64Image);
+            dropzoneInstance.emit("thumbnail", mockFile, base64);
             dropzoneInstance.files.push(mockFile);
             mockFile.previewElement.classList.add('dz-complete'); 
 
             // thumbnail인 이미지는 thumnail 표시 CSS 적용
             let thumbnailLabel = generateThumbnailLabel(mockFile);
-            setThumbnailOnLoad(mockFile, thumbnailLabel, base64Image);
+            setThumbnailOnLoad(mockFile, thumbnailLabel, base64);
 
             // dropzone click 시 thumbnailImage 변경되게 적용
-            handleClickDropzoneImage(mockFile, thumbnailLabel, base64Image);
+            handleClickDropzoneImage(mockFile, thumbnailLabel, base64);
 
 
             // dropzone image에서 제거 버튼 누르면 dropzone에서 삭제되게 적용
             let removeButton = mockFile.previewElement.querySelector(".dz-remove");
-            handleDropzoneImageRemoveBtn(removeButton, dropzoneInstance, mockFile, base64Image);
+            handleDropzoneImageRemoveBtn(removeButton, dropzoneInstance, mockFile, base64);
 
             // Base64 문자열을 디코딩하여 바이너리 데이터로 변환하는 함수
-            const file = convertBase64ToFile(base64Image, mockFile);
+            const file = convertBase64ToFile(base64, mockFile);
 
             //나중에 fileUrl도 전부 추가해야함.
             const fileKey = mockFile.name;
-            uploadedFiles.set(fileKey, { file: file, base64: base64Image, url: base64Image  });
+            uploadedFiles.set(fileKey, { file, base64  });
+        });
+
+        this.on("sending", function(file, xhr, formData) {
+            // Prevent actual sending since we are not using a server
+            xhr.abort();
         });
     
         this.on('addedfile', function (file) {
             
             let reader = new FileReader();
             reader.onload = (event) => {
-                let base64Data = event.target.result;
+                let base64 = event.target.result;
                 
                 // base64로 저장된 값을 확인하여 중복된 이미지  올리기 방지
                 for (const [key, value] of uploadedFiles) {
-                    if (value.base64 === base64Data) {
+                    if (value.base64 === base64) {
                         Swal.fire({
                             icon: 'error',
                             title: '파일 중복',
@@ -108,25 +118,12 @@ const dropzone = new Dropzone('#dropzone', {
                         return;
                     }
                 }
+
+                uploadedFiles.set(file.name, { file, base64 });
+                insertImageToQuill(file, base64);
             }
             reader.readAsDataURL(file);
             this.element.classList.add('dz-started');
-        });
-
-        //file dropzone에 올려서 upload 성공 시 발동하는 event listener
-        this.on('success', function (file, response) {
-            let fileUrl = response.fileUrl;
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                let base64Data = e.target.result;
-                insertImageToQuill(file, base64Data, fileUrl);
-            };
-            reader.readAsDataURL(file);
-        });
-
-        //file dropzone에 올려서 upload 실패 시 발동하는 event listener
-        this.on('error', function (file, errorMessage) {
-            console.error('업로드 실패:', errorMessage);
         });
 
         //file dropzone에서 삭제했을 때 발생하는 event lisneter
@@ -142,16 +139,13 @@ const dropzone = new Dropzone('#dropzone', {
                 만약 기존 저장된 preload가 아닌 upload파일이라면 서버에서도 파일 delete
             */
             removeImageFromQuillBoard(fileData.base64);
-            if (fileData.url) {
-                deleteUploadedFileAjax(fileData.url);
-            }
 
             //dropzone에 image가 사라졌으므로 image가 없음을 알려주기 위해 css 제거
             if (this.files.length === 0) {
                 this.element.classList.remove('dz-started');
             }
             uploadedFiles.delete(fileKey);
-            preventRequestIfRemovedImageIsThumbnail(fileData.url);
+            preventRequestIfRemovedImageIsThumbnail(fileData.base64);
         });
 
         this.on('complete', function (file) {
@@ -175,58 +169,49 @@ quill.on('text-change', function () {
     }
 });
 
-function deleteUploadedFileAjax(url) {
-    fetch('/board/deleteFile', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'fileUrl=' + encodeURIComponent(url)
-    })
-    .then(response => response.json())
-    .catch(err => console.error('파일 삭제 중 오류:', err));
-}
 
-function preventRequestIfRemovedImageIsThumbnail(url) {
-    const currentThumbnailUrl = document.getElementById('thumbnailUrl').value;
-    if (url === currentThumbnailUrl) {
+function preventRequestIfRemovedImageIsThumbnail(base64) {
+    const currentThumbnailBase64 = document.getElementById('thumbnailUrl').value;
+    if (base64 === currentThumbnailBase64) {
         document.getElementById('thumbnailUrl').value = "";
     }
 }
 
-function removeImageFromQuillBoard(base64Image) {
-    let imgToRemove = quill.root.querySelector(`img[src="${base64Image}"]`);
+function removeImageFromQuillBoard(base64) {
+    let imgToRemove = quill.root.querySelector(`img[src="${base64}"]`);
     if (imgToRemove) {
         imgToRemove.remove();
     }
 }
 
-function handleDropzoneImageRemoveBtn(removeButton, dropzoneInstance, mockFile, base64Image) {
+function handleDropzoneImageRemoveBtn(removeButton, dropzoneInstance, mockFile, base64) {
     removeButton.addEventListener("click", function (e) {
         e.preventDefault();
         e.stopPropagation();
         dropzoneInstance.removeFile(mockFile);
-        removeImageFromQuillBoard(base64Image);
+        removeImageFromQuillBoard(base64);
     });
 }
 
-function handleClickDropzoneImage(mockFile, thumbnailLabel, base64Image) {
+function handleClickDropzoneImage(mockFile, thumbnailLabel, base64) {
     mockFile.previewElement.addEventListener('click', function (e) {
         //삭제버튼을 누른 경우 차후 진행 방지
         if (e.target.classList.contains('dz-remove')) {
             return;
         }
-        updateThumbnailSelection(mockFile, thumbnailLabel, base64Image, base64Image);
+        updateThumbnailSelection(mockFile, thumbnailLabel, base64);
     });
 }
 
-function setThumbnailOnLoad(mockFile, thumbnailLabel, base64Image) {
+function setThumbnailOnLoad(mockFile, thumbnailLabel, base64) {
     const dropZoneImgElements = mockFile.previewElement.querySelectorAll('img');
     const dropzoneImgSrcs = Array.from(dropZoneImgElements).map(img => img.getAttribute('src') || '');
     for (let i = 0; i < dropzoneImgSrcs.length; i++) {
         if (dropzoneImgSrcs[i] === document.getElementById('thumbnail').value) {
             mockFile.previewElement.classList.add('thumbnail-selected');
             thumbnailLabel.style.display = 'block';
-            document.getElementById('thumbnail').value = base64Image;
-            document.getElementById('thumbnailUrl').value = base64Image;
+            document.getElementById('thumbnail').value = base64;
+            document.getElementById('thumbnailUrl').value = base64;
         }
     }
 }
@@ -240,8 +225,8 @@ function generateThumbnailLabel(file) {
     return thumbnailLabel;
 }
 
-function convertBase64ToFile(base64Image, mockFile) {
-    const base64String = base64Image.replace(/^data:image\/(png|jpeg);base64,/, '');
+function convertBase64ToFile(base64, mockFile) {
+    const base64String = base64.replace(/^data:image\/(png|jpeg);base64,/, '');
     const binaryData = base64ToBinary(base64String);
     const blob = new Blob([binaryData], { type: 'image/*' });
     const file = new File([blob], mockFile.name, { type: 'image/*' });
@@ -251,18 +236,17 @@ function convertBase64ToFile(base64Image, mockFile) {
 /**
  * Inserts an image into Quill.
  *
- * @param {File} file - The file object from the dropzone (the image to insert).
- * @param {string} base64Data - The base64-encoded image data.
- * @param {string} [fileUrl] - The optional URL of the file (if already uploaded).
+ * @param {File} file - dropzone file.
+ * @param {string} base64 - The base64-encoded image data.
  */
-function insertImageToQuill(file, base64Data, fileUrl = "") {
+function insertImageToQuill(file, base64) {
     let range = quill.getSelection();
     let insertIndex = range ? range.index : quill.getLength();
-    quill.insertEmbed(insertIndex, 'image', base64Data);
+    quill.insertEmbed(insertIndex, 'image', base64);
     quill.setSelection(insertIndex + 1);
 
     let fileKey = file.name;
-    uploadedFiles.set(fileKey, { file: file, base64: base64Data, url: fileUrl });
+    uploadedFiles.set(fileKey, { file: file, base64: base64 });
 
     file.previewElement.classList.add('dz-complete');
 
@@ -272,7 +256,7 @@ function insertImageToQuill(file, base64Data, fileUrl = "") {
         if (e.target.classList.contains('dz-remove')) {
             return;
         }
-        updateThumbnailSelection(file, thumbnailLabel, base64Data, fileUrl);
+        updateThumbnailSelection(file, thumbnailLabel, base64);
     });
 }
 
@@ -280,10 +264,9 @@ function insertImageToQuill(file, base64Data, fileUrl = "") {
  * 
  * @param {File} file  dropzonefile
  * @param {HTMLElement} thumbnailLabel 
- * @param {base64String} base64Data 
- * @param {string} fileUrl base64String | filePath_string
+ * @param {base64String} base64 
  */
-function updateThumbnailSelection(file, thumbnailLabel, base64Data, fileUrl) {
+function updateThumbnailSelection(file, thumbnailLabel, base64) {
     //썸네일 이미지를 바꾸기 위해 이전 썸네일 이미지 표시 css를 초기화
     document.querySelectorAll('.dz-preview').forEach(function (preview) {
         preview.classList.remove('thumbnail-selected');
@@ -296,8 +279,8 @@ function updateThumbnailSelection(file, thumbnailLabel, base64Data, fileUrl) {
      file.previewElement.classList.add('thumbnail-selected');
      thumbnailLabel.style.display = 'block';
      // 새로 지정한 썸네일이면 hidden input 갱신
-    document.getElementById('thumbnail').value = base64Data;
-    document.getElementById('thumbnailUrl').value = fileUrl;
+    document.getElementById('thumbnail').value = base64;
+    document.getElementById('thumbnailUrl').value = base64;
 }
 
 function base64ToBinary(base64) {
