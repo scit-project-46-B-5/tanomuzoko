@@ -78,7 +78,6 @@ const dropzone = new Dropzone('#dropzone', {
         this.on('addedfile', function (file) {
             let fileKey = file.name + file.size;
             if (uploadedFiles.has(fileKey)) {
-                console.warn('중복된 파일입니다:', file.name);
                 Swal.fire({
                     icon: 'error',
                     title: '파일 중복',
@@ -95,7 +94,6 @@ const dropzone = new Dropzone('#dropzone', {
         });
 
         this.on('success', function (file, response) {
-            console.log('업로드 완료:', response);
             if (response && response.fileUrl) {
                 var fileUrl = response.fileUrl;
                 const reader = new FileReader();
@@ -119,7 +117,6 @@ const dropzone = new Dropzone('#dropzone', {
         });
 
         this.on('removedfile', function (file) {
-            console.log('Dropzone에서 파일 삭제됨:', file.name);
             let fileKey = file.name + file.size;
             // 중복 파일이면 Quill 에디터의 이미지는 그대로 두고 uploadedFiles 삭제하지 않음
             if (!file.isDuplicate) {
@@ -136,13 +133,6 @@ const dropzone = new Dropzone('#dropzone', {
                             body: 'fileUrl=' + encodeURIComponent(fileData.url)
                         })
                             .then(response => response.json())
-                            .then(data => {
-                                if (data.error) {
-                                    console.error('파일 삭제 실패:', data.error);
-                                } else {
-                                    console.log('파일 삭제 성공');
-                                }
-                            })
                             .catch(err => console.error('파일 삭제 중 오류:', err));
                     }
                 }
@@ -191,7 +181,6 @@ function insertImageToQuill(file, base64Data, fileUrl) {
         thumbnailLabel.style.display = 'block';
         document.getElementById('thumbnail').value = base64Data;
         document.getElementById('thumbnailUrl').value = fileUrl;
-        console.log('썸네일 지정:', fileUrl);
     });
 }
 

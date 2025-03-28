@@ -3,7 +3,6 @@ package org.scit.project.user.handler;
 import java.io.IOException;
 
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -25,13 +24,6 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
         String redirectUrl = "/user/login?errorType=";
         // 로그인 시도한 사용자 ID 가져오기
         String userId = request.getParameter("userId");
-        
-        if (exception instanceof InternalAuthenticationServiceException) {
-        	System.out.println("aaa");
-        	System.out.println(request.getParameter("userId"));
-        } else if (exception instanceof DisabledException) {
-        	System.out.println("bbb");
-        }
 
         try {
             // 예외가 발생할 수 있는 코드

@@ -29,8 +29,11 @@ public class RedisConfig {
      * Redis 서버 실행 여부 확인 및 필요 시 자동 실행
      */
     private void checkAndStartRedis() {
+        if (isRedisRunning()) {
+            return;
+        }
+
         if (!isRedisRunning()) {
-            System.out.println("🔴 Redis 서버가 꺼져 있습니다. 실행을 시도합니다...");
             startRedisServer();
 
             // Redis가 실행될 때까지 기다리기 (최대 10초 대기)
@@ -39,33 +42,21 @@ public class RedisConfig {
                 try {
                     Thread.sleep(1000); // 1초 대기
                     retryCount++;
-                    System.out.println("⏳ Redis 서버 실행 대기 중... (" + retryCount + "초)");
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
             }
-
-            if (isRedisRunning()) {
-                System.out.println("✅ Redis 서버가 성공적으로 실행되었습니다.");
-            } else {
-                System.err.println("❌ Redis 서버 실행에 실패했습니다. 직접 실행해주세요.");
-            }
-        } else {
-            System.out.println("✅ Redis 서버가 이미 실행 중입니다.");
-        }
+        } 
     }
 //    Spring 종료시 Redis도 같이 종료
     @PreDestroy
     public void stopRedisServer() {
         if (redisProcess != null) {
             redisProcess.destroy(); // 🔥 실행된 Redis 프로세스 종료
-            System.out.println("🛑 Redis 서버가 종료되었습니다.");
         } else {
-            System.out.println("🔎 실행된 Redis 프로세스가 없습니다.");
             try {
                 // 🔥 Windows에서 실행 중인 redis-server.exe 강제 종료
                 Runtime.getRuntime().exec("taskkill /F /IM redis-server.exe");
-                System.out.println("🛑 Redis 서버 프로세스를 강제 종료했습니다.");
             } catch (IOException e) {
                 System.err.println("❌ Redis 서버 강제 종료 실패: " + e.getMessage());
             }
@@ -91,7 +82,6 @@ public class RedisConfig {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(REDIS_EXEC_PATH);
             redisProcess = processBuilder.start();
-            System.out.println("🚀 Redis 서버를 실행했습니다.");
         } catch (IOException e) {
             System.err.println("❌ Redis 서버 실행 실패: " + e.getMessage());
         }
