@@ -24,7 +24,8 @@ document.getElementById('board-form').onsubmit = function (e) {
     }
 
     // 첨부된 이미지 파일이 없으면 alert 창 띄움
-    if (dropzone.files.length === 0) {
+    const isDropZoneImagedEmpty = (dropzone.files.length === 0);
+	if (isDropZoneImagedEmpty) {
         Swal.fire({
             icon: 'error',
             title: '파일 첨부 오류',
@@ -36,20 +37,9 @@ document.getElementById('board-form').onsubmit = function (e) {
         return false;
     }
 
-    // 에디터 내 모든 <img> 태그의 현재 표시 크기를 가져와 인라인 style로 설정
-    var imgs = quill.root.querySelectorAll('img');
-    imgs.forEach(function (img) {
-        var rect = img.getBoundingClientRect();
-        var width = rect.width;
-        var height = rect.height;
-        img.setAttribute('style', 'width:' + width + 'px; height:' + height + 'px;');
-    });
-
-    // 업데이트된 HTML을 hidden input에 설정
-    document.getElementById('boardContent').value = quill.root.innerHTML;
-
     // 파일이 하나 이상 첨부된 경우, 썸네일 지정 여부 확인
-    if (dropzone.files.length > 0 && !document.getElementById('thumbnailUrl').value) {
+    const isThumbnailNotSelected = (dropzone.files.length > 0 && !document.getElementById('thumbnailUrl').value);
+	if (isThumbnailNotSelected) {
         Swal.fire({
             icon: 'error',
             title: '썸네일 선택 오류',
@@ -60,6 +50,10 @@ document.getElementById('board-form').onsubmit = function (e) {
         e.preventDefault();
         return false;
     }
+
+     // 업데이트된 HTML을 hidden input에 설정
+     document.getElementById('boardContent').value = quill.root.innerHTML;
+
     return true;
 };
 
@@ -67,7 +61,8 @@ let uploadedFiles = new Map();
 Dropzone.autoDiscover = false;
 
 const dropzone = new Dropzone('#dropzone', {
-    url: '/board/upload',
+    url: '#', // Prevents "No URL provided" error
+    autoProcessQueue: false, // Prevent automatic uploads
     maxFiles: 5,
     maxFilesize: 5,
     acceptedFiles: 'image/*',
@@ -76,75 +71,56 @@ const dropzone = new Dropzone('#dropzone', {
     dictRemoveFile: '삭제',
     init: function () {
         this.on('addedfile', function (file) {
-            let fileKey = file.name + file.size;
-            if (uploadedFiles.has(fileKey)) {
-                Swal.fire({
-                    icon: 'error',
-                    title: '파일 중복',
-                    text: '이미 업로드된 파일입니다.',
-                    confirmButtonColor: '#ff7f50',
-                    confirmButtonText: '확인'
-                });
-                // 중복 파일임을 표시한 후, removeFile 호출
-                file.isDuplicate = true;
-                this.removeFile(file);
-                return;
+            let reader = new FileReader();
+            reader.onload = (event) => {
+                let base64 = event.target.result;
+                
+                // base64로 저장된 값을 확인하여 중복된 이미지  올리기 방지
+                for (const [key, value] of uploadedFiles) {
+                    if (value.base64 === base64) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '파일 중복',
+                            text: '이미 업로드된 파일입니다.',
+                            confirmButtonColor: '#ff7f50',
+                            confirmButtonText: '확인'
+                        });
+                        this.removeFile(file);
+                        return;
+                    }
+                }
+
+                uploadedFiles.set(file.name, { file, base64 });
+                insertImageToQuill(file, base64);
             }
+            reader.readAsDataURL(file);
             this.element.classList.add('dz-started');
         });
 
-        this.on('success', function (file, response) {
-            if (response && response.fileUrl) {
-                var fileUrl = response.fileUrl;
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    var base64Data = e.target.result;
-                    insertImageToQuill(file, base64Data, fileUrl);
-                };
-                reader.readAsDataURL(file);
-            } else {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    var base64Data = e.target.result;
-                    insertImageToQuill(file, base64Data, "");
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        this.on('error', function (file, errorMessage) {
-            console.error('업로드 실패:', errorMessage);
+        this.on("sending", function(file, xhr, formData) {
+            // Prevent actual sending since we are not using a server
+            xhr.abort();
         });
 
         this.on('removedfile', function (file) {
-            let fileKey = file.name + file.size;
-            // 중복 파일이면 Quill 에디터의 이미지는 그대로 두고 uploadedFiles 삭제하지 않음
-            if (!file.isDuplicate) {
-                let fileData = uploadedFiles.get(fileKey);
-                if (fileData) {
-                    let imgToRemove = quill.root.querySelector(`img[src="${fileData.base64}"]`);
-                    if (imgToRemove) {
-                        imgToRemove.remove();
-                    }
-                    if (fileData.url) {
-                        fetch('/board/deleteFile', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                            body: 'fileUrl=' + encodeURIComponent(fileData.url)
-                        })
-                            .then(response => response.json())
-                            .catch(err => console.error('파일 삭제 중 오류:', err));
-                    }
-                }
-                uploadedFiles.delete(fileKey);
-                if (this.files.length === 0) {
-                    this.element.classList.remove('dz-started');
-                }
-                const currentThumbnailUrl = document.getElementById('thumbnailUrl').value;
-                if (fileData && fileData.url === currentThumbnailUrl) {
-                    document.getElementById('thumbnailUrl').value = "";
-                }
+            let fileKey = file.name;
+            let fileData = uploadedFiles.get(fileKey);
+            if (!fileData) {
+                return;
             }
+
+            /*
+                fileData가 저장되어 있는 경우 quill에서도 제거
+                만약 기존 저장된 preload가 아닌 upload파일이라면 서버에서도 파일 delete
+            */
+            removeImageFromQuillBoard(fileData.base64);
+
+            //dropzone에 image가 사라졌으므로 image가 없음을 알려주기 위해 css 제거
+            if (this.files.length === 0) {
+                this.element.classList.remove('dz-started');
+            }
+            uploadedFiles.delete(fileKey);
+            preventRequestIfRemovedImageIsThumbnail(fileData.base64);
         });
 
         this.on('complete', function (file) {
@@ -153,48 +129,90 @@ const dropzone = new Dropzone('#dropzone', {
     }
 });
 
-function insertImageToQuill(file, base64Data, fileUrl) {
-    let range = quill.getSelection();
-    let insertIndex = range ? range.index : quill.getLength();
-    quill.insertEmbed(insertIndex, 'image', base64Data);
-    quill.setSelection(insertIndex + 1);
 
-    let fileKey = file.name + file.size;
-    uploadedFiles.set(fileKey, { file: file, base64: base64Data, url: fileUrl });
 
-    file.previewElement.classList.add('dz-complete');
-
-    let thumbnailLabel = document.createElement('div');
-    thumbnailLabel.classList.add('thumbnail-label');
-    thumbnailLabel.textContent = '썸네일로 지정';
-    thumbnailLabel.style.display = 'none';
-    file.previewElement.insertBefore(thumbnailLabel, file.previewElement.firstChild);
-
-    file.previewElement.addEventListener('click', function (e) {
-        if (e.target.classList.contains('dz-remove')) return;
-        document.querySelectorAll('.dz-preview').forEach(function (preview) {
-            preview.classList.remove('thumbnail-selected');
-            let label = preview.querySelector('.thumbnail-label');
-            if (label) { label.style.display = 'none'; }
-        });
-        file.previewElement.classList.add('thumbnail-selected');
-        thumbnailLabel.style.display = 'block';
-        document.getElementById('thumbnail').value = base64Data;
-        document.getElementById('thumbnailUrl').value = fileUrl;
-    });
-}
 
 quill.on('text-change', function () {
     let quillImages = new Set([...quill.root.querySelectorAll('img')].map(img => img.src));
     for (let [fileKey, fileData] of uploadedFiles.entries()) {
         if (!quillImages.has(fileData.base64)) {
-            console.log('Quill에서 이미지 삭제됨:', fileData.base64);
             dropzone.removeFile(fileData.file);
             uploadedFiles.delete(fileKey);
-            const currentThumbnailUrl = document.getElementById('thumbnailUrl').value;
-            if (fileData.url === currentThumbnailUrl) {
-                document.getElementById('thumbnailUrl').value = "";
-            }
+            preventRequestIfRemovedImageIsThumbnail(fileData?.base64);
         }
     }
 });
+
+
+/**
+ * Inserts an image into Quill.
+ *
+ * @param {File} file - dropzone file.
+ * @param {string} base64 - The base64-encoded image data.
+ */
+function insertImageToQuill(file, base64) {
+    let range = quill.getSelection();
+    let insertIndex = range ? range.index : quill.getLength();
+    quill.insertEmbed(insertIndex, 'image', base64);
+    quill.setSelection(insertIndex + 1);
+
+    let fileKey = file.name;
+    uploadedFiles.set(fileKey, { file, base64 });
+
+    file.previewElement.classList.add('dz-complete');
+
+    const thumbnailLabel = generateThumbnailLabel(file);
+
+    file.previewElement.addEventListener('click', function (e) {
+        if (e.target.classList.contains('dz-remove')) {
+            return;
+        }
+        updateThumbnailSelection(file, thumbnailLabel, base64);
+    });
+}
+
+function removeImageFromQuillBoard(base64) {
+    let imgToRemove = quill.root.querySelector(`img[src="${base64}"]`);
+    if (imgToRemove) {
+        imgToRemove.remove();
+    }
+}
+
+/**
+ * 
+ * @param {File} file  dropzonefile
+ * @param {HTMLElement} thumbnailLabel 
+ * @param {base64String} base64 
+ */
+function updateThumbnailSelection(file, thumbnailLabel, base64) {
+    //썸네일 이미지를 바꾸기 위해 이전 썸네일 이미지 표시 css를 초기화
+    document.querySelectorAll('.dz-preview').forEach(function (preview) {
+        preview.classList.remove('thumbnail-selected');
+        let label = preview.querySelector('.thumbnail-label');
+        if (label) {
+            label.style.display = 'none';
+        }
+    });
+     //새로 선택된 썸네일 이미지를 보여주기 위해 이미지 표시 css 추가
+     file.previewElement.classList.add('thumbnail-selected');
+     thumbnailLabel.style.display = 'block';
+     // 새로 지정한 썸네일이면 hidden input 갱신
+    document.getElementById('thumbnail').value = base64;
+    document.getElementById('thumbnailUrl').value = base64;
+}
+
+function generateThumbnailLabel(file) {
+    let thumbnailLabel = document.createElement('div');
+    thumbnailLabel.classList.add('thumbnail-label');
+    thumbnailLabel.textContent = '썸네일로 지정';
+    thumbnailLabel.style.display = 'none';
+    file.previewElement.insertBefore(thumbnailLabel, file.previewElement.firstChild);
+    return thumbnailLabel;
+}
+
+function preventRequestIfRemovedImageIsThumbnail(base64) {
+    const currentThumbnailBase64 = document.getElementById('thumbnailUrl').value;
+    if (base64 === currentThumbnailBase64) {
+        document.getElementById('thumbnailUrl').value = "";
+    }
+}
