@@ -341,7 +341,13 @@ function updateReply(replySeq) {
     let newContent = $(`#edit-input-${replySeq}`).val();
 
     if (newContent.trim() === '') {
-        alert('댓글 내용을 입력해주세요.');
+        Swal.fire({
+            icon: 'error',
+            title: '댓글 수정 실패',
+            text: '댓글 내용을 입력해주세요.',
+            confirmButtonColor: '#ff7f50',
+            confirmButtonText: '확인'
+        });
         return;
     }
 
