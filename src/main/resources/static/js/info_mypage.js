@@ -162,6 +162,17 @@ async function changeInfo() {
         newPassword: newPassword.length > 0 ? newPassword : null
     };
 
+    if (!passwordChecker.isPasswordValid()) {
+        Swal.fire({
+            icon: 'error',
+            title: '정보 변경 실패',
+            text: '비밀번호 검증이 정상적으로 완료되지 않았습니다.',
+            confirmButtonColor: '#ff7f50',
+            confirmButtonText: '확인'
+        });
+        return;
+    }
+
     try {
         const response = await fetch("/mypage/updateInfo", {
             method: "POST",
@@ -174,7 +185,13 @@ async function changeInfo() {
         if (data.success) {
             modal.style.display = "block";
         } else {
-            alert("정보 변경에 실패했습니다.");
+            Swal.fire({
+                icon: 'error',
+                title: '정보 변경 실패',
+                text: '정보 변경에 실패하였습니다.',
+                confirmButtonColor: '#ff7f50',
+                confirmButtonText: '확인'
+            });
         }
     } catch (error) {
         console.error("Error:", error);
