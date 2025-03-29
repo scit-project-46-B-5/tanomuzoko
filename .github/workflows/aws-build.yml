@@ -19,13 +19,17 @@ jobs:
         AWS_USER: ${{ secrets.AWS_USER }}
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       run: |
-        echo "$AWS_HOST"
-        echo "$AWS_USER"
         echo "$SSH_PRIVATE_KEY" > private_key.pem
         chmod 600 private_key.pem
 
+        mkdir -p ~/.ssh
+        chmod 700 ~/.ssh
+
+        # Add the AWS EC2 instance's public key to known_hosts securely
+        ssh-keyscan -H $AWS_HOST >> ~/.ssh/known_hosts
+
         # SSH into the EC2 instance and run the build process directly
-        ssh -t -o StrictHostKeyChecking=no -i private_key.pem $AWS_USER@$AWS_HOST << 'EOF'
+        ssh -i private_key.pem $AWS_USER@$AWS_HOST << 'EOF'
           # Navigate to the project directory
           cd ~/tanomuzoko/
 
