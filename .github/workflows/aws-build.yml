@@ -1,0 +1,44 @@
+name: tanomuzoko-build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+    - name: SSH into AWS Instance, Build and Restart Service
+      env:
+        AWS_HOST: ${{ secrets.AWS_HOST }}
+        AWS_USER: ${{ secrets.AWS_USER }}
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      run: |
+        echo "$SSH_PRIVATE_KEY" > private_key.pem
+        chmod 600 private_key.pem
+
+        # SSH into the EC2 instance and run the build process directly
+        ssh -i private_key.pem $AWS_USER@$AWS_HOST << 'EOF'
+          # Navigate to the project directory
+          cd ~/tanomuzoko/
+
+          # Pull the latest code if needed (e.g., from GitHub)
+          git pull origin main
+
+          # Build the project using Gradle (assuming Gradle is installed or using the wrapper)
+          ./gradlew build -x test
+
+          # Stop the Spring Boot service
+          sudo systemctl stop tanomuzoko.service
+
+          # Restart the service (no need to copy the JAR, it will already be built in place)
+          sudo systemctl restart tanomuzoko.service
+        EOF
+        
+        # Clean up the private key
+        rm private_key.pem
