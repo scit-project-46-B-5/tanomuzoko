@@ -36,5 +36,8 @@ out/
 ### VS Code ###
 .vscode/
 
-
-### 환경변수
+### js any type 문제 해결을 위한 eslint
+package-lock.json
+package.json
+eslint.config.mjs
+node_modules/
