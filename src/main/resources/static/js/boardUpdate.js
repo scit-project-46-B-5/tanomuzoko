@@ -45,8 +45,8 @@ let uploadedFiles = new Map();
 Dropzone.autoDiscover = false;
 
 const dropzone = new Dropzone('#dropzone', {
-    url: '#', // Prevents "No URL provided" error
-    autoProcessQueue: false, // Prevent automatic uploads
+    url: '#', // upload 시 server에 request하지 않게 변경
+    autoProcessQueue: false, // upload 시 server에 request하지 않게 변경
     maxFiles: 5,
     maxFilesize: 5,
     acceptedFiles: 'image/*',
@@ -87,13 +87,12 @@ const dropzone = new Dropzone('#dropzone', {
             // Base64 문자열을 디코딩하여 바이너리 데이터로 변환하는 함수
             const file = convertBase64ToFile(base64, mockFile);
 
-            //나중에 fileUrl도 전부 추가해야함.
             const fileKey = mockFile.name;
             uploadedFiles.set(fileKey, { file, base64  });
         });
 
         this.on("sending", function(file, xhr, formData) {
-            // Prevent actual sending since we are not using a server
+            //upload 시 server에 request하지 않게 변경
             xhr.abort();
         });
     

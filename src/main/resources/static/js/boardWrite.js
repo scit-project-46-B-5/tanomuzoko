@@ -61,8 +61,8 @@ let uploadedFiles = new Map();
 Dropzone.autoDiscover = false;
 
 const dropzone = new Dropzone('#dropzone', {
-    url: '#', // Prevents "No URL provided" error
-    autoProcessQueue: false, // Prevent automatic uploads
+    url: '#', // server에 request하지 않게 변경
+    autoProcessQueue: false, // server에 request하지 않게 변경
     maxFiles: 5,
     maxFilesize: 5,
     acceptedFiles: 'image/*',
@@ -99,7 +99,7 @@ const dropzone = new Dropzone('#dropzone', {
         });
 
         this.on("sending", function(file, xhr, formData) {
-            // Prevent actual sending since we are not using a server
+            //upload 시 server에 request하지 않게 변경
             xhr.abort();
         });
 
@@ -107,10 +107,7 @@ const dropzone = new Dropzone('#dropzone', {
             let fileKey = file.name;
             let fileData = uploadedFiles.get(fileKey);
 
-            /*
-                fileData가 저장되어 있는 경우 quill에서도 제거
-                만약 기존 저장된 preload가 아닌 upload파일이라면 서버에서도 파일 delete
-            */
+            //중복 파일이라면 quill에서 제거하지 않고, 새로 upload된 파일이면 제거
             if (!this.duplicate) {
                 removeImageFromQuillBoard(fileData.base64);
             } else {
