@@ -113,6 +113,7 @@ const dropzone = new Dropzone('#dropzone', {
                             confirmButtonColor: '#ff7f50',
                             confirmButtonText: '확인'
                         });
+                        this.duplicate = true;
                         this.removeFile(file);
                         return;
                     }
@@ -129,15 +130,14 @@ const dropzone = new Dropzone('#dropzone', {
         this.on('removedfile', function (file) {
             let fileKey = file.name;
             let fileData = uploadedFiles.get(fileKey);
-            if (!fileData) {
+
+            //중복 파일이라면 quill에서 제거하지 않고, 새로 upload된 파일이면 제거
+            if (!this.duplicate) {
+                removeImageFromQuillBoard(fileData.base64);
+            } else {
+                this.duplicate = false;
                 return;
             }
-
-            /*
-                fileData가 저장되어 있는 경우 quill에서도 제거
-                만약 기존 저장된 preload가 아닌 upload파일이라면 서버에서도 파일 delete
-            */
-            removeImageFromQuillBoard(fileData.base64);
 
             //dropzone에 image가 사라졌으므로 image가 없음을 알려주기 위해 css 제거
             if (this.files.length === 0) {
