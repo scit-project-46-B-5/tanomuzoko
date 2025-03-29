@@ -12,50 +12,53 @@ const modal = document.getElementById("myModal");
 const closeModal = document.getElementById("closeModal");
 const modalButton = document.getElementById("modalButton");
 
-// 서버로부터 받은 비밀번호 확인 상태를 추적
-let isPasswordCorrect = false;
-
 // 새 비밀번호 입력란 숨기기
 newPasswordSection.style.display = "none";
 
-// Debounce 함수 정의
-function debounce(func, delay) {
-    let timer;
-    return function (...args) {
-        clearTimeout(timer); // 기존 타이머 제거
-        timer = setTimeout(() => func.apply(this, args), delay); 
-    };
-}
+const createPasswordChecker = () => {
+    let isPasswordCorrect = false;
 
-// 비밀번호 확인
-const checkPw = debounce(async function () {
-    if (password.value.length !== 0) {
+    async function checkPw() {
+        if (password.value.length === 0) {
+            isPasswordCorrect = false;
+            pwIconBox.innerHTML = "";
+            changePwBtn.disabled = true;
+            validateForm();
+            return false; // Resolve immediately with false if input is empty
+        }
+
         try {
             const response = await fetch("/mypage/checkPassword", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ currentPassword: password.value })
             });
-            const data = await response.json(); 
+            const data = await response.json();
             isPasswordCorrect = data;
-            if (isPasswordCorrect) {
-                changePwBtn.disabled = false;
-                pwIconBox.innerHTML = `<i class="fa-solid fa-circle-check pwCheckIcon" style="color: #5cd85a;"></i>`;
-            } else {
-                changePwBtn.disabled = true;
-                pwIconBox.innerHTML = `<i class="fa-solid fa-circle-xmark pwCheckIcon" style="color: #f55735;"></i>`;
-            }
+
+            // Update UI
+            pwIconBox.innerHTML = isPasswordCorrect
+                ? `<i class="fa-solid fa-circle-check pwCheckIcon" style="color: #5cd85a;"></i>`
+                : `<i class="fa-solid fa-circle-xmark pwCheckIcon" style="color: #f55735;"></i>`;
+
+            changePwBtn.disabled = !isPasswordCorrect;
             validateForm();
+
+            return isPasswordCorrect;
         } catch (error) {
-            console.error('Error:', error);
+            console.error("Error:", error);
+            return false;
         }
-    } else {
-        isPasswordCorrect = false;
-        pwIconBox.innerHTML = "";
-        changePwBtn.disabled = true;
-        validateForm();
     }
-}, 300);
+
+    const debouncedCheckPw = debounce(checkPw, 300); // Apply debounce here
+
+    function isPasswordValid() {
+        return isPasswordCorrect;
+    }
+
+    return { checkPw: debouncedCheckPw, isPasswordValid };
+};
 
 // 새 비밀번호 확인 및 길이 체크
 const checkNewPw = debounce(function () {
@@ -106,25 +109,45 @@ changePwBtn.addEventListener("click", function () {
     validateForm();
 });
 
+
+function debounce(func, delay) {
+    let timer;
+    return function (...args) {
+        return new Promise((resolve) => {
+            clearTimeout(timer);
+            timer = setTimeout(async () => {
+                const result = await func.apply(this, args);
+                resolve(result);
+            }, delay);
+        });
+    };
+}
+
+
 // 정보 변경 버튼 활성화 조건 확인
 function validateForm() {
     const isNickNameValid = nickName.value.trim().length >= 2 && nickName.value.trim().length <= 11;
     const isNewPwValid = newPW.value.length >= 8 && newPW.value === newPWCheck.value;
 
-    // 닉네임 길이 조건을 체크하고 안내 메시지 표시/숨기기
     const nickNameLengthMessage = document.getElementById("nickNameLengthMessage");
-    nickNameLengthMessage.style.display = (nickName.value.trim().length < 2 || nickName.value.trim().length > 11) ? "block" : "none";
+    nickNameLengthMessage.style.display = isNickNameValid ? "none" : "block";
 
-    const isPasswordSectionValid = isPasswordCorrect && (newPasswordSection.style.display === "none" || isNewPwValid);
-    changeInfoBtn.disabled = !(isNickNameValid && isPasswordSectionValid);
+    if (newPasswordSection.style.display === "none") {
+        changeInfoBtn.disabled = !(passwordChecker.isPasswordValid() && isNickNameValid);
+    } else {
+        changeInfoBtn.disabled = !(isNickNameValid && isNewPwValid);
+    }
 
-    // 비밀번호 변경 버튼 유효성 체크
-    changePwBtn.disabled = !(isPasswordCorrect && isNickNameValid);
+    changePwBtn.disabled = !(passwordChecker.isPasswordValid() && isNickNameValid);
 }
+
+const passwordChecker = createPasswordChecker();
 
 // 비밀번호 입력 확인
 document.addEventListener("keyup", validateForm);
-password.addEventListener("keyup", checkPw);
+password.addEventListener("keyup", async () => {
+    await passwordChecker.checkPw();
+});
 newPW.addEventListener("keyup", checkNewPw);
 newPWCheck.addEventListener("keyup", checkNewPw);
 nickName.addEventListener("keyup", validateForm);
