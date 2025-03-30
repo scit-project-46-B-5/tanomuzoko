@@ -1,21 +1,14 @@
 package org.scit.project.reply.repository;
 
-import java.util.List;
-
 import org.scit.project.board.entity.BoardEntity;
 import org.scit.project.reply.entity.ReplyEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface ReplyRepository extends JpaRepository<ReplyEntity, Long>{
-
-    List<ReplyEntity> findByParentReplyAndIsDeletedFalse(ReplyEntity parentReply);
-
-    List<ReplyEntity> findByBoardAndParentReplyIsNullAndIsDeletedFalse(BoardEntity board, Sort sort);
 
     @Query("""
         SELECT DISTINCT r FROM ReplyEntity r 

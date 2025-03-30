@@ -171,7 +171,6 @@ function sendEmailVerification(email) {
         dataType: "json",
         data: JSON.stringify({ userEmail: email }),
         success: function (data) {
-            console.log("📩 이메일이 정상적으로 발송되었습니다.");
             $("#Confirm").attr("value", data);
         },
         error: function (xhr) {

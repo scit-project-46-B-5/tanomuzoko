@@ -2,10 +2,7 @@ package org.scit.project.user.handler;
 
 import java.io.IOException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -14,11 +11,12 @@ import org.springframework.stereotype.Component;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
+@Slf4j
 public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(CustomAuthenticationFailureHandler.class);
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
@@ -26,13 +24,6 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
         String redirectUrl = "/user/login?errorType=";
         // 로그인 시도한 사용자 ID 가져오기
         String userId = request.getParameter("userId");
-        
-        if (exception instanceof InternalAuthenticationServiceException) {
-        	System.out.println("aaa");
-        	System.out.println(request.getParameter("userId"));
-        } else if (exception instanceof DisabledException) {
-        	System.out.println("bbb");
-        }
 
         try {
             // 예외가 발생할 수 있는 코드
