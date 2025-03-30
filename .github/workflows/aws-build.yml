@@ -2,9 +2,15 @@ name: tanomuzoko-build
 
 on:
   push:
-    branches: [ "main" ]
+    paths-ignore:
+      - 'README*.md'         # Exclude README-like files
+      - '.github/workflows/*.yaml'  # Exclude all yaml from triggering actions
   pull_request:
-    branches: [ "main" ]
+    paths-ignore:
+      - 'README*.md'         # Exclude README-like files
+      - '.github/workflows/*.yaml'  # Exclude all yaml from triggering actions
+
+
 
 jobs:
   deploy:
