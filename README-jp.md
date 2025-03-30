@@ -8,7 +8,7 @@
 
 
 ## 導入
-- tanomuzoko プログラム
+- tanomuzoko(頼む ＋ 冷蔵庫) プログラム
 
 
 ## 内容

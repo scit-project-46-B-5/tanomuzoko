@@ -8,7 +8,7 @@
 
 
 ## Introduction
-- tanomuzoko 프로그램
+- tanomuzoko(부탁해-tanomu + 냉장고-zoko) 프로그램
 
 
 ## contents
