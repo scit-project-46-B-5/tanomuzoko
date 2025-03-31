@@ -464,28 +464,49 @@ const ingredientsList = document.getElementById('ingredients-list');
 const searchInput = document.getElementById('search-input');
 
 // 재료 목록 필터링 및 표시
-function displayIngredients(filter = '') {
+function displayIngredients() {
     ingredientsList.innerHTML = '';
-    ingredients
-        .filter((item) => item.includes(filter))
-        .forEach((item) => {
-            let btn = document.createElement('button');
-            btn.textContent = item;
-            btn.classList.add('ingredient-btn');
+    ingredients.forEach((item) => {
+        let btn = document.createElement('button');
+        btn.textContent = item;
+        btn.classList.add('ingredient-btn');
 
-            if (document.querySelector(`[data-item="${item}"]`)) {
-                btn.classList.add('selected');
-            }
+        if (document.querySelector(`[data-item="${item}"]`)) {
+            btn.classList.add('selected');
+        }
 
-            btn.onclick = () => toggleCartItem(btn, item);
-            ingredientsList.appendChild(btn);
-        });
+        btn.onclick = () => toggleCartItem(btn, item);
+        ingredientsList.appendChild(btn);
+    });
 }
+
+function debounce(func, delay) {
+    let timer;
+    return function (...args) {
+        clearTimeout(timer); // 기존 타이머 제거
+        timer = setTimeout(() => func.apply(this, args), delay); 
+    };
+}
+
+const debouncedFilterIngredients = debounce(filterIngredients, 150);
+
+document.querySelector("#search-input").addEventListener('input', function() {
+    debouncedFilterIngredients();
+})
 
 // 검색 필터링
 function filterIngredients() {
-    displayIngredients(searchInput.value.trim());
+    const ingredientsBtns = Array.from(ingredientsList.children);
+    ingredientsBtns.filter((item) => !item.textContent.includes(searchInput.value))
+                    .forEach((item) => {
+                        item.style.display = 'none';
+                    })
+    ingredientsBtns.filter((item) => item.textContent.includes(searchInput.value))
+                    .forEach((item) => {
+                        item.style.display = 'block';
+                    })
 }
+
 
 // 장바구니 최대 개수 설정
 const maxCartItems = 10;
@@ -494,7 +515,7 @@ const maxCartItems = 10;
 function toggleCartItem(button, ingredient) {
     const cartBox = document.getElementById('cart-box');
     let existingItem = cartBox.querySelector(`[data-item="${ingredient}"]`);
-
+    
     if (existingItem) {
         existingItem.remove();
         button.classList.remove('selected');

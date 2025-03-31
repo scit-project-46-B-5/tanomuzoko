@@ -50,32 +50,33 @@ public class BoardService {
         BoardEntity entity = BoardEntity.toEntity(boardDTO, user, recipeEntity);
         BoardEntity savedBoard = boardRepository.save(entity);
 
-        if (boardDTO.getThumbnailUrl() != null && !boardDTO.getThumbnailUrl().isEmpty()) {
-            String thumbnailUrl = boardDTO.getThumbnailUrl();
-            String savedFileName = "";
-
-            if (thumbnailUrl.startsWith("/uploads/")) {
-                savedFileName = thumbnailUrl.substring(9);
-            } else {
-                String newUUID = UUID.randomUUID().toString();
-                String ext = "";
-                if (thumbnailUrl.startsWith("data:image/")) {
-                    int slashIndex = thumbnailUrl.indexOf("/");
-                    int semicolonIndex = thumbnailUrl.indexOf(";");
-                    if (slashIndex != -1 && semicolonIndex != -1) {
-                        ext = "." + thumbnailUrl.substring(slashIndex + 1, semicolonIndex);
-                    }
-                }
-                savedFileName = "thumbnail_" + newUUID + ext;
-            }
-
-            BoardImageEntity imageEntity = BoardImageEntity.builder()
-                .boardEntity(savedBoard)
-                .originalFileName(boardDTO.getThumbnail())
-                .savedFileName(savedFileName)
-                .build();
-            boardImageRepository.save(imageEntity);
+        if (!boardDTO.isThumbnailUrlEmpty()) {
+            return;
         }
+
+        String thumbnailUrl = boardDTO.getThumbnailUrl();
+        String savedFileName = "";
+        if (boardDTO.isUploadedInCurrentBoard()) {
+            savedFileName = thumbnailUrl.substring(9);
+        } else {
+            String newUUID = UUID.randomUUID().toString();
+            String ext = "";
+            if (thumbnailUrl.startsWith("data:image/")) {
+                int slashIndex = thumbnailUrl.indexOf("/");
+                int semicolonIndex = thumbnailUrl.indexOf(";");
+                if (slashIndex != -1 && semicolonIndex != -1) {
+                    ext = "." + thumbnailUrl.substring(slashIndex + 1, semicolonIndex);
+                }
+            }
+            savedFileName = "thumbnail_" + newUUID + ext;
+        }
+
+        BoardImageEntity imageEntity = BoardImageEntity.builder()
+            .boardEntity(savedBoard)
+            .originalFileName(boardDTO.getThumbnail())
+            .savedFileName(savedFileName)
+            .build();
+        boardImageRepository.save(imageEntity);
     }
 
     @Transactional

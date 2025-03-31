@@ -14,19 +14,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface RecipeMyPageRepository extends JpaRepository<RecipeEntity, Long>{
     
-    // @EntityGraph(attributePaths = {"recipeOutputEntity", "recipeInputKeywordEntityList"})
-    // @Query("""
-    //     SELECT DISTINCT r FROM RecipeEntity r
-    //     INNER JOIN r.recipeInputKeywordEntityList k
-    //     INNER JOIN r.recipeOutputEntity j
-    //     INNER JOIN r.userEntity u
-    //     WHERE u.userSeq = :userSeq
-    // """)
-    // Page<RecipeEntity> findRecipesWithPagination(
-    //     @Param("userSeq") Long userSeq,
-    //     Pageable pageable
-    // );
-    
     @Query("""
         SELECT r.recipeSeq FROM RecipeEntity r
         WHERE r.userEntity.userSeq = :userSeq

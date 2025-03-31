@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
-import org.scit.project.mypage.dto.UserUpdateDTO;
 import org.scit.project.user.entity.UserEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,9 +25,6 @@ import lombok.ToString;
 
 public class LoginUserDetails implements UserDetails {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private Long userSeq;
 	private String userId;

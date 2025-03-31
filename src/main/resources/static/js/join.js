@@ -171,7 +171,6 @@ function sendEmailVerification(email) {
         dataType: "json",
         data: JSON.stringify({ userEmail: email }),
         success: function (data) {
-            console.log("📩 이메일이 정상적으로 발송되었습니다.");
             $("#Confirm").attr("value", data);
         },
         error: function (xhr) {
@@ -413,13 +412,6 @@ function join() {
                 "userEmail": userEmail
             }),
             success: function (resp) {
-                Swal.fire({
-                    icon: 'success',
-                    title: '가입 성공!',
-                    text: '회원가입이 완료되었습니다.',
-                    confirmButtonColor: '#ff7f50',
-                    confirmButtonText: '확인',
-                });
                 window.location.href = "/"; // ✅ 메인 페이지로 이동
             },
             error: function (xhr) {

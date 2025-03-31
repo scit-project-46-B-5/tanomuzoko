@@ -1,69 +1,60 @@
-$(document).ready(function () {
-    // 현재 페이지 URL에서 boardSeq 값을 가져옴 (예: ?boardSeq=1234)
-    const boardSeq = new URLSearchParams(window.location.search).get("boardSeq");
-    let currentPage = 0;
-    let isLoggedIn = false;
+// 현재 페이지 URL에서 boardSeq 값을 가져옴 (예: ?boardSeq=1234)
 
-    if (!boardSeq) {
-        return; // 게시글 번호가 없으면 함수 종료
-    }
+// 공감 상태 및 개수 불러오기
+function fetchHeartStatus() {
+    $.ajax({
+        url: `/heart/status?boardSeq=${$('#boardSeq').val()}`,
+        type: "GET",
+        success: function (resp) {
+            updateHeartUI(resp.isHearted, resp.heartCount);
 
-    // 공감 상태 및 개수 불러오기
-    function fetchHeartStatus() {
-        $.ajax({
-            url: `/heart/status?boardSeq=${boardSeq}`,
-            type: "GET",
-            success: function (resp) {
-                updateHeartUI(resp.isHearted, resp.heartCount);
-                isLoggedIn = resp.isLoggedIn; // 로그인 여부 저장
-
-                if (!resp.isLoggedIn) {
-                    $("#like-btn").prop("disabled", true); // 로그인하지 않은 유저는 버튼 비활성화
-                }
-            },
-            error: function () {
-                console.error("공감 상태를 불러오지 못했습니다.");
+            if (!resp.isLoggedIn) {
+                $("#like-btn").prop("disabled", true); // 로그인하지 않은 유저는 버튼 비활성화
             }
-        });
-    }
-
-    // 공감 버튼 클릭 이벤트 (사용자가 버튼을 클릭하면 공감 상태 변경)
-    $("#like-btn").click(function () {
-        if ($(this).prop("disabled")) {
-            return;
+        },
+        error: function () {
+            console.error("공감 상태를 불러오지 못했습니다.");
         }
-
-        $.ajax({
-            url: `/heart/toggle?boardSeq=${boardSeq}`,
-            type: "POST",
-            success: function (resp) {
-                updateHeartUI(resp.isHearted, resp.heartCount);
-            },
-            error: function () {
-                console.error("공감 요청에 실패했습니다.");
-            }
-        });
     });
+}
 
-    // UI 업데이트 함수 (공감 버튼 상태 변경)
-    function updateHeartUI(isHearted, heartCount) {
-        if (isHearted) {
-            $("#like-btn").addClass("liked").text("❤️ 취소 " + heartCount).css("font-family", "NPSfontBold, sans-serif");
-            
-        } else {
-            $("#like-btn").removeClass("liked").text("🤍 공감 " + heartCount).css("font-family", "NPSfontBold, sans-serif");
-        }
+// 공감 버튼 클릭 이벤트 (사용자가 버튼을 클릭하면 공감 상태 변경)
+$("#like-btn").click(function () {
+    if ($(this).prop("disabled")) {
+        return;
     }
 
-    // 페이지 로딩 시 공감 상태 가져오기
-    fetchHeartStatus();
-
-    // 댓글 초기화( 댓글 전체 조회 )
-    initReplies();
-	
-	// 수정/삭제 버튼 로드
-	loadBoardButtons();
+    const boardSeq = $('#boardSeq').val();
+    $.ajax({
+        url: `/heart/toggle?boardSeq=${boardSeq}`,
+        type: "POST",
+        success: function (resp) {
+            updateHeartUI(resp.isHearted, resp.heartCount);
+        },
+        error: function () {
+            console.error("공감 요청에 실패했습니다.");
+        }
+    });
 });
+
+// UI 업데이트 함수 (공감 버튼 상태 변경)
+function updateHeartUI(isHearted, heartCount) {
+    if (isHearted) {
+        $("#like-btn").addClass("liked").text("❤️ 취소 " + heartCount).css("font-family", "NPSfontBold, sans-serif");
+        
+    } else {
+        $("#like-btn").removeClass("liked").text("🤍 공감 " + heartCount).css("font-family", "NPSfontBold, sans-serif");
+    }
+}
+
+// 페이지 로딩 시 공감 상태 가져오기
+fetchHeartStatus();
+
+// 댓글 초기화( 댓글 전체 조회 )
+initReplies();
+
+// 수정/삭제 버튼 로드
+loadBoardButtons();
 
 // 댓글 초기화 (페이지네이션 포함)
 function initReplies(page = 0) {
@@ -75,7 +66,6 @@ function initReplies(page = 0) {
         method: 'GET',
         data: { "boardSeq": boardSeq, "page": page },
         success: function (resp) {
-            currentPage = page;
             let tag = ``;
             $.each(resp.content, function (index, item) {
                 tag += renderComment(item, loginId, item.parentReplySeq !== null);
@@ -100,10 +90,12 @@ function renderComment(item, loginId, isChild) {
                     loginId === item.userId
                         ? `
                     <div class="comment-buttons">
-                        <button class="edit-input-btn" onclick="deleteReply(${item.replySeq})">삭제</button>
+
+                    ${item.isDeleted ? '' : `<button class="edit-input-btn" onclick="deleteReply(${item.replySeq})">삭제</button>
                         <button class="edit-cancel-btn" onclick="editReply(${item.replySeq}, '${escapeHTML(
                             item.replyContent
-                        )}')">수정</button>
+                        )}')">수정</button>` }
+                        
                     </div>
                 `
                         : ''
@@ -111,7 +103,7 @@ function renderComment(item, loginId, isChild) {
             </div>
             <div class="user-text">
                 <span class="full-text">${item.isDeleted ? '삭제된 댓글입니다' : fullText}</span>
-                ${hasMore ? '<button class="more-btn" onclick="toggleExpand(this)">더보기</button>' : ''}
+                ${hasMore && !item.isDeleted ? '<button class="more-btn" onclick="toggleExpand(this)">더보기</button>' : ''}
             </div>
     `;
     if (!isChild && loginId) {
@@ -179,7 +171,7 @@ $(document).on("click", ".reply-submit-btn", function () {
             "parentReplySeq": parentReplySeq || null
         },
         success: function () {
-            initReplies(currentPage);
+            initReplies($("#pagination").find(".active").text() - 1);
         }
     });
 });
@@ -224,8 +216,6 @@ function generatePagination(resp) {
         pagination += `<button onclick="initReplies(${startPage - 1})">◀ 이전</button>`;
     }
 
-    console.log(endPage);
-
     for (let i = startPage; i < endPage; i++) {
         pagination += `<button onclick="initReplies(${i})" class="${i === currentPage ? 'active' : ''}">${i + 1}</button>`;
     }
@@ -247,7 +237,8 @@ $(document).ready(function () {
     });
 });
 
-// 댓글 최대 글자 수 설정
+// 댓글 최대/최소 글자 수 설정
+const minContentLength = 1;
 const maxContentLength = 300;
 
 // 댓글 추가 함수
@@ -255,7 +246,7 @@ function addReply() {
     let commentInput = $("#comment-input").val();
     let boardSeq = $('#boardSeq').val();
 
-    if (commentInput.trim() == '' || commentInput.trim().length > maxContentLength) {
+    if (commentInput.trim().length < minContentLength || commentInput.trim().length > maxContentLength) {
         Swal.fire({
             icon: 'warning',
             title: '등록할 수 없습니다',
@@ -340,7 +331,13 @@ function updateReply(replySeq) {
     let newContent = $(`#edit-input-${replySeq}`).val();
 
     if (newContent.trim() === '') {
-        alert('댓글 내용을 입력해주세요.');
+        Swal.fire({
+            icon: 'error',
+            title: '댓글 수정 실패',
+            text: '댓글 내용을 입력해주세요.',
+            confirmButtonColor: '#ff7f50',
+            confirmButtonText: '확인'
+        });
         return;
     }
 
@@ -349,7 +346,7 @@ function updateReply(replySeq) {
         method: 'POST',
         data: { "replySeq": replySeq, "replyContent": newContent },
         success: function () {
-            initReplies(currentPage);
+            initReplies($("#pagination").find(".active").text() - 1);
         }
     });
 }

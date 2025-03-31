@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.scit.project.board.entity.BoardEntity;
 import org.scit.project.board.entity.BoardImageEntity;
 import org.scit.project.board.repository.BoardImageRepository;
 import org.scit.project.board_heart.repository.BoardHeartRepository;

@@ -11,7 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,7 +35,7 @@ public class BoardImageEntity {
     @Column(name = "image_seq")
     private Long imageSeq;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "board_seq", nullable = false)
     private BoardEntity boardEntity;
 

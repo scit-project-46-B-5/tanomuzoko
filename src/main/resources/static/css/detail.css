@@ -37,9 +37,6 @@
     margin: 10px 0;
     text-align: right;
     border-bottom: 2px solid #ddd; /* 👈 구분선 추가 */
-
-    /* 👈 구분선 위치 수정 */
-    margin-top: 0px;
     padding-bottom: 10px;
 }
 
@@ -212,6 +209,7 @@
 }
 
 .comment-box {
+    width: 100%;
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
@@ -225,6 +223,12 @@
     font-size: 14px;
 }
 
+.comment-box input:focus {
+    border-color: #ff7f50;
+    outline: none;
+    background-color: #fff;
+}
+
 .comment-box button {
     padding: 10px 15px;
     background: #ff7f50;
@@ -232,7 +236,13 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    transition: background 0.1s ease;
 }
+
+.comment-box button:hover {
+    background: #e56b42;
+}
+
 .author-posts {
     list-style: none;
     padding-left: 0px;
@@ -303,45 +313,6 @@
     background: #e56b42;
 }
 
-/* 📌 댓글 입력 박스 스타일 */
-.comment-box {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    width: 100%;
-}
-
-/* 📌 댓글 입력 스타일 */
-.comment-box input {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 14px;
-}
-
-/* 📌 댓글 입력 버튼 스타일 */
-.comment-box button {
-    padding: 10px 15px;
-    background: #ff7f50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-/* 버튼 호버 효과 */
-.comment-box button:hover {
-    background: #e56b42;
-}
-
-/* 📌 작성자 이름에 마우스를 올리면 스타일 변경 */
-.comment .user-info:hover {
-    color: #ff7f50;
-    cursor: pointer;
-}
-
 /* 📌 수정 폼 스타일 */
 .edit-form, .reply-form {
     display: flex; /* 가로 방향으로 배치 */
@@ -399,13 +370,13 @@
     font-size: 14px;
     cursor: pointer;
     padding: 0;
-    transition: color 0.3s ease;
+    transition: color 0.1s ease;
 }
 
 /* 📌 저장/취소 버튼 호버 효과 */
 .edit-input-btn:hover,
 .edit-cancel-btn:hover {
-    color: #e56b42;
+    color: #666;
     /* 호버 시 색상 변경 */
 }
 
@@ -469,13 +440,19 @@
 }
 
 .reply-btn{
-    color: #ff7f50; /* 텍스트 색상 오렌지로 설정 */
+    color: #ff7f50;
     border: none;
-    font-size: 14px;
+    border-radius: 4px;
+    background-color: #fdcc9f30;
+    font-size: 12px;
+    padding: 4px 8px;
+    margin-top: 4px;
     cursor: pointer;
-    transition: color 0.3s ease;
-    padding: 0;
-    background: none;
+    transition: color 0.1s ease;
+}
+
+.reply-btn:hover {
+    background-color: #fdcc9f60;
 }
 
 /* 유저 정보 + 버튼을 가로로 정렬 */

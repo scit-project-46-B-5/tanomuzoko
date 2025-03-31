@@ -73,7 +73,6 @@ $("#loginBtn").on("click", function (event) {
         return;
     }
 
-    console.log("✅ 로그인 요청 실행");
     $("form").submit(); // 폼 제출 실행
 });
 

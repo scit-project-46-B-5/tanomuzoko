@@ -1,6 +1,5 @@
 package org.scit.project.reply.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -13,9 +12,9 @@ import org.scit.project.reply.repository.ReplyRepository;
 import org.scit.project.user.entity.UserEntity;
 import org.scit.project.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +39,11 @@ public class ReplyService {
         Optional<BoardEntity> boardOpt = boardRepository.findById(replyDTO.getBoardSeq());
         if (boardOpt.isEmpty()) {
             throw new IllegalArgumentException("게시글이 존재하지 않습니다.");
+        }
+
+        String replyContent = replyDTO.getReplyContent().trim();
+        if (replyContent.length() < 1 || replyContent.length() > 300) {
+            throw new IllegalArgumentException("댓글은 1~300자 이내로 입력해야 합니다.");
         }
 
         BoardEntity board = boardOpt.get();
