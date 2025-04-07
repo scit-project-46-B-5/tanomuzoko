@@ -176,7 +176,7 @@ async function getRecipeWritten() {
 
         return data;
     } catch (error) {
-        console.error(first);
+        console.error(error);
     }
 }
 

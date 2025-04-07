@@ -94,7 +94,7 @@ changePwBtn.addEventListener("click", function () {
         changePwBtn.innerText = "취소";
         changePwBtn.style.backgroundColor = "#f55735";
         password.readOnly = true;
-        passwordLengthMessage.style.display = "none";
+        document.getElementById("passwordLengthMessage").style.display = "none";
     } else {
         newPW.value = "";
         newPWCheck.value = "";
@@ -104,7 +104,7 @@ changePwBtn.addEventListener("click", function () {
         changePwBtn.style.backgroundColor = "#5cd85a";
         password.readOnly = false;
         changeInfoBtn.disabled = true;
-        passwordLengthMessage.style.display = "none";
+        document.getElementById("passwordLengthMessage").style.display = "none";
     }
     validateForm();
 });
