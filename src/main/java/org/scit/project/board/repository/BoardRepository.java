@@ -15,7 +15,7 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
     List<BoardEntity> findTop11ByUserEntityOrderByCreateDateDesc(UserEntity userEntity);
 
     // 조회수(hitCount)만 증가시키는 update 쿼리 (update_date에는 영향을 주지 않음)
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("update BoardEntity b set b.hitCount = b.hitCount + 1 where b.boardSeq = :boardSeq")
     void incrementHitCount(@Param("boardSeq") Long boardSeq);
 }
