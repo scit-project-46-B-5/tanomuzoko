@@ -10,13 +10,16 @@ import org.springframework.data.repository.query.Param;
 
 public interface ReplyRepository extends JpaRepository<ReplyEntity, Long>{
 
-    @Query("""
-        SELECT DISTINCT r FROM ReplyEntity r 
+    @Query(value = """
+        SELECT r FROM ReplyEntity r 
         LEFT JOIN FETCH r.childReplies c
         WHERE r.board = :board 
         AND (r.parentReply IS NULL OR r.parentReply IN 
         (SELECT p FROM ReplyEntity p WHERE p.board = :board AND p.parentReply IS NULL))
         ORDER BY COALESCE(r.parentReply.replySeq, r.replySeq)
-    """)
+    """, countQuery = """
+        select count(r) FROM ReplyEntity r
+         WHERE r.board = :board 
+""")
     Page<ReplyEntity> findRepliesByBoard(@Param("board") BoardEntity board, Pageable pageable);
 }

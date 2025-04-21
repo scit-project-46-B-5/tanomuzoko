@@ -1,5 +1,7 @@
 package org.scit.project.reply.service;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -78,11 +80,12 @@ public class ReplyService {
 
         // Fetch paginated parent and child replies in a single query
         Page<ReplyEntity> replyPage = replyRepository.findRepliesByBoard(boardOpt.get(), pageable);
-
+        List<ReplyEntity> deduplicated = new ArrayList<>(new LinkedHashSet<>(replyPage.getContent()));
+        
         // Convert to DTOs
-        List<ReplyDTO> replyDTOs = replyPage.getContent().stream()
-                .map(ReplyDTO::toDTO)
-                .collect(Collectors.toList());
+        List<ReplyDTO> replyDTOs = deduplicated.stream()
+                                            .map(ReplyDTO::toDTO)
+                                            .collect(Collectors.toList());
 
         return new PageImpl<>(replyDTOs, pageable, replyPage.getTotalElements());
     }
